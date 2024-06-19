@@ -1,5 +1,6 @@
 import ftplib
 import os
+import datetime
 from database import get_all_profiles, get_profile_activity
 
 FTP_HOST = os.getenv('FTP_HOST')
@@ -16,9 +17,9 @@ def update_site():
             'lodestone_id': profile['lodestone_id'],
             'activity': activity
         })
-    # Here you would format the data and upload it via FTP
+    # Ici, vous formatez les données et les téléchargez via FTP
     with ftplib.FTP(FTP_HOST, FTP_USER, FTP_PASS) as ftp:
-        # Example of uploading a file
+        # Exemple de téléchargement de fichier
         with open('local_file.html', 'rb') as file:
             ftp.storbinary('STOR remote_file.html', file)
 
@@ -26,6 +27,6 @@ def mark_retired():
     profiles = get_all_profiles()
     for profile in profiles:
         activity = get_profile_activity(profile['lodestone_id'])
-        if activity['last_login'] > 30:  # assuming days
-            # Update the profile status to retired
+        if activity and (datetime.now() - activity).days > 30:  # exemple de 30 jours
+            # Mettez à jour le statut du profil à retraité
             pass

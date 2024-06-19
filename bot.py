@@ -1,4 +1,5 @@
 import os
+from database import link_profile, get_linked_profile, update_profile_activity, get_all_profiles, get_profile_activity
 import discord
 import asyncio
 from discord.ext import commands

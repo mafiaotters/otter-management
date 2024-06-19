@@ -6,3 +6,4 @@ python-dotenv==0.19.2
 ftplib==3.4.0
 sqlite3==3.35.5
 asyncio==3.4.3
+google-cloud-firestore==2.16.0

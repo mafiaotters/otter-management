@@ -1,47 +1,37 @@
-import sqlite3
 import os
-from datetime import datetime
+from google.cloud import firestore
 
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-def get_db():
-    conn = sqlite3.connect(DATABASE_URL)
-    return conn
+# Initialiser Firestore
+db = firestore.Client()
 
 def link_profile(discord_id, lodestone_id):
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("INSERT INTO profiles (discord_id, lodestone_id) VALUES (?, ?)", (discord_id, lodestone_id))
-    conn.commit()
-    conn.close()
+    doc_ref = db.collection('profiles').document(str(discord_id))
+    doc_ref.set({
+        'discord_id': discord_id,
+        'lodestone_id': lodestone_id,
+        'last_login': None
+    })
 
 def get_linked_profile(discord_id):
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("SELECT lodestone_id FROM profiles WHERE discord_id = ?", (discord_id,))
-    profile = c.fetchone()
-    conn.close()
-    return profile
+    doc_ref = db.collection('profiles').document(str(discord_id))
+    doc = doc_ref.get()
+    if doc.exists:
+        return doc.to_dict()
+    return None
 
 def update_profile_activity(lodestone_id, last_login):
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("UPDATE profiles SET last_login = ? WHERE lodestone_id = ?", (last_login, lodestone_id))
-    conn.commit()
-    conn.close()
+    profiles_ref = db.collection('profiles')
+    query = profiles_ref.where('lodestone_id', '==', lodestone_id)
+    for profile in query.stream():
+        profile.reference.update({'last_login': last_login})
 
 def get_all_profiles():
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("SELECT * FROM profiles")
-    profiles = c.fetchall()
-    conn.close()
-    return profiles
+    profiles_ref = db.collection('profiles')
+    return [doc.to_dict() for doc in profiles_ref.stream()]
 
 def get_profile_activity(lodestone_id):
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("SELECT last_login FROM profiles WHERE lodestone_id = ?", (lodestone_id,))
-    activity = c.fetchone()
-    conn.close()
-    return activity
+    profiles_ref = db.collection('profiles')
+    query = profiles_ref.where('lodestone_id', '==', lodestone_id)
+    for profile in query.stream():
+        return profile.to_dict().get('last_login')
+    return None
