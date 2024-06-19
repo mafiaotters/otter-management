@@ -1,5 +1,5 @@
 {
-  "name": "otter-management",
+  "name": "ottermanagement",
   "version": "1.0.0",
   "description": "<h2> Create venv: </h2> <h3> WINDOWS </h3> python -m venv venv source venv/bin/activate  # Sur Windows: venv\\Scripts\\activate",
   "main": "index.js",
@@ -7,12 +7,21 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Jungso",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "firebase-admin": "^12.1.1"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jungso-GB/otter-management.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Jungso-GB/otter-management/issues"
+  },
+  "homepage": "https://github.com/Jungso-GB/otter-management#readme"
 }
