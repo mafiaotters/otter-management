@@ -1,7 +1,8 @@
-discord.py==1.7.3
-requests==2.25.1
-flask==2.0.1
-flask-discord==0.1.5
+discord==2.3.2
+requests==2.32.3
+flask==3.0.3
+flask-discord==0.1.69
 python-dotenv==0.19.2
 ftplib==3.4.0
 sqlite3==3.35.5
+asyncio==3.4.3

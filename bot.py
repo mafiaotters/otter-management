@@ -1,5 +1,6 @@
 import os
 import discord
+import asyncio
 from discord.ext import commands
 from xivapi import fetch_lodestone_profile, fetch_character_activity
 from site_update import update_site, mark_retired

@@ -1,3 +1,4 @@
+import os
 import discord
 
 def setup_logger(bot, log_channel_id):
