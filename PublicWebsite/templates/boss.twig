@@ -1,0 +1,57 @@
+<!-- {{boss.name}} -->
+<div class="col-lg-4 col-md-6 mb-4">
+  <div class="card h-100">
+    <a href="#"><img class="card-img-top" src="assets/img/pve/{{boss.file|lower}}.jpg" alt=""></a>
+    <div class="card-body">
+      <h4 class="card-title">
+        <a href="#" data-toggle="modal" data-target="#{{boss.stripName|replace({' ': ''})}}ModalCenter"><span class="bossName">- {{boss.name}} -</span> <br> <span class="bossType">{{boss.type}}
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+            <path
+              d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z" />
+          </svg></span></a>
+      </h4>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="{{boss.stripName}}ModalCenter" tabindex="-1" role="dialog"
+      aria-labelledby="{{boss.name}}ModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="{{boss.stripName}}ModalCenterTitle">Vainqueurs - {{boss.name}} ({{boss.type}})
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-award-fill" viewBox="0 0 16 16">
+                <path
+                  d="M8 0l1.669.864 1.858.282.842 1.68 1.337 1.32L13.4 6l.306 1.854-1.337 1.32-.842 1.68-1.858.282L8 12l-1.669-.864-1.858-.282-.842-1.68-1.337-1.32L2.6 6l-.306-1.854 1.337-1.32.842-1.68L6.331.864 8 0z" />
+                <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1 4 11.794z" />
+              </svg>
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>{{boss.wincount}} loutres sur {{boss.try}} l'ont vaincu.</p>
+            <ul class="list-group list-group-flush">
+            {% for winner in boss.winners %}
+              <li class="list-group-item">{{ winner.name }}</li>
+            {% endfor %}
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="progress">
+        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80"
+          aria-valuemin="0" aria-valuemax="100" style="width: {{boss.winrate}}%">{{boss.winrate}}%
+          <span class="sr-only">{{boss.winrate}}% effectué (danger)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END {{boss.name}} -->

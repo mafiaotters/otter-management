@@ -1,0 +1,13 @@
+{% for bossSection in bosslist %}
+    {% if bossSection.name == "arr-nm" %}
+        <div role="tabpanel" class="col-lg-16 tab-pane fade show active" id="{{bossSection.name}}">
+    {% else %}
+        <div role="tabpanel" class="col-lg-16 tab-pane fade" id="{{bossSection.name}}">
+    {% endif %}
+        <div class="row">
+    {% for boss in bossSection.bosses %}
+        {{ include('boss.twig') }}
+    {% endfor %}
+    </div>
+    </div>
+{% endfor %}
