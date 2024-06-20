@@ -7,9 +7,9 @@ module.exports = async (bot) => {
 
         let command = require(`../Commands/${file}`)
         // Check if the command has a name
-        if(!command.name || typeof command.name !== "string") throw new TypeError(`Command ${file.slice(0, file.length - 3)} have no name`)
+        if(!command.data.name || typeof command.data.name !== "string") throw new TypeError(`Command ${file.slice(0, file.length - 3)} have no name`)
             //Load the command in the bot
-            bot.commands.set(command.name, command)
+            bot.commands.set(command.data.name, command)
             console.log(`Commande + ${file} + chargée !`)
         
     })

@@ -8,6 +8,7 @@ const loadCommands = require('./Loader/loadCommands');
 const loadEvents = require('./Loader/loadEvents');
 const loadDatabase = require('./Loader/loadDatabase');
 
+const loadSlashCommands = require('./Loader/loadSlashCommands');
 
 bot.color = "#95A5A6" // Set bot color
 
@@ -26,6 +27,14 @@ bot.db = loadDatabase()
 
 loadCommands(bot); // Load all commands in collection, to the bot
 loadEvents(bot); // Load all commands in collection, to the bot
+
+// Quand le bot est prêt et connecté
+bot.on('ready', () => {
+    console.log(`Bot opérationnel sous le nom: ${bot.user.tag}!`);
+
+    // Load slash commands
+    loadSlashCommands(bot);
+});
 
 //When bot join a guild
 bot.on('guildCreate', async (guild) => {

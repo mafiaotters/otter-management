@@ -1,5 +1,50 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('link')
+        .setDescription('Lier votre lodestone à Discord !')
+        .addStringOption(option =>
+            option.setName('id')
+                .setDescription('Votre ID lodestone')
+                .setRequired(true)),
+                
+    async execute(interaction) {
+        const lodestoneId = interaction.options.getString('id');
+        const discordId = interaction.user.id;
+
+        let command;
+        console.log(interaction.options.getString("id"))
+
+        if(interaction.options.getString("id")) {
+            command = bot.commands.get(interaction.options.getString("id"));
+            if(!command) return interaction.reply("Veuillez rentrer votre ID");
+    }
+    
+
+    // If don't put ID
+    if(!command) {
+        return interaction.reply("Veuillez rentrer votre ID");
+        // If user define a command
+        } else {
+            console.log('Lodestone ID en vérification:' + interaction.options.getString("ID"))
+            const docRef = db.collection('profiles').doc(discordId);
+            await docRef.set({ lodestoneId });
+            await interaction.reply(`Votre ID Discord est maintenant lié à votre ID lodestone: ${lodestoneId}`);
+            
+        }
+
+    }
+};
+
+
+
+
+
+
+/*
+const { SlashCommandBuilder } = require('@discordjs/builders');
+
 const db = require('../Loader/loadDatabase');  // Assurez-vous d'importer la fonction de votre module database
 
 module.exports = {
@@ -46,4 +91,4 @@ module.exports = {
 
         await interaction.reply(`Votre ID Discord est maintenant lié à votre ID lodestone: ${lodestoneId}`);
     },
-};
+};*/
