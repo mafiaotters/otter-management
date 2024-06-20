@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const Discord = require('discord.js');
 const intents = new Discord.IntentsBitField(3276799) // Indents used for the bot
 const bot = new Discord.Client({intents});
@@ -16,9 +17,15 @@ bot.function = {
     linkGuildDB: require('./Helpers/checkGuildComponent')
 }
 
-bot.login(process.env.TOKEN); // Login to Discord
+console.log('Connexion à Discord...')
 
+
+bot.login(process.env.DISCORD_TOKEN); // Login to Discord
+console.log('Connexion validée !')
+
+console.log('Chargement de Firestore...')
 bot.db = loadDatabase()
+console.log('Firestore chargé !')
 
 loadCommands(bot); // Load all commands in collection, to the bot
 loadEvents(bot); // Load all commands in collection, to the bot
