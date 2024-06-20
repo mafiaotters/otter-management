@@ -1,8 +1,7 @@
-const firebase = require('firebase');
 const checkCollectionExists = require('./checkCollectionExists');
 
 module.exports = async (bot, guild) => {
-  const db = firebase.firestore();
+  const db = require('../Loader/loadDatabase');
   const serversRef = db.collection('Servers');
 
   try {

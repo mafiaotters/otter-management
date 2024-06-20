@@ -3,7 +3,7 @@
 ```npm install discord.js dotenv firebase-admin express```
 
 <h2> Start bot: </h2>
-node bot.js
+node robotter/bot.js
 
 <h2> Start flask auth (for Discord OAuth for website) </h2>
 node auth.js

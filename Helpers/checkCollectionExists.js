@@ -1,5 +1,3 @@
-const firebase = require('firebase');
-
 module.exports = async (serversRef, guildId) => {
   const docRef = serversRef.doc(guildId); //get the collection of guild
   const docSnapshot = await docRef.get(); //get the documents in the collection
