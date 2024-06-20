@@ -1,5 +1,6 @@
 const fs = require('fs');
 
+console.log('Chargement des commandes...')
 module.exports = async (bot) => {
     // Read each .js file in the Commands folder
     fs.readdirSync("./Commands").filter(f => f.endsWith(".js")).forEach(async file => {
@@ -9,7 +10,7 @@ module.exports = async (bot) => {
         if(!command.name || typeof command.name !== "string") throw new TypeError(`Command ${file.slice(0, file.length - 3)} have no name`)
             //Load the command in the bot
             bot.commands.set(command.name, command)
-            console.log(`Command + ${file} + successfully loaded`)
+            console.log(`Commande + ${file} + chargée !`)
         
     })
 }

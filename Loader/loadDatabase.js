@@ -1,6 +1,8 @@
 const admin = require('firebase-admin');
 const fs = require('fs');
 
+console.log('Initialisation de Firestore..')
+
 // Lire le fichier JSON et le convertir en objet
 const serviceAccount = JSON.parse(fs.readFileSync('./key-firebase.json', 'utf8'));
 
@@ -12,6 +14,7 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
+console.log('Firestore chargé !')
 module.exports = db;
 };
 

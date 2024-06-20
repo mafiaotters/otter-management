@@ -4,6 +4,8 @@ module.exports = async (bot, guild) => {
   const db = require('../Loader/loadDatabase');
   const serversRef = db.collection('Servers');
 
+  console.log('Vérification de la collection des serveurs Discord...')
+
   try {
     // If server doesn't exist, create it
     if(await checkCollectionExists(serversRef, guild.id) == false) {
@@ -23,4 +25,5 @@ module.exports = async (bot, guild) => {
   } catch (error) {
     console.log(`Error during verify collection for "${guild.name}" (${guild.id}) `, error);
   }
+  console.log('Vérification terminée !')
 };

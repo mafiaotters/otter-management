@@ -18,14 +18,11 @@ bot.function = {
 }
 
 console.log('Connexion à Discord...')
-
-
 bot.login(process.env.DISCORD_TOKEN); // Login to Discord
 console.log('Connexion validée !')
 
-console.log('Chargement de Firestore...')
+
 bot.db = loadDatabase()
-console.log('Firestore chargé !')
 
 loadCommands(bot); // Load all commands in collection, to the bot
 loadEvents(bot); // Load all commands in collection, to the bot
