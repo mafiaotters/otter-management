@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const crypto = require('crypto');
+const saveProfileKey = require('../Helpers/saveProfileKey');
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 
 
@@ -60,7 +61,10 @@ module.exports = {
       // GENERATION DE LA CLE
       const keyGenerated = 'otterVerify-' + generateKey();
       console.log('Clé générée: ' + keyGenerated)
+
       // Sauvegarde de la clé dans la base de données Firestore associé au discordID
+      await saveProfileKey(discordId, keyGenerated, lodestoneIdInt, interaction.user.username);
+
 
       // Update message avec la clé générée
       embed.setTitle('Clé générée: ' + keyGenerated)
