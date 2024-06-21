@@ -1,94 +1,76 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const Discord = require('discord.js');
+const crypto = require('crypto');
+const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
+
+
+function generateKey() {
+    // Utilisez 8 pour obtenir 16 caractères après la conversion en hexadécimal
+    return crypto.randomBytes(8).toString('hex');
+  }
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('link')
-        .setDescription('Lier votre lodestone à Discord !')
-        .addStringOption(option =>
-            option.setName('id')
-                .setDescription('Votre ID lodestone')
-                .setRequired(true)),
-                
-    async execute(interaction) {
-        const lodestoneId = interaction.options.getString('id');
-        const discordId = interaction.user.id;
-
-        let command;
-        console.log(interaction.options.getString("id"))
-
-        if(interaction.options.getString("id")) {
-            command = bot.commands.get(interaction.options.getString("id"));
-            if(!command) return interaction.reply("Veuillez rentrer votre ID");
-    }
     
-
-    // If don't put ID
-    if(!command) {
-        return interaction.reply("Veuillez rentrer votre ID");
-        // If user define a command
-        } else {
-            console.log('Lodestone ID en vérification:' + interaction.options.getString("ID"))
-            const docRef = db.collection('profiles').doc(discordId);
-            await docRef.set({ lodestoneId });
-            await interaction.reply(`Votre ID Discord est maintenant lié à votre ID lodestone: ${lodestoneId}`);
-            
-        }
-
-    }
-};
-
-
-
-
-
-
-/*
-const { SlashCommandBuilder } = require('@discordjs/builders');
-
-const db = require('../Loader/loadDatabase');  // Assurez-vous d'importer la fonction de votre module database
-
-module.exports = {
     name: "link",
-    description: "Lier votre lodestone à Discord!",
+    description: "Link your ID",
     permission: "Aucune",
     dm: true,
     category: "User",
     options: [
         {
             type: "STRING",
-            name: "ID",
-            description: "Votre ID lodestone",
+            name: "lodestone-id",
+            description: "Votre ID Lodestone",
             required: true,
             autocomplete: false,
         }
     ],
-    
-    
-    
-    async run(bot, interaction, args) {
 
-        const lodestoneId = interaction.options.getString('ID');
+    async run(bot, interaction, args){
+        const lodestoneId = interaction.options.getString('lodestone-id');
         const discordId = interaction.user.id;
 
         let command;
-        console.log('Lodestone ID en vérification:' + interaction.options.getString("ID"))
+        console.log('Lodestone ID en vérification: ' + interaction.options.getString("lodestone-id"))
 
-        //VOIR POUR VERIFIER LA VALIDITE DU LODESTONE ID
-
-        if(interaction.options.getString("ID")) {
-            command = bot.commands.get(interaction.options.getString("ID"));
-            if(!command) return interaction.reply("ID Lodestone invalide");
+        // Vérifier si lodestoneId est un nombre et est compris entre 1,000,000 et 999,999,999 (plage des ID Lodestone valides)
+        const lodestoneIdInt = parseInt(lodestoneId, 10); // Convertir en nombre
+    if(isNaN(lodestoneIdInt) || lodestoneIdInt < 1000000 || lodestoneIdInt > 999999999) {
+        console.log('ID Lodestone invalide : ' + lodestoneIdInt)
+        return interaction.reply("Saisissez un ID Lodestone valide.");
     }
 
-    // If don't put ID. 
-    if(!command) {
-        return interaction.reply("Entrez votre Lodestone ID")
-    }
+    // Générer une clé d'autorisation unique pour le profil
+    // Message de génération
+    const embed = new EmbedBuilder()
+      .setTitle("Génération d'une clé...")
+      .setDescription("Vous devrez la rentrer sur votre profil lodestone.")
+      .setColor("#00b0f4")
+      .setTimestamp();
+
+      const button = new ActionRowBuilder()
+      .addComponents(
+        new ButtonBuilder()
+        .setURL('https://eu.finalfantasyxiv.com/lodestone/character/' + lodestoneIdInt + '/')
+        .setLabel('Aller sur votre profil Lodestone')
+        .setStyle(ButtonStyle.Link)
+      );
+
+      await interaction.reply({ embeds: [embed], components: [button] });
+      
+      // GENERATION DE LA CLE
+      const keyGenerated = 'otterVerify-' + generateKey();
+      console.log('Clé générée: ' + keyGenerated)
+      // Sauvegarde de la clé dans la base de données Firestore associé au discordID
+
+      // Update message avec la clé générée
+      embed.setTitle('Clé générée: ' + keyGenerated)
+      embed.setDescription('Rentrez la dans votre description lodestone')
+      await interaction.editReply({ embeds: [embed] });
 
         // Utilisez la base de données Firestore pour lier le profil
-        const docRef = db.collection('profiles').doc(discordId);
+       /* const docRef = db.collection('profiles').doc(discordId);
         await docRef.set({ lodestoneId });
 
-        await interaction.reply(`Votre ID Discord est maintenant lié à votre ID lodestone: ${lodestoneId}`);
-    },
-};*/
+        await interaction.reply(`Votre ID Discord est maintenant lié à votre ID lodestone: ${lodestoneId}`); */
+    }
+}

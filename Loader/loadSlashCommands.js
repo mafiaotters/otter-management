@@ -3,8 +3,6 @@ require('dotenv').config();
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord.js');
 
-
-
 module.exports = async bot => {
 
     let commands = [];
@@ -43,11 +41,10 @@ module.exports = async bot => {
 
             }
         }
-
         await commands.push(slashCommand);
     })
     const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
     await rest.put(Routes.applicationCommands(bot.user.id), { body: commands })
-    console.log(`Successfully registered slash commands.`);
+    console.log(`Commande slash envoyée au serveur Discord.`);
 }
