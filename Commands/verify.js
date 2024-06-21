@@ -25,20 +25,18 @@ module.exports = {
             const keyUser = doc.data().keyUser; // Récupérer la clé utilisateur
             // Obtient la description du profil Lodestone
             const characterDesc = await getLodestoneInfo(`https://eu.finalfantasyxiv.com/lodestone/character/${lodestoneId}/`, '.character__selfintroduction'); // Récupérer la description du personnage
-            console.log(characterDesc);
             
             // Vérification de l'ID lodestone sur le profil de l'utilisateur
-            if (characterDesc && characterDesc.includes(keyUser)) {
-                await interaction.editReply(`La clé utilisateur a été vérifiée avec succès sur votre profil Lodestone.`);
-                // Ajouter la donnée "check" avec la valeur "1" dans Firestore
+            if (characterDesc && characterDesc.includes(keyUser)) {                
+                // Ajouter la donnée "check" avec la valeur "1" dans Firestore, utile dans d'autres script pour vérifier si le compte est lié et non encore en attente.
                 await userDocRef.update({ check: 1 });
-                console.log(`Donnée "check" ajoutée pour l'utilisateur: ${discordId}`);
+                console.log(`Lien lodestone et discord validé pour: ${interaction.user.username} (${discordId})`);
                 await interaction.editReply("Votre compte Discord a été lié à votre profil lodestone FFXIV avec succès !")
             } else {
-                await interaction.editReply("La clé utilisateur n'a pas été trouvée sur votre profil Lodestone. Assurez-vous de l'avoir ajoutée correctement.");
+                await interaction.editReply({content: "La clé utilisateur n'a pas été trouvée sur votre profil Lodestone. Assurez-vous de l'avoir ajoutée correctement.", ephemeral: true});
             }
         } else {
-            await interaction.editReply("Impossible de récupérer la description du profil Lodestone.");
+            await interaction.editReply({content: "Impossible de récupérer la description du profil Lodestone.", ephemeral: true});
         }
     } catch (error) {
         console.error("Erreur lors de la vérification de la clé utilisateur pour " + discordId, error);

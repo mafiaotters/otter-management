@@ -37,7 +37,7 @@ module.exports = {
         const lodestoneIdInt = parseInt(lodestoneId, 10); // Convertir en nombre
     if(isNaN(lodestoneIdInt) || lodestoneIdInt < 1000000 || lodestoneIdInt > 999999999) {
         console.log('ID Lodestone invalide : ' + lodestoneIdInt)
-        return interaction.reply("Saisissez un ID Lodestone valide.");
+        return interaction.reply({content:"Saisissez un ID Lodestone valide.", ephemeral: true});
     }
 
     // Générer une clé d'autorisation unique pour le profil
@@ -56,7 +56,7 @@ module.exports = {
         .setStyle(ButtonStyle.Link)
       );
 
-      await interaction.reply({ embeds: [embed], components: [button] });
+      await interaction.reply({ embeds: [embed], components: [button], ephemeral: true });
       
       // GENERATION DE LA CLE
       const keyGenerated = 'otterVerify-' + generateKey();
@@ -69,12 +69,7 @@ module.exports = {
       // Update message avec la clé générée
       embed.setTitle('Clé générée: ' + keyGenerated)
       embed.setDescription('Rentrez la dans votre description lodestone')
-      await interaction.editReply({ embeds: [embed] });
+      await interaction.editReply({ embeds: [embed], ephemeral: true});
 
-        // Utilisez la base de données Firestore pour lier le profil
-       /* const docRef = db.collection('profiles').doc(discordId);
-        await docRef.set({ lodestoneId });
-
-        await interaction.reply(`Votre ID Discord est maintenant lié à votre ID lodestone: ${lodestoneId}`); */
     }
 }
