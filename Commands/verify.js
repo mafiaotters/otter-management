@@ -1,6 +1,10 @@
 const db = require('../Loader/loadDatabase'); // Assurez-vous que le chemin est correct
-const getLodestoneInfo = require('../Helpers/getLodestoneInfo');
+const getLodestonePage = require('../Helpers/getLodestonePage');
 const { ButtonBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js');
+
+// Classes actuelles lodestone  - DESCRIPTION       - NOM
+const divClasses = ['.character__selfintroduction', '.frame__chara__name'];
+
 
 // Création des boutons
 const buttonLodestone = new ButtonBuilder()
@@ -35,13 +39,17 @@ module.exports = {
             if(!doc.data().keyUser){ // Si aucune clé renseignée
                 return interaction.editReply({content: "Vous n'avez pas de clé utilisateur. Veuillez en générer une avec /link", ephemeral: true});
             }
-            // Obtient la description du profil Lodestone
-            const characterDesc = await getLodestoneInfo(`https://eu.finalfantasyxiv.com/lodestone/character/${lodestoneId}/`, '.character__selfintroduction'); // Récupérer la description du personnage
+            // Obtient le profil lodestone, et les classes qu'on demande en haut du script
+            const characterInfo = await getLodestonePage(`https://eu.finalfantasyxiv.com/lodestone/character/${lodestoneId}/`, divClasses);
             
+            // Prends les valeur que l'on souhaite.
+            const characterDesc = characterInfo['.character__selfintroduction'];
+            const characterName = characterInfo['.frame__chara__name'];
+
             // Vérification de l'ID lodestone sur le profil de l'utilisateur
             if (characterDesc && characterDesc.includes(keyUser)) {                
                 // Ajouter la donnée "check" avec la valeur "1" dans Firestore, utile dans d'autres script pour vérifier si le compte est lié et non encore en attente.
-                await userDocRef.update({ check: 1 });
+                await userDocRef.update({ verified : true, mainCharacter: characterName});
                 console.log(`Lien lodestone et discord validé pour: ${interaction.user.username} (${discordId})`);
                 await interaction.editReply("Votre compte Discord a été lié à votre profil lodestone FFXIV avec succès ! \nVous pouvez retirer la clé de votre description.")
             } else {

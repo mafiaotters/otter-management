@@ -8,7 +8,7 @@ heroku config:set PUPPETEER_EXECUTABLE_PATH=/app/.apt/usr/bin/google-chrome
 */
 const puppeteer = require('puppeteer');
 
-async function getLodestoneDesc(url, divClass) {
+async function getLodestonePage(url, divClasses) {
   // Lancer le navigateur avec des options pour simuler un utilisateur réel
   const browser = await puppeteer.launch({
     headless: true, // Mode sans tête, mettez false pour voir le navigateur
@@ -22,14 +22,16 @@ async function getLodestoneDesc(url, divClass) {
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: 'networkidle2' }); // Attendre que le réseau soit inactif
 
-  // Extraire le texte de la div spécifiée
-  const description = await page.evaluate((divClass) => {
-    const el = document.querySelector(divClass);
-    return el ? el.innerText : null;
-  }, divClass);
-
+  const info = await page.evaluate((divClasses) => {
+    let results = {};
+    divClasses.forEach(divClass => {
+      const el = document.querySelector(divClass);
+      results[divClass] = el ? el.innerText : null;
+    });
+    return results;
+  }, divClasses);
   await browser.close();
-  return description;
+  return info;
 }
 
-module.exports = getLodestoneDesc;
+module.exports = getLodestonePage;
