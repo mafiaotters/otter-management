@@ -30,7 +30,7 @@ module.exports = {
     const profilesRef = db.collection('profiles');
     const userDocRef = profilesRef.doc(discordId);
 
-    await interaction.deferReply(); // Répondre à l'interaction pour éviter les erreurs de délai
+    await interaction.deferReply({ ephemeral: true }); // Répondre à l'interaction pour éviter les erreurs de délai
     
     try {
         const doc = await userDocRef.get();
@@ -52,14 +52,14 @@ module.exports = {
                 // Ajouter la donnée "check" avec la valeur "1" dans Firestore, utile dans d'autres script pour vérifier si le compte est lié et non encore en attente.
                 await userDocRef.update({ verified : true, mainCharacter: characterName});
                 console.log(`[${timestamp}] Lien lodestone et discord validé pour: ${interaction.user.username} (${discordId})`);
-                await interaction.editReply("Votre compte Discord a été lié à votre profil lodestone FFXIV avec succès ! \nVous pouvez retirer la clé de votre description.")
+                await interaction.editReply({content: "Votre compte Discord a été lié à votre profil lodestone FFXIV avec succès ! \nVous pouvez retirer la clé de votre description.", ephemeral: false});
+                // A FAIRE : Mettre un message "public" de réussite, avec une photo sympa ou autres du perso.
             } else {
                 await interaction.editReply({content: "La clé utilisateur n'a pas été trouvée sur votre profil Lodestone. Assurez-vous de l'avoir ajoutée correctement. \nVotre clé: " + keyUser, ephemeral: true, components: [row]});
             }
         } else {
             if(doc.data() && doc.data().lodestoneId){ 
             //Si un lodestone est déjà renseigné, mais pas validé
-
             await interaction.editReply({content: "Impossible de récupérer la clé sur votre profil Lodestone. Pensez à la générer via /link puis la mettre en description de votre profil Lodestone", ephemeral: true, components: [row]});
         } else{
             //Si aucun lodestone n'est renseigné
