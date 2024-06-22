@@ -1,3 +1,5 @@
+// FAIRE UNE COMMANDE "COMMENT" AVEC DES TUTOS DERRIERE
+
 const Discord = require('discord.js');
 
 module.exports = {

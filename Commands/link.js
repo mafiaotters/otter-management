@@ -1,8 +1,8 @@
-const Discord = require('discord.js');
 const crypto = require('crypto');
 const saveProfileKey = require('../Helpers/saveProfileKey');
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 
+const timestamp = new Date().toISOString();
 
 function generateKey() {
     // Utilisez 8 pour obtenir 16 caractères après la conversion en hexadécimal
@@ -31,12 +31,12 @@ module.exports = {
         const discordId = interaction.user.id;
 
         let command;
-        console.log('Lodestone ID en vérification: ' + interaction.options.getString("lodestone-id"))
+        console.log(timestamp + ' Lodestone ID en vérification: ' + interaction.options.getString("lodestone-id"))
 
         // Vérifier si lodestoneId est un nombre et est compris entre 1,000,000 et 999,999,999 (plage des ID Lodestone valides)
         const lodestoneIdInt = parseInt(lodestoneId, 10); // Convertir en nombre
     if(isNaN(lodestoneIdInt) || lodestoneIdInt < 1000000 || lodestoneIdInt > 999999999) {
-        console.log('ID Lodestone invalide : ' + lodestoneIdInt)
+        console.log(timestamp + ' ID Lodestone invalide : ' + lodestoneIdInt)
         return interaction.reply({content:"Saisissez un ID Lodestone valide.", ephemeral: true});
     }
 
@@ -60,7 +60,7 @@ module.exports = {
       
       // GENERATION DE LA CLE
       const keyGenerated = 'otterVerify-' + generateKey();
-      console.log('Clé générée: ' + keyGenerated)
+      console.log(timestamp + ' Clé générée: ' + keyGenerated)
 
       // Sauvegarde de la clé dans la base de données Firestore associé au discordID
       await saveProfileKey(discordId, keyGenerated, lodestoneIdInt, interaction.user.username);

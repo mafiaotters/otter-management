@@ -4,6 +4,7 @@ const { ButtonBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js');
 
 // Classes actuelles lodestone  - DESCRIPTION       - NOM
 const divClasses = ['.character__selfintroduction', '.frame__chara__name'];
+const timestamp = new Date().toISOString();
 
 
 // Création des boutons
@@ -50,7 +51,7 @@ module.exports = {
             if (characterDesc && characterDesc.includes(keyUser)) {                
                 // Ajouter la donnée "check" avec la valeur "1" dans Firestore, utile dans d'autres script pour vérifier si le compte est lié et non encore en attente.
                 await userDocRef.update({ verified : true, mainCharacter: characterName});
-                console.log(`Lien lodestone et discord validé pour: ${interaction.user.username} (${discordId})`);
+                console.log(`[${timestamp}] Lien lodestone et discord validé pour: ${interaction.user.username} (${discordId})`);
                 await interaction.editReply("Votre compte Discord a été lié à votre profil lodestone FFXIV avec succès ! \nVous pouvez retirer la clé de votre description.")
             } else {
                 await interaction.editReply({content: "La clé utilisateur n'a pas été trouvée sur votre profil Lodestone. Assurez-vous de l'avoir ajoutée correctement. \nVotre clé: " + keyUser, ephemeral: true, components: [row]});
@@ -66,7 +67,7 @@ module.exports = {
         }
     }
     } catch (error) {
-        console.error("Erreur lors de la vérification de la clé utilisateur pour " + discordId, error);
+        console.error(timestamp + " Erreur lors de la vérification de la clé utilisateur pour " + discordId, error);
     }
 }
 }
