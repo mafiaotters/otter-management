@@ -36,6 +36,12 @@ bot.on('ready', () => {
     loadSlashCommands(bot);
 });
 
+// Quand un membre change de role
+const handleRoleChange = require('./Events/handleRoleChange');
+bot.on('guildMemberUpdate', (oldMember, newMember) => {
+  handleRoleChange(bot, oldMember, newMember);
+});
+
 //When bot join a guild
 bot.on('guildCreate', async (guild) => {
     await bot.function.linkGuildDB(bot, guild);
