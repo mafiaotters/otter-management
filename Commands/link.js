@@ -12,7 +12,7 @@ function generateKey() {
 module.exports = {
     
     name: "link",
-    description: "Link your ID",
+    description: "Génère une clé pour lier votre compte Discord à votre profil Lodestone.",
     permission: "Aucune",
     dm: true,
     category: "User",
@@ -51,8 +51,8 @@ module.exports = {
       const button = new ActionRowBuilder()
       .addComponents(
         new ButtonBuilder()
-        .setURL('https://eu.finalfantasyxiv.com/lodestone/character/' + lodestoneIdInt + '/')
-        .setLabel('Aller sur votre profil Lodestone')
+        .setURL('https://eu.finalfantasyxiv.com/lodestone/my/setting/profile/')
+        .setLabel('Changer description Lodestone')
         .setStyle(ButtonStyle.Link)
       );
 
