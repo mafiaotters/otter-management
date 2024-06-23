@@ -11,12 +11,17 @@ module.exports = async (bot, oldMember, newMember) => {
 
   // Trouver les nouveaux rôles qui n'étaient pas présents avant
   const newRoles = newMember.roles.cache.filter(role => !oldMember.roles.cache.has(role.id));
+  // Trouver les anciens rôles qui ne sont plus présents
+  const lostRoles = oldMember.roles.cache.filter(role => !newMember.roles.cache.has(role.id));
   const roleNames = ["Loutre Mafieuse", "Copains des loutres", "Sottocapo"];
 
   // Vérifier si le nouveau rôle correspond à un des noms spécifiés
   const hasTargetRole = newRoles.some(role => roleNames.includes(role.name));
+  // Vérifier si l'ancien rôle correspond à un des noms spécifiés
+  const hasLostTargetRole = lostRoles.some(role => roleNames.includes(role.name));
 
-  if (!hasTargetRole) return; // Aucun des rôles ciblés n'a été ajouté
+
+  if (!hasTargetRole && !hasLostTargetRole) return; // Aucun des rôles ciblés n'a été ajouté/perdu
 
   const discordId = newMember.id;
   const profilesRef = db.collection('profiles');
@@ -25,14 +30,22 @@ module.exports = async (bot, oldMember, newMember) => {
   try {
     const doc = await userDocRef.get();
     if (doc.exists && doc.data().verified) {
-      // L'utilisateur est vérifié et a reçu un des rôles ciblés, mettre à jour la BDD et le site
-      console.log(`[${timestamp}] Action déclenchée pour l'utilisateur vérifié avec nouveau rôle: ${newMember.displayName}`);
+      // L'utilisateur est vérifié et a RECU un des rôles ciblés
+      if(hasTargetRole){
+        const newRoleName = newRoles.first().name; // Prendre le nom du premier nouveau rôle
+        console.log(`[${timestamp}] Nouveau rôle pour ${newMember.displayName}, rôle: ${newRoleName}`);
+        await userDocRef.update({ lastRole: newRoleName }); // Mettre à jour le document avec le nouveau rôle      
       await newMember.user.send("Bonjour ! \nVous avez reçu le rôle **" + newRoles.first().name + "** sur le serveur **" + newMember.guild.name + "**. \n\nAvec ce rôle vous êtes apparu sur le site de la Mafia des Loutres ! N'hésitez pas à allez voir: \nhttps://ffxiv-lamafiadesloutres.fr \n\nSi vous souhaitez modifier votre profil sur le site, tapez ```/profile``` dans le channel mechaloutres: \nhttps://discord.com/channels/675543520425148416/677208300504219669");
-    } else {
-        // Envoyez
+    }
+      if(hasLostTargetRole){
+        console.log(`[${timestamp}] Rôle retiré à ${newMember.displayName}, rôle: ${lostRoles.first().name}`);
+        //await newMember.user.send("Bonjour ! \nVous avez perdu le rôle **" + newRoles.first().name + "** sur le serveur **" + newMember.guild.name + "**.");
+      } 
+  }else {
+        // Envoie un message privé à l'utilisateur pour l'inviter à se lier à son profil
         await newMember.user.send("Bonjour ! \nVous avez reçu le rôle **" + newRoles.first().name + "** sur le serveur **" + newMember.guild.name + "**. \n\nAvec ce rôle vous êtes apparu sur le site ! Je vous invite à vous enregistrer par la commande ```/link``` sur le serveur pour modifier votre profil. Cliquez ici:\nhttps://discord.com/channels/675543520425148416/677208300504219669");
       console.log(`[${timestamp}] L'utilisateur ${newMember.displayName} n'est pas vérifié ou n'a pas de profil.`);
-    }
+  }
   } catch (error) {
     console.error(timestamp + " Erreur lors de la vérification du profil de l'utilisateur", error);
   }

@@ -1,4 +1,6 @@
 // FAIRE UNE COMMANDE "COMMENT" AVEC DES TUTOS DERRIERE
+// Comment connaitre son id lodestone
+// Comment lier son compte discord à lodestone
 
 const Discord = require('discord.js');
 
