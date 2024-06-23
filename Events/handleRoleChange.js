@@ -1,52 +1,74 @@
-const db = require('../Loader/loadDatabase');
+const db = require('../Loader/loadDatabase'); // Assurez-vous que cette importation est correcte et que la fonction est appelée pour obtenir l'instance de la base de données
 
 const timestamp = new Date().toISOString();
+
+const rolePermissions = {
+  "Copains des loutres": 1,
+  "Loutre Retraitée": 2,
+  "Loutre Naissante": 3,
+  "Loutre Mafieuse": 4,
+  "Sottocapo": 5,
+  "Le Parrain": 6
+};
 
 module.exports = async (bot, oldMember, newMember) => {
   const guildIds = ["675543520425148416", "653689680906420235"];
   const guildId = newMember.guild.id;
 
-  // Vérifier si le changement de rôle s'est produit dans une des guildes spécifiées
   if (!guildIds.includes(guildId)) return;
 
-  // Trouver les nouveaux rôles qui n'étaient pas présents avant
-  const newRoles = newMember.roles.cache.filter(role => !oldMember.roles.cache.has(role.id));
-  // Trouver les anciens rôles qui ne sont plus présents
-  const lostRoles = oldMember.roles.cache.filter(role => !newMember.roles.cache.has(role.id));
-  const roleNames = ["Loutre Mafieuse", "Copains des loutres", "Sottocapo"];
+  const oldRoles = oldMember.roles.cache;
+  const newRoles = newMember.roles.cache;
 
-  // Vérifier si le nouveau rôle correspond à un des noms spécifiés
-  const hasTargetRole = newRoles.some(role => roleNames.includes(role.name));
-  // Vérifier si l'ancien rôle correspond à un des noms spécifiés
-  const hasLostTargetRole = lostRoles.some(role => roleNames.includes(role.name));
-
-
-  if (!hasTargetRole && !hasLostTargetRole) return; // Aucun des rôles ciblés n'a été ajouté/perdu
+  const lostRoles = oldRoles.filter(role => !newRoles.has(role.id));
+  const gainedRoles = newRoles.filter(role => !oldRoles.has(role.id));
 
   const discordId = newMember.id;
   const profilesRef = db.collection('profiles');
   const userDocRef = profilesRef.doc(discordId);
 
-  try {
-    const doc = await userDocRef.get();
-    if (doc.exists && doc.data().verified) {
-      // L'utilisateur est vérifié et a RECU un des rôles ciblés
-      if(hasTargetRole){
-        const newRoleName = newRoles.first().name; // Prendre le nom du premier nouveau rôle
-        console.log(`[${timestamp}] Nouveau rôle pour ${newMember.displayName}, rôle: ${newRoleName}`);
-        await userDocRef.update({ lastRole: newRoleName }); // Mettre à jour le document avec le nouveau rôle      
-      await newMember.user.send("Bonjour ! \nVous avez reçu le rôle **" + newRoles.first().name + "** sur le serveur **" + newMember.guild.name + "**. \n\nAvec ce rôle vous êtes apparu sur le site de la Mafia des Loutres ! N'hésitez pas à allez voir: \nhttps://ffxiv-lamafiadesloutres.fr \n\nSi vous souhaitez modifier votre profil sur le site, tapez ```/profile``` dans le channel mechaloutres: \nhttps://discord.com/channels/675543520425148416/677208300504219669");
+  lostRoles.forEach(async lostRole => {
+    if (rolePermissions[lostRole.name]) {
+      const highestRemainingRole = newRoles
+        .filter(role => rolePermissions[role.name])
+        .sort((a, b) => rolePermissions[b.name] - rolePermissions[a.name])
+        .first();
+
+      if (highestRemainingRole) {
+        console.log(`[${timestamp}] Rôle retiré à ${newMember.displayName}: haut rôle restant: ${highestRemainingRole.name}`);
+      }else{
+        console.log(`[${timestamp}] Rôle retiré à ${newMember.displayName}: aucun rôle restant`);
+      
+      }
     }
-      if(hasLostTargetRole){
-        console.log(`[${timestamp}] Rôle retiré à ${newMember.displayName}, rôle: ${lostRoles.first().name}`);
-        //await newMember.user.send("Bonjour ! \nVous avez perdu le rôle **" + newRoles.first().name + "** sur le serveur **" + newMember.guild.name + "**.");
-      } 
-  }else {
-        // Envoie un message privé à l'utilisateur pour l'inviter à se lier à son profil
-        await newMember.user.send("Bonjour ! \nVous avez reçu le rôle **" + newRoles.first().name + "** sur le serveur **" + newMember.guild.name + "**. \n\nAvec ce rôle vous êtes apparu sur le site ! Je vous invite à vous enregistrer par la commande ```/link``` sur le serveur pour modifier votre profil. Cliquez ici:\nhttps://discord.com/channels/675543520425148416/677208300504219669");
-      console.log(`[${timestamp}] L'utilisateur ${newMember.displayName} n'est pas vérifié ou n'a pas de profil.`);
-  }
-  } catch (error) {
-    console.error(timestamp + " Erreur lors de la vérification du profil de l'utilisateur", error);
-  }
-};
+  });
+
+  gainedRoles.forEach(async gainedRole => {
+    if (rolePermissions[gainedRole.name]) {
+      // Récupérer la priorité la plus élevée parmi les rôles existants
+      const highestExistingRolePriority = newMember.roles.cache
+        .filter(role => rolePermissions[role.name])
+        .reduce((max, role) => Math.max(max, rolePermissions[role.name]), 0);
+      console.log('ROLE PRIORIETE EXISTANTE: ' + highestExistingRolePriority)
+      console.log('ROLE PRIORIETE NOUVEAU: ' + rolePermissions[gainedRole.name])
+      // Vérifier si le nouveau rôle a une priorité supérieure
+      if (rolePermissions[gainedRole.name] > highestExistingRolePriority) {
+        console.log('ROLE PRIORIETE SUPERIEURE')
+        try {
+          const doc = await userDocRef.get();
+          if (doc.exists && doc.data().verified) {
+            // Actions pour un utilisateur vérifié avec un nouveau rôle de priorité supérieure
+            console.log(`[${timestamp}] Rôle ajouté à ${newMember.displayName}(lodestone vérifié): priorité supérieure à un rôle existant`)
+          } else {
+            // Actions pour un utilisateur non vérifié ou sans profil avec un nouveau rôle de priorité supérieure
+            console.log(`[${timestamp}] Rôle ajouté à ${newMember.displayName}(lodestone non vérifié): priorité supérieure à un rôle existant`)
+          }
+        } catch (error) {
+          console.error(`[${timestamp}] Erreur lors de la vérification du profil de l'utilisateur ${newMember.displayName}`, error);
+        }
+      } else {
+        // Le nouveau rôle n'a pas une priorité supérieure, vous pouvez choisir de ne rien faire ou de gérer ce cas spécifiquement
+        console.log(`[${timestamp}] Rôle ajouté à ${newMember.displayName}: priorité inférieure ou égale à un rôle existant`)
+      }
+    }
+  });}
