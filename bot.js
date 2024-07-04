@@ -38,6 +38,16 @@ bot.on('ready', () => {
     loadSlashCommands(bot);
 });
 
+// TELECHARGEMENT DU SITE
+const downloadWebsite = require('./Helpers/downloadWebsite');
+// URL de l'archive zip du dépôt GitHub
+const websiteUrl = 'https://github.com/Satalis/LOUTRES_SITE/archive/refs/heads/master.zip';
+// Chemin où vous souhaitez extraire le site web
+const outputPath = './PublicWebsite';
+
+// Télécharge et extrait le site web
+downloadWebsite(websiteUrl, outputPath);
+
 // Quand un membre change de role
 const handleRoleChange = require('./Events/handleRoleChange');
 bot.on('guildMemberUpdate', (oldMember, newMember) => {

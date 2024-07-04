@@ -1,9 +1,0 @@
-/*--------------------------------------------------------------
-# General
---------------------------------------------------------------*/
-
-@media screen and (max-width: 900px) {
-    .carousel-indicators, .carousel-inner {
-        display: none;
-    }
-}
