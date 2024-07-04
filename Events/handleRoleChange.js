@@ -27,6 +27,10 @@ module.exports = async (bot, oldMember, newMember) => {
   const profilesRef = db.collection('profiles');
   const userDocRef = profilesRef.doc(discordId);
 
+
+
+  // Prendre la liste des rôles du type, et prendre le rôle le plus élevé
+
   lostRoles.forEach(async lostRole => {
     if (rolePermissions[lostRole.name]) {
       const highestRemainingRole = newRoles
@@ -38,12 +42,14 @@ module.exports = async (bot, oldMember, newMember) => {
         console.log(`[${timestamp}] Rôle retiré à ${newMember.displayName}: haut rôle restant: ${highestRemainingRole.name}`);
       }else{
         console.log(`[${timestamp}] Rôle retiré à ${newMember.displayName}: aucun rôle restant`);
-      
       }
     }
   });
 
+
+
   gainedRoles.forEach(async gainedRole => {
+    console.log('ROLE GAGNE: ' + gainedRole)
     if (rolePermissions[gainedRole.name]) {
       // Récupérer la priorité la plus élevée parmi les rôles existants
       const highestExistingRolePriority = newMember.roles.cache
@@ -71,4 +77,6 @@ module.exports = async (bot, oldMember, newMember) => {
         console.log(`[${timestamp}] Rôle ajouté à ${newMember.displayName}: priorité inférieure ou égale à un rôle existant`)
       }
     }
+    newMember.roles.cache.clear();
+    oldMember.roles.cache.clear();
   });}
