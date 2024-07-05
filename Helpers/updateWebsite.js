@@ -3,11 +3,22 @@ const simpleGit = require('simple-git');
 
 async function updateWebsite(gitRepoUrl, outputPath) {
     const timestamp = new Date().toISOString();
-    const git = simpleGit(outputPath);
     console.log('Mise à jour du site web...');
 
     try {
-        // Vérifier si le répertoire .git existe pour déterminer si c'est un dépôt Git
+        // Vérifier si le dossier outputPath existe
+        const outputPathExists = await fs.access(outputPath).then(() => true).catch(() => false);
+
+        if (!outputPathExists) {
+            // Si le dossier n'existe pas, on clone le dépôt
+            const git = simpleGit();
+            await git.clone(gitRepoUrl, outputPath);
+            console.log(`[${timestamp}]: Site web cloné avec succès dans ${outputPath}`);
+            return; // Fin de la fonction après le clonage
+        }
+
+        // Si le dossier existe, on continue avec la mise à jour du dépôt
+        const git = simpleGit(outputPath);
         const gitDirExists = await fs.access(`${outputPath}/.git`).then(() => true).catch(() => false);
 
         if (gitDirExists) {
@@ -15,7 +26,6 @@ async function updateWebsite(gitRepoUrl, outputPath) {
             await git.fetch();
             await git.checkout('.');
             await git.pull('--recurse-submodules');
-
             console.log(`[${timestamp}]: Site web mis à jour avec succès dans ${outputPath}`);
         } else {
             // Si le répertoire n'est pas un dépôt Git, on clone le dépôt
