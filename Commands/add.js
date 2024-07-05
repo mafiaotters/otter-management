@@ -51,7 +51,22 @@ module.exports = {
                 lodestoneId: " ",
                 mainCharacter: " ",
                 verified: false,
-                discordId: discordId
+                discordId: discordId,
+                currentRole: " ",
+                websiteInfo:{
+                    mainCharacterName: " ",
+                    photoLoutre: " ",
+                    photoPerso: " ",
+                    titre: " ",
+                    profilPage: false,
+                    profilPageInfo: {
+                        mainPicture: " ",
+                        descriptionHTML: " ",
+                        photo1: " ",
+                        photo2: " ",
+                        photo3: " ",
+                    }
+                }
             });
             await interaction.reply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
             console.log(`${timestamp}: Membre ajouté avec succès: ${discordName}`)
