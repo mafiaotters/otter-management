@@ -19,6 +19,7 @@ module.exports = {
             // Si l'utilisateur n'est ni admin ni dans la liste, on refuse l'exécution de la commande
             return interaction.reply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
         }
-        return interaction.reply({ content: "Mise à jour du site ", ephemeral: true })
+        
+        
     }
 }
