@@ -1,3 +1,8 @@
+/* INFOS
+Pour rajouter des valeurs par défaut sur les membres, c'est dans Commands/add.js
+
+*/
+
 require('dotenv').config();
 
 const Discord = require('discord.js');
@@ -39,10 +44,10 @@ bot.on('ready', () => {
 });
 
 // TELECHARGEMENT DU SITE
-const updateWebsite = require('./Helpers/updateWebsite');
+const downloadUpdateWebsite = require('./Helpers/downloadUpdateWebsite');
 const websiteUrl = 'https://github.com/Satalis/LOUTRES_SITE/';
 const outputPath = './PublicWebsite';
-updateWebsite(websiteUrl, outputPath); //- A REACTIVER QUAND LES TESTS SONT FINIS
+downloadUpdateWebsite(websiteUrl, outputPath); //- A REACTIVER QUAND LES TESTS SONT FINIS
 
 // Quand un membre change de role
 const handleRoleChange = require('./Events/handleRoleChange');

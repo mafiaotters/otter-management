@@ -1,7 +1,7 @@
 const fs = require('fs').promises;
 const simpleGit = require('simple-git');
 
-async function updateWebsite(gitRepoUrl, outputPath) {
+async function downloadUpdateWebsite(gitRepoUrl, outputPath) {
     const timestamp = new Date().toISOString();
     console.log('Mise à jour du site web...');
 
@@ -37,4 +37,4 @@ async function updateWebsite(gitRepoUrl, outputPath) {
     }
 }
 
-module.exports = updateWebsite;
+module.exports = downloadUpdateWebsite;
