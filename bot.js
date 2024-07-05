@@ -39,20 +39,18 @@ bot.on('ready', () => {
 });
 
 // TELECHARGEMENT DU SITE
-const downloadWebsite = require('./Helpers/downloadWebsite');
-// URL de l'archive zip du dépôt GitHub
-const websiteUrl = 'https://github.com/Satalis/LOUTRES_SITE/archive/refs/heads/master.zip';
-// Chemin où vous souhaitez extraire le site web
+const updateWebsite = require('./Helpers/updateWebsite');
+const websiteUrl = 'https://github.com/Satalis/LOUTRES_SITE/';
 const outputPath = './PublicWebsite';
-
-// Télécharge et extrait le site web
-downloadWebsite(websiteUrl, outputPath);
+updateWebsite(websiteUrl, outputPath); //- A REACTIVER QUAND LES TESTS SONT FINIS
 
 // Quand un membre change de role
 const handleRoleChange = require('./Events/handleRoleChange');
 bot.on('guildMemberUpdate', (oldMember, newMember) => {
   handleRoleChange(bot, oldMember, newMember);
 });
+
+
 
 //When bot join a guild
 bot.on('guildCreate', async (guild) => {
