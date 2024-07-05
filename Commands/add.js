@@ -39,6 +39,12 @@ module.exports = {
         const profilesRef = db.collection('profiles');
         const userDocRef = profilesRef.doc(discordName);
 
+        const docSnapshot = await userDocRef.get();
+        if(docSnapshot.exists) {
+            console.log(`${timestamp}: Membre déjà dans la base de données: ${discordName}`)
+            return interaction.reply({ content: "Ce membre est déjà dans la base de données.", ephemeral: true });
+        }
+
         try {
             await userDocRef.set({
                 discordName: discordName,
