@@ -12,3 +12,8 @@ node auth.js
 <h1> Configuration </h1>
 <h2> Ajouter des blocs de config </h2>
 Si on a besoin de rajouter des éléments à la base de donnée, on passe par l'util "checkGuildComponent.js"
+
+
+(pour moi:
+port web 8081
+apachectl start)
