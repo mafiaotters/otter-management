@@ -3,7 +3,9 @@ const simpleGit = require('simple-git');
 
 async function downloadUpdateWebsite(gitRepoUrl, outputPath) {
     const timestamp = new Date().toISOString();
-    console.log('Mise à jour du site web...');
+    console.log('Téléchargement derniere MAJ du site web...');
+
+    // CHANGER LE SYSTEME POUR PASSER SUR LE FTP
 
     try {
         // Vérifier si le dossier outputPath existe
