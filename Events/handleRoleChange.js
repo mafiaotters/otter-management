@@ -3,10 +3,9 @@ const db = require('../Loader/loadDatabase'); // Assurez-vous que cette importat
 const rolePermissions = {
   "Le Parrain": 6,
   "Sottocapo": 5,
-  "Loutre Mafieuse": 4,
-  "Loutre Naissante": 3,
-  "Loutre Retraitée": 2,
-  "Copains des loutres": 1
+  "Enroloutre": 4,
+  "Loutre Mafieuse": 3,
+  "Loutre Naissante": 2
 };
 
 async function updateActiveMembers(newMember, highestGainedRoleName) {
