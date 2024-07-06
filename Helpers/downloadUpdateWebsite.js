@@ -1,42 +1,49 @@
 const fs = require('fs').promises;
-const simpleGit = require('simple-git');
+const path = require('path');
+const SFTPClient = require('ssh2-sftp-client');
+const sftp = new SFTPClient();
 
-async function downloadUpdateWebsite(gitRepoUrl, outputPath) {
-    const timestamp = new Date().toISOString();
-    console.log('Téléchargement derniere MAJ du site web...');
+// Configuration SFTP déjà définie dans votre extrait
+const sftpConfig = {
+    host: process.env.FTP_HOST,
+    port: process.env.FTP_PORT,
+    username: process.env.FTP_USER,
+    password: process.env.FTP_PASS,
+    remoteDir: '/'
+};
 
-    // CHANGER LE SYSTEME POUR PASSER SUR LE FTP
+async function downloadUpdateWebsite(localDir) {
+    await sftp.connect(sftpConfig);
+    const remoteFiles = await sftp.list(sftpConfig.remoteDir);
 
-    try {
-        // Vérifier si le dossier outputPath existe
-        const outputPathExists = await fs.access(outputPath).then(() => true).catch(() => false);
+    for (const file of remoteFiles) {
+        const localFilePath = path.join(localDir, file.name);
+        const remoteFilePath = path.join(sftpConfig.remoteDir, file.name);
 
-        if (!outputPathExists) {
-            // Si le dossier n'existe pas, on clone le dépôt
-            const git = simpleGit();
-            await git.clone(gitRepoUrl, outputPath);
-            console.log(`[${timestamp}]: Site web cloné avec succès dans ${outputPath}`);
-            return; // Fin de la fonction après le clonage
+        try {
+            const localFileStats = await fs.stat(localFilePath);
+            const localFileModifiedTime = new Date(localFileStats.mtime).getTime();
+            const remoteFileModifiedTime = new Date(file.modifyTime).getTime();
+
+            // Vérifie si le fichier local est plus ancien que le fichier distant
+            if (localFileModifiedTime < remoteFileModifiedTime || !localFileStats) {
+                console.log(`Téléchargement de ${file.name}...`);
+                await downloadFile(remoteFilePath, localFilePath);
+            }
+        } catch (error) {
+            // Le fichier n'existe pas localement, le télécharger
+            console.log(`Téléchargement de ${file.name} car il n'existe pas localement.`);
+            await downloadFile(remoteFilePath, localFilePath);
         }
-
-        // Si le dossier existe, on continue avec la mise à jour du dépôt
-        const git = simpleGit(outputPath);
-        const gitDirExists = await fs.access(`${outputPath}/.git`).then(() => true).catch(() => false);
-
-        if (gitDirExists) {
-            // Si le répertoire est déjà un dépôt Git, on fait simplement un pull pour mettre à jour
-            await git.fetch();
-            await git.checkout('.');
-            await git.pull('--recurse-submodules');
-            console.log(`[${timestamp}]: Site web mis à jour avec succès dans ${outputPath}`);
-        } else {
-            // Si le répertoire n'est pas un dépôt Git, on clone le dépôt
-            await git.clone(gitRepoUrl, outputPath);
-            console.log(`[${timestamp}]: Site web cloné avec succès dans ${outputPath}`);
-        }
-    } catch (error) {
-        console.error(`[${timestamp}]: Erreur lors de la mise à jour ou du clonage du dépôt : ${error}`);
     }
+
+    await sftp.end();
+}
+
+async function downloadFile(remoteFilePath, localFilePath) {
+    // Crée le dossier si nécessaire
+    await fs.mkdir(path.dirname(localFilePath), { recursive: true });
+    await sftp.get(remoteFilePath, localFilePath);
 }
 
 module.exports = downloadUpdateWebsite;

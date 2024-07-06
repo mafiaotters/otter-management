@@ -45,9 +45,8 @@ bot.on('ready', () => {
 
 // TELECHARGEMENT DU SITE
 const downloadUpdateWebsite = require('./Helpers/downloadUpdateWebsite');
-const websiteUrl = 'https://github.com/Satalis/LOUTRES_SITE/';
 const outputPath = './PublicWebsite';
-downloadUpdateWebsite(websiteUrl, outputPath); //- A REACTIVER QUAND LES TESTS SONT FINIS
+downloadUpdateWebsite(outputPath);
 
 // Quand un membre change de role
 const handleRoleChange = require('./Events/handleRoleChange');

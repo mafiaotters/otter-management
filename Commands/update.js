@@ -28,7 +28,7 @@ module.exports = {
 
 
         // TELECHARGER LE SITE ACTUEL
-        await downloadUpdateWebsite('https://github.com/Satalis/LOUTRES_SITE/', './PublicWebsite')
+        await downloadUpdateWebsite('./PublicWebsite')
 
         // Créer une backup du site
         await backupWebsite();
