@@ -3,6 +3,8 @@ const updateMemberDAO = require('../Helpers/updateMemberDAO');
 const downloadUpdateWebsite = require('../Helpers/downloadUpdateWebsite');
 const backupWebsite = require('../Helpers/backupWebsite');
 
+const updateFunction = require('../Helpers/updateFunction');
+
 module.exports = {
     name: "update",
     description: "Mise à jour du site web des loutres.",
@@ -26,15 +28,9 @@ module.exports = {
 
         console.log(`[${timestamp}]: Mise à jour du site web...`);
 
+        await updateFunction();
 
-        // TELECHARGER LE SITE ACTUEL
-        await downloadUpdateWebsite('./PublicWebsite')
-
-        // Créer une backup du site
-        await backupWebsite();
-        
-        // Edit le fichier MemberDAO
-        updateMemberDAO(); 
+        interaction.reply({ content: "Mise à jour du site web réalisée avec succès.", ephemeral: true });
         
     }
 }

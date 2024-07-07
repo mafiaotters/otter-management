@@ -43,17 +43,15 @@ bot.on('ready', () => {
     loadSlashCommands(bot);
 });
 
-// TELECHARGEMENT DU SITE
-const downloadUpdateWebsite = require('./Helpers/downloadUpdateWebsite');
-const websiteUrl = 'https://github.com/Satalis/LOUTRES_SITE/';
-downloadUpdateWebsite(websiteUrl, './PublicWebsite/');
+// UPDATE FUNCTION
+const updateFunction = require('./Helpers/updateFunction');
+updateFunction();
 
 // Quand un membre change de role
 const handleRoleChange = require('./Events/handleRoleChange');
 bot.on('guildMemberUpdate', (oldMember, newMember) => {
   handleRoleChange(bot, oldMember, newMember);
 });
-
 
 
 //When bot join a guild
