@@ -1,49 +1,40 @@
 const fs = require('fs').promises;
+const simpleGit = require('simple-git');
 const path = require('path');
-const SFTPClient = require('ssh2-sftp-client');
-const sftp = new SFTPClient();
+require('dotenv').config();
 
-// Configuration SFTP déjà définie dans votre extrait
-const sftpConfig = {
-    host: process.env.FTP_HOST,
-    port: process.env.FTP_PORT,
-    username: process.env.FTP_USER,
-    password: process.env.FTP_PASS,
-    remoteDir: '/'
-};
+async function downloadUpdateWebsite(gitRepoUrl, outputPath) {
+    const timestamp = new Date().toISOString();
+    const branch = process.env.GITHUB_BRANCH; // Branche à utiliser pour le dépôt Git
+    
+    // Construisez le chemin correct incluant "PublicWebsite"
+    const publicWebsitePath = path.join(outputPath);
 
-async function downloadUpdateWebsite(localDir) {
-    await sftp.connect(sftpConfig);
-    const remoteFiles = await sftp.list(sftpConfig.remoteDir);
+    // Vérifiez si le dossier "PublicWebsite" existe, sinon créez-le
+    await fs.access(publicWebsitePath).catch(async () => {
+        console.log(`Le dossier ${publicWebsitePath} n'existe pas, création en cours...`);
+        await fs.mkdir(publicWebsitePath, { recursive: true });
+    });
 
-    for (const file of remoteFiles) {
-        const localFilePath = path.join(localDir, file.name);
-        const remoteFilePath = path.join(sftpConfig.remoteDir, file.name);
+    // Utilisez publicWebsitePath pour les opérations Git
+    const git = simpleGit(publicWebsitePath);
+    console.log('Mise à jour du site web...');
 
-        try {
-            const localFileStats = await fs.stat(localFilePath);
-            const localFileModifiedTime = new Date(localFileStats.mtime).getTime();
-            const remoteFileModifiedTime = new Date(file.modifyTime).getTime();
+    try {
+        const gitDirExists = await fs.access(path.join(publicWebsitePath, '.git')).then(() => true).catch(() => false);
 
-            // Vérifie si le fichier local est plus ancien que le fichier distant
-            if (localFileModifiedTime < remoteFileModifiedTime || !localFileStats) {
-                console.log(`Téléchargement de ${file.name}...`);
-                await downloadFile(remoteFilePath, localFilePath);
-            }
-        } catch (error) {
-            // Le fichier n'existe pas localement, le télécharger
-            console.log(`Téléchargement de ${file.name} car il n'existe pas localement.`);
-            await downloadFile(remoteFilePath, localFilePath);
+        if (gitDirExists) {
+            await git.fetch();
+            await git.checkout(branch); // Spécifiez explicitement la branche "test"
+            await git.pull('origin', branch, {'--recurse-submodules': true}); // Assurez-vous de tirer les changements de la branche "test"
+            console.log(`[${timestamp}]: Site web mis à jour avec succès dans ${publicWebsitePath}`);
+        } else {
+            await git.clone(gitRepoUrl, '.', ['--branch', branch]); // Cloner dans le dossier actuel
+            console.log(`[${timestamp}]: Site web cloné avec succès dans ${publicWebsitePath}`);
         }
+    } catch (error) {
+        console.error(`[${timestamp}]: Erreur lors de la mise à jour ou du clonage du dépôt : ${error}`);
     }
-
-    await sftp.end();
-}
-
-async function downloadFile(remoteFilePath, localFilePath) {
-    // Crée le dossier si nécessaire
-    await fs.mkdir(path.dirname(localFilePath), { recursive: true });
-    await sftp.get(remoteFilePath, localFilePath);
 }
 
 module.exports = downloadUpdateWebsite;
