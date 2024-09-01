@@ -5,3 +5,4 @@ devWebsite/
 backupWebsite/
 .env
 devWebsite/
+tmp/

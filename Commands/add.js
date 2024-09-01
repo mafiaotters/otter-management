@@ -45,10 +45,10 @@ module.exports = {
             return interaction.reply({ content: "Ce membre est déjà dans la base de données.", ephemeral: true });
         }
 
-        console.log('displayName: ' + discordUser.displayName);
+       /* console.log('displayName: ' + discordUser.displayName);
         console.log('username: ' + discordUser.username);
         console.log('tag: ' + discordUser.tag);
-        console.log('discordUser: ' + discordUser.nickname);
+        console.log('discordUser: ' + discordUser.nickname);*/
 
        let prenom = discordUser.displayName.split(' ')[0];
 

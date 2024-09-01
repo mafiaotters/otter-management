@@ -1,6 +1,7 @@
 const updateMemberDAO = require('./updateMemberDAO');
 const downloadGitWebsite = require('./downloadGitWebsite');
 const backupWebsite = require('./backupWebsite');
+const updateOtterJson = require('./updateOtterJson');
 
 async function updateFunction() {
 
@@ -11,7 +12,10 @@ async function updateFunction() {
     //await backupWebsite();
     
     // Edit le fichier MemberDAO
-    updateMemberDAO(); 
+    await updateMemberDAO(); 
+
+    // Edit le fichier Otter.json
+    await updateOtterJson();
 
     // Upload le site sur le FTP
     //await uploadWebsite(); A FAIRE

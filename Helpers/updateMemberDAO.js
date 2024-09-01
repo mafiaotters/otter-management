@@ -91,11 +91,14 @@ class FriendsMemberDAO
     }
 }`;
 
-    // Chemin vers le fichier MemberDAO.php
-    const filePath = path.join(__dirname, '../memberDAO.php');
-
+    const tmpDirPath = path.join(__dirname, '../tmp');
+    if (!fs.existsSync(tmpDirPath)) {
+        // Créer le dossier "tmp" s'il n'existe pas
+        fs.mkdirSync(tmpDirPath, { recursive: true });
+        console.log('Dossier "tmp" créé avec succès.');
+    }
     // Écrire le contenu dans le fichier MemberDAO.php
-    fs.writeFile(filePath, content, (err) => {
+    fs.writeFile(tmpDirPath + '/memberDAO.php', content, (err) => {
         if (err) {
             console.error("Erreur lors de l'écriture du fichier MemberDAO.php:", err);
         } else {
