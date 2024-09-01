@@ -1,6 +1,6 @@
 key-firebase.json
 node_modules/
 package-lock.json
-PublicWebsite/
+devWebsite/
 backupWebsite/
 .env
