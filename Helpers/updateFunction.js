@@ -13,5 +13,8 @@ async function updateFunction() {
     // Edit le fichier MemberDAO
     updateMemberDAO(); 
 
+    // Upload le site sur le FTP
+    //await uploadWebsite(); A FAIRE
+
 }
 module.exports = updateFunction;

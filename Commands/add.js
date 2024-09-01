@@ -33,7 +33,7 @@ module.exports = {
         // Supposons que args[0] est l'ID Discord du membre à ajouter
         const discordUser = interaction.options.getUser('membre');
         const discordId = discordUser.id;
-        const discordName = discordUser.displayName; // Récupérer le nom d'utilisateur Discord
+        const discordName = discordUser.username; // Récupérer le nom d'utilisateur Discord
 
         // Accéder à Firestore pour créer ou mettre à jour le document
         const profilesRef = db.collection('profiles');
@@ -45,6 +45,21 @@ module.exports = {
             return interaction.reply({ content: "Ce membre est déjà dans la base de données.", ephemeral: true });
         }
 
+        console.log('displayName: ' + discordUser.displayName);
+        console.log('username: ' + discordUser.username);
+        console.log('tag: ' + discordUser.tag);
+        console.log('discordUser: ' + discordUser.nickname);
+
+       let prenom = discordUser.displayName.split(' ')[0];
+
+       function extraireNom(nomComplet) {
+        const parties = nomComplet.split(' ');
+        return parties.length > 1 ? parties.slice(1).join(' ') : '';
+      }
+      let nom = extraireNom(discordUser.displayName);
+
+       let parties = discordUser.displayName.split(' ');
+
         try {
             await userDocRef.set({
                 discordName: discordName,
@@ -54,17 +69,19 @@ module.exports = {
                 discordId: discordId,
                 currentRole: " ",
                 websiteInfo:{
-                    mainCharacterName: " ",
-                    photoLoutre: " ",
-                    photoPerso: " ",
-                    titre: " ",
+                    Prenom: prenom,
+                    Nom: nom,
+                    PhotoLoutre: 'assets/img/speakers/' + prenom + '.jpg',
+                    PhotoLoutre2: 'assets/img/speakers/' + prenom + '_1.jpg',
+                    Titre: "Loutre Mafieuse",
                     profilPage: false,
                     profilPageInfo: {
-                        mainPicture: " ",
+                        fileName: await prenom.toLowerCase(),
                         descriptionHTML: " ",
-                        photo1: " ",
-                        photo2: " ",
-                        photo3: " ",
+                        titre: "Gros titre",
+                        titre1: "Gauche",
+                        titre2: "Milieu",
+                        titre3: "Droite",
                     }
                 }
             });

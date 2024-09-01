@@ -9,8 +9,8 @@ const rolePermissions = {
 };
 
 async function updateActiveMembers(newMember, highestGainedRoleName) {
-  const discordId = newMember.id;
-  const discordName = newMember.displayName;
+  try{
+  const discordName = newMember.user.username;
   const profilesRef = db.collection('profiles');
   const userDocRef = profilesRef.doc(discordName);
   const activeRef = db.collection('activeMembers');
@@ -21,7 +21,7 @@ async function updateActiveMembers(newMember, highestGainedRoleName) {
   if (profileDoc.exists && profileDoc.data().mainCharacter) {
     mainCharacterName = profileDoc.data().mainCharacter;
   } else {
-    console.log(`Profil ou mainCharacter introuvable pour l'utilisateur: ${discordName}`);
+    console.log(`Profil ou mainCharacter non défini pour l'utilisateur: ${discordName}`);
     return; // Sortir de la fonction si le pseudo principal n'est pas trouvé
   }
 
@@ -40,9 +40,13 @@ async function updateActiveMembers(newMember, highestGainedRoleName) {
   const highestRoleRef = activeRef.doc(highestGainedRoleName).collection('members');
   await highestRoleRef.doc(discordName).set({pseudo: mainCharacterName}); 
   console.log(`Ajouté à la collection ${highestGainedRoleName} pour ${discordName} avec le pseudo: ${mainCharacterName}`);
-}
 
+} catch (error) {
+  console.error('Erreur lors de la mise à jour des membres actifs:', error);
+}
+}
 module.exports = async (bot, oldMember, newMember) => {
+try{
   const timestamp = new Date().toISOString();
   const guildIds = ["675543520425148416", "653689680906420235"];
   const guildId = newMember.guild.id;
@@ -55,7 +59,7 @@ module.exports = async (bot, oldMember, newMember) => {
   const lostRoles = oldRoles.filter(role => !newRoles.has(role.id));
   const gainedRoles = newRoles.filter(role => !oldRoles.has(role.id));
 
-  const discordName = newMember.displayName;
+  const discordName = newMember.user.username;
   const profilesRef = db.collection('profiles');
   const userDocRef = profilesRef.doc(discordName);
 
@@ -102,4 +106,7 @@ gainedRoles.forEach(async gainedRole => {
   }
 });
 
-;}
+} catch (error) {
+  console.error('Erreur lors de la gestion des rôles:', error);
+}
+}

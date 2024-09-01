@@ -1,8 +1,4 @@
 const db = require('../Loader/loadDatabase'); 
-const updateMemberDAO = require('../Helpers/updateMemberDAO');
-const downloadGitWebsite = require('../Helpers/downloadGitWebsite');
-const backupWebsite = require('../Helpers/backupWebsite');
-
 const updateFunction = require('../Helpers/updateFunction');
 
 module.exports = {
