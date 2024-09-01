@@ -60,6 +60,6 @@ bot.on('guildCreate', async (guild) => {
 });
 
 
-/* POUR LE DEVELOPPMENT UNIQUMENT*/
+/* POUR LE DEVELOPPMENT UNIQUMENT
 const downloadGitWebsite = require('./Helpers/downloadGitWebsite');
-downloadGitWebsite('https://github.com/Satalis/LOUTRES_SITE/', './devWebsite')
+downloadGitWebsite('https://github.com/Satalis/LOUTRES_SITE/', './devWebsite')*/
