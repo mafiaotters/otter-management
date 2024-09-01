@@ -1,30 +1,40 @@
 const fs = require('fs');
 const path = require('path');
 
-// Simuler la récupération des données des membres depuis PublicWebsite/memberDAO.php
-const members = [
-    { img: "assets/img/speakers/mimino.jpg", firstName: "Mimino", lastName: "Mino", title: "Loutre Princesse", hasAvatar: true, avatarType: "Avatar2" },
-    // Ajoutez d'autres membres ici
-];
+// Fonction pour générer le contenu de MemberDAO.php
+async function updateMemberDAO() {
+    // Début du template de MemberDAO.php
+    let content = `<?php
+class MemberDAO
+{
+    function getAll()
+    {
+        return array(
+`;
 
-async function generateMemberDAO() {
-    const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}]: Edition du fichier MemberDAO...`);
-    // Chemin vers le fichier JSON où vous souhaitez sauvegarder les données des membres
-    const filePath = path.join(__dirname, '../PublicWebsite/data/otter.json');
+    // Générer les lignes pour chaque membre
+    members.forEach(member => {
+        content += `            new Member("${member.photo}", "${member.prenom}", "${member.nom}", "${member.titre}", ${member.profilPage}, "${member.photoProfil}"),\n`;
+    });
 
-    // Convertir l'objet JavaScript en chaîne JSON
-    const data = JSON.stringify(members, null, 2);
+    // Fin du template de MemberDAO.php
+    content += `        );
+    }
+}`;
 
-    // Écrire les données dans le fichier JSON
-    fs.writeFile(filePath, data, (err) => {
+    // Chemin vers le fichier MemberDAO.php
+    const filePath = path.join(__dirname, '../devWebsite/memberDAO.php');
+
+    // Écrire le contenu dans le fichier MemberDAO.php
+    fs.writeFile(filePath, content, (err) => {
         if (err) {
-            console.error("Erreur lors de l'écriture du fichier MemberDAO:", err);
+            console.error("Erreur lors de l'écriture du fichier MemberDAO.php:", err);
         } else {
-            console.log('MemberDAO édité avec succès.');
+            console.log('MemberDAO.php mis à jour avec succès.');
         }
     });
 }
 
 // Exécuter la fonction
-module.exports = generateMemberDAO;
+
+modules.exports = updateMemberDAO();

@@ -8,10 +8,10 @@ async function updateFunction() {
     //await downloadGitWebsite('https://github.com/Satalis/LOUTRES_SITE/', './PublicWebsite')
 
     // Créer une backup du site actuellement sur FTP
-    await backupWebsite();
+    //await backupWebsite();
     
     // Edit le fichier MemberDAO
-    //updateMemberDAO(); 
+    updateMemberDAO(); 
 
 }
 module.exports = updateFunction;
