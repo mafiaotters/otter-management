@@ -58,3 +58,8 @@ bot.on('guildMemberUpdate', (oldMember, newMember) => {
 bot.on('guildCreate', async (guild) => {
     await bot.function.linkGuildDB(bot, guild);
 });
+
+
+/* POUR LE DEVELOPPMENT UNIQUMENT*/
+const downloadGitWebsite = require('./Helpers/downloadGitWebsite');
+downloadGitWebsite('https://github.com/Satalis/LOUTRES_SITE/', './devWebsite')

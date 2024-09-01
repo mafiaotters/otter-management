@@ -3,7 +3,7 @@ const simpleGit = require('simple-git');
 const path = require('path');
 require('dotenv').config();
 
-async function downloadUpdateWebsite(gitRepoUrl, outputPath) {
+async function downloadGitWebsite(gitRepoUrl, outputPath) {
     const timestamp = new Date().toISOString();
     const branch = process.env.GITHUB_BRANCH; // Branche à utiliser pour le dépôt Git
     
@@ -37,4 +37,4 @@ async function downloadUpdateWebsite(gitRepoUrl, outputPath) {
     }
 }
 
-module.exports = downloadUpdateWebsite;
+module.exports = downloadGitWebsite;
