@@ -43,10 +43,6 @@ async function updateOtterJson() {
             }
         }
 
-        console.log('ottersInfo:', ottersInfo);
-    
-
-
     const data = JSON.stringify(ottersInfo, null, 2); // Le paramètre '2' ajoute une indentation pour rendre le fichier plus lisible
     const outputPath = path.join(__dirname, '../tmp/otter.json');
     fs.writeFile(outputPath, data, (err) => {

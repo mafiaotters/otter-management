@@ -43,8 +43,6 @@ async function updateMemberDAO() {
         }else{console.log('ERROR: no profile data')}
       }
 
-      console.log('Membres :', membersList)
-
     }
   
     // Une fois tous les membres récupérés, générer le fichier MemberDAO.php
