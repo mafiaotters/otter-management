@@ -54,7 +54,6 @@ SftpClient.prototype.downloadDir = async function(sourceDir, destDir, excludeDir
                 continue; // Exclure les dossiers spécifiés
             }
             console.log('Téléchargement de:', item.name);
-            console.log('currentSourceDir:', currentSourceDir);
 
             if(currentSourceDir.includes('assets') && item.name !== 'speakers' && !currentSourceDir.endsWith('speakers')) {                continue; // Saute tous les dossiers de img, sauf speakers
             }
