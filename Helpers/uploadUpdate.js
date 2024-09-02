@@ -22,13 +22,13 @@ async function uploadUpdate() {
         const filesToUpload = [
          //   'memberDAO.php', 
            // path.join('data', 'otter.json') // Ajustement pour le dossier "data"
-           console.log('BRANCHE main')
+           console.log('BRANCHE main, aucun upload activé pour le moment')
         ];
         } else {
         const filesToUpload = [
-            console.log('BRANCHE dev')
-           // path.join('dev/data', 'otter.json'), 
-           // path.join('dev/', 'memberDAO.php') // Ajustement pour le dossier "data"
+            console.log('Upload sur le répertoire de développement du site..'),
+            path.join('dev/data', 'otter.json'), 
+            path.join('dev/', 'memberDAO.php')
         ];
         }
 /*
