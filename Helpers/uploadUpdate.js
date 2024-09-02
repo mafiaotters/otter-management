@@ -18,11 +18,20 @@ async function uploadUpdate() {
         const tmpDirPath = './tmp';
 
         // Chemins spécifiques des fichiers à uploader
+        if(process.env.GITHUB_BRANCH === 'main') {
         const filesToUpload = [
-            'memberDAO.php', 
-            path.join('data', 'otter.json') // Ajustement pour le dossier "data"
+         //   'memberDAO.php', 
+           // path.join('data', 'otter.json') // Ajustement pour le dossier "data"
+           console.log('BRANCHE main')
         ];
-
+        } else {
+        const filesToUpload = [
+            console.log('BRANCHE dev')
+           // path.join('dev/data', 'otter.json'), 
+           // path.join('dev/', 'memberDAO.php') // Ajustement pour le dossier "data"
+        ];
+        }
+/*
         for (const fileName of filesToUpload) {
             const localFilePath = path.join(tmpDirPath, fileName);
             const remoteFilePath = path.posix.join('/', fileName); // Ajustez le chemin distant si nécessaire
@@ -35,7 +44,7 @@ async function uploadUpdate() {
             } else {
                 console.error(`Le fichier ${fileName} n'existe pas dans ${tmpDirPath}`);
             }
-        }
+        }*/
 
         console.log('Upload des fichiers terminé avec succès.');
     } catch (err) {
