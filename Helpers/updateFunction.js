@@ -2,6 +2,7 @@ const updateMemberDAO = require('./updateMemberDAO');
 const downloadGitWebsite = require('./downloadGitWebsite');
 const backupWebsite = require('./backupWebsite');
 const updateOtterJson = require('./updateOtterJson');
+const uploadUpdate = require('./uploadUpdate');
 
 async function updateFunction() {
 
@@ -9,7 +10,7 @@ async function updateFunction() {
     //await downloadGitWebsite('https://github.com/Satalis/LOUTRES_SITE/', './PublicWebsite')
 
     // Créer une backup du site actuellement sur FTP
-    //await backupWebsite();
+    await backupWebsite();
     
     // Edit le fichier MemberDAO
     await updateMemberDAO(); 
@@ -18,7 +19,7 @@ async function updateFunction() {
     await updateOtterJson();
 
     // Upload le site sur le FTP
-    //await uploadWebsite(); A FAIRE
+    //await uploadUpdate(); //Fonctionnement ok ? 
 
 }
 module.exports = updateFunction;
