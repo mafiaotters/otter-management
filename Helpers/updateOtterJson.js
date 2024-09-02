@@ -43,13 +43,21 @@ async function updateOtterJson() {
             }
         }
 
+        const tmpDirPath = path.join(__dirname, '../tmp/data');
+        if (!fs.existsSync(tmpDirPath)) {
+            // Créer le dossier "tmp/data" s'il n'existe pas
+            fs.mkdirSync(tmpDirPath, { recursive: true });
+            console.log('Dossier "tmp/data" créé avec succès.');
+        }
+    
+
     const data = JSON.stringify(ottersInfo, null, 2); // Le paramètre '2' ajoute une indentation pour rendre le fichier plus lisible
-    const outputPath = path.join(__dirname, '../tmp/otter.json');
+    const outputPath = path.join(__dirname, '../tmp/data/otter.json');
     fs.writeFile(outputPath, data, (err) => {
         if (err) {
             console.error("Erreur lors de l'écriture du fichier JSON:", err);
         } else {
-            console.log('Fichier ottersInfo.json créé avec succès.');
+            console.log('Fichier data/otter.json créé avec succès.');
         }
     });
 

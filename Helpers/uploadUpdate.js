@@ -18,23 +18,23 @@ async function uploadUpdate() {
         const tmpDirPath = './tmp';
 
         // Chemins spécifiques des fichiers à uploader
-        if(process.env.GITHUB_BRANCH === 'main') {
         const filesToUpload = [
-         //   'memberDAO.php', 
-           // path.join('data', 'otter.json') // Ajustement pour le dossier "data"
-           console.log('BRANCHE main, aucun upload activé pour le moment')
+            'memberDAO.php', 
+           path.posix.join('data', 'otter.json') // Ajustement pour le dossier "data"
         ];
-        } else {
-        const filesToUpload = [
-            console.log('Upload sur le répertoire de développement du site..'),
-            path.join('dev/data', 'otter.json'), 
-            path.join('dev/', 'memberDAO.php')
-        ];
+
+        let basePath = '/dev/'; // Chemin distant de base pour les fichiers à uploader
+        console.log('Chemin distant défini sur /dev.');
+        if (process.env.GITHUB_BRANCH === 'main') {
+            //basePath = '/'; // Changer le chemin distant pour le site principale
+            console.log('Chemin distant changé pour la branche principale.');
+            console.error('Attention: Branche principale demandée, mais non activé pour rester sur la dev.');
         }
-/*
-        for (const fileName of filesToUpload) {
-            const localFilePath = path.join(tmpDirPath, fileName);
-            const remoteFilePath = path.posix.join('/', fileName); // Ajustez le chemin distant si nécessaire
+        
+
+    for (const fileName of filesToUpload) {
+            const localFilePath = path.posix.join(tmpDirPath, fileName);
+            let remoteFilePath = path.posix.join(basePath, fileName); // Concatène le chemin de base avec le nom du fichier
 
             // Vérifie si le fichier existe localement avant de tenter l'upload
             const exists = await fsExtra.pathExists(localFilePath);
@@ -44,7 +44,7 @@ async function uploadUpdate() {
             } else {
                 console.error(`Le fichier ${fileName} n'existe pas dans ${tmpDirPath}`);
             }
-        }*/
+        }
 
         console.log('Upload des fichiers terminé avec succès.');
     } catch (err) {
