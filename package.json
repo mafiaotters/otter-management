@@ -8,7 +8,7 @@
     "start": "node bot.js"
   },
   "engines": {
-    "node": "19"
+    "node": "20.5"
   },
   "keywords": [],
   "author": "Jungso",
