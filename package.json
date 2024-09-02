@@ -4,6 +4,7 @@
   "description": "<h2> Create venv: </h2> <h3> WINDOWS </h3> python -m venv venv source venv/bin/activate  # Sur Windows: venv\\Scripts\\activate",
   "main": "bot.js",
   "scripts": {
+    "prestart": "heroku buildpacks:add https://github.com/heroku/heroku-buildpack-nodejs.git && heroku buildpacks:add https://github.com/jontewks/puppeteer-heroku-buildpack.git",
     "start": "npm install -g npm@10.8.3 && node bot.js"
   },
   "engines": {
