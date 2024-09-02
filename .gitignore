@@ -6,3 +6,4 @@ backupWebsite/
 .env
 devWebsite/
 tmp/
+.DS_Store
