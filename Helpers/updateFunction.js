@@ -19,7 +19,7 @@ async function updateFunction() {
     await updateOtterJson();
 
     // Upload le site sur le FTP
-    //await uploadUpdate(); //Fonctionnement ok ? 
+    await uploadUpdate(); 
 
 }
 module.exports = updateFunction;
