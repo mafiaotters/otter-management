@@ -58,27 +58,21 @@ module.exports = {
       }
       let nom = extraireNom(discordUser.displayName);
 
-       let parties = discordUser.displayName.split(' ');
-
         try {
             await userDocRef.set({
                 discordName: discordName,
                 lodestoneId: " ",
-                mainCharacter: " ",
                 verified: false,
                 discordId: discordId,
                 currentRole: " ",
+                Prenom: prenom,
+                Nom: nom,
                 websiteInfo:{
-                    Prenom: prenom,
-                    Nom: nom,
-                    PhotoLoutre: 'assets/img/speakers/' + prenom + '.jpg',
-                    PhotoLoutre2: 'assets/img/speakers/' + prenom + '_1.jpg',
-                    Titre: "Loutre Mafieuse",
+                    fileName: await prenom.toLowerCase(),
+                    Titre: "Loutre Naissante",
                     profilPage: false,
                     profilPageInfo: {
-                        fileName: await prenom.toLowerCase(),
                         descriptionHTML: " ",
-                        titre: "Gros titre",
                         titre1: "Gauche",
                         titre2: "Milieu",
                         titre3: "Droite",

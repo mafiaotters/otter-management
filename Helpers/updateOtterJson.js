@@ -30,14 +30,14 @@ async function updateOtterJson() {
 
                 // Ajouter les informations nécessaires dans l'objet ottersInfo avec fileName comme clé
                 ottersInfo[profilPageInfo.fileName] = {
-                    FirstName: websiteInfo.Prenom,
-                    LastName: websiteInfo.Nom,
-                    FileName: profilPageInfo.fileName,
+                    FirstName: profileDoc.data().Prenom,
+                    LastName: profileDoc.data().Nom,
+                    FileName: websiteInfo.fileName,
                     text: profilPageInfo.descriptionHTML,
                     title1: profilPageInfo.titre1,
                     title2: profilPageInfo.titre2,
                     title3: profilPageInfo.titre3,
-                    Titre: profilPageInfo.titre,
+                    Titre: websiteInfo.Titre,
                 };
                 }
             }
