@@ -71,12 +71,10 @@ module.exports = {
                 websiteInfo:{
                     Prenom: prenom,
                     Nom: nom,
-                    PhotoLoutre: 'assets/img/speakers/' + prenom + '.jpg',
-                    PhotoLoutre2: 'assets/img/speakers/' + prenom + '_1.jpg',
+                    fileName: await prenom.toLowerCase(),
                     Titre: "Loutre Mafieuse",
                     profilPage: false,
                     profilPageInfo: {
-                        fileName: await prenom.toLowerCase(),
                         descriptionHTML: " ",
                         titre: "Gros titre",
                         titre1: "Gauche",

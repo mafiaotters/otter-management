@@ -32,7 +32,7 @@ async function updateOtterJson() {
                 ottersInfo[profilPageInfo.fileName] = {
                     FirstName: websiteInfo.Prenom,
                     LastName: websiteInfo.Nom,
-                    FileName: profilPageInfo.fileName,
+                    FileName: websiteInfo.fileName,
                     text: profilPageInfo.descriptionHTML,
                     title1: profilPageInfo.titre1,
                     title2: profilPageInfo.titre2,

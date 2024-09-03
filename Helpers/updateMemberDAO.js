@@ -30,12 +30,11 @@ async function updateMemberDAO() {
 
           // Ajoutez ici les informations nécessaires à partir de profileData, dans le tableau membersList
           membersList.push({
-            PhotoLoutre: profileData.websiteInfo.PhotoLoutre,
+            fileName: profileData.websiteInfo.fileName,
             Prenom: profileData.websiteInfo.Prenom,
             Nom: profileData.websiteInfo.Nom,
             Titre: role,
             profilPage: profileData.websiteInfo.profilPage,
-            PhotoLoutre2: profileData.websiteInfo.PhotoLoutre2
           });
         }else{console.log('ERROR: no profile data')}
       }
@@ -52,7 +51,9 @@ async function updateMemberDAO() {
 async function writeMemberDAO(membersList) {
     // Début du template de MemberDAO.php
     let content = `<?php
+
     require_once "member.php";
+    
 class MemberDAO
 {
     function getAll()
@@ -60,9 +61,11 @@ class MemberDAO
         return array(
 `;
 
+    
     // Générer les lignes pour chaque membre
     membersList.forEach(member => {
-        content += `            new Member("${member.PhotoLoutre}", "${member.Prenom}", "${member.Nom}", "${member.Titre}", ${member.profilPage}, "${member.PhotoLoutre2}"),\n`;
+        const avatar = member.profilPage ? "Avatar2" : "NoAvatar2";
+        content += `            new Member("assets/img/speakers/${member.fileName}.jpg", "${member.Prenom}", "${member.Nom}", "${member.Titre}", ${member.profilPage}, "${avatar}"),\n`;
     });
 
     // Fin du template de MemberDAO.php
