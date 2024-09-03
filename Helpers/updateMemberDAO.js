@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const db = require('../Loader/loadDatabase');
+const SftpClient = require('ssh2-sftp-client');
+const sftp = new SftpClient();
 
 
 async function updateMemberDAO() {
@@ -49,11 +51,23 @@ async function updateMemberDAO() {
 
 // Fonction pour générer le contenu de MemberDAO.php
 async function writeMemberDAO(membersList) {
+
+    // Configuration de la connexion SFTP
+    const sftpOptions = {
+        host: process.env.FTP_HOST,
+        port: process.env.FTP_PORT,
+        user: process.env.FTP_USER,
+        password: process.env.FTP_PASS
+    };
+
+    // Connexion au serveur SFTP
+    await sftp.connect(sftpOptions);
+
     // Début du template de MemberDAO.php
     let content = `<?php
 
     require_once "member.php";
-    
+
 class MemberDAO
 {
     function getAll()
@@ -63,10 +77,20 @@ class MemberDAO
 
     
     // Générer les lignes pour chaque membre
-    membersList.forEach(member => {
-        const avatar = member.profilPage ? "Avatar2" : "NoAvatar2";
+    for (const member of membersList) {
+        const basePath = process.env.GITHUB_BRANCH === 'main' ? '/assets/img/speakers' : '/dev/assets/img/speakers';
+        const remoteAvatarPath = `${basePath}/${member.fileName}_1.jpg`;
+        let avatar = "NoAvatar2";
+
+        try {
+            const exists = await sftp.exists(remoteAvatarPath);
+            avatar = exists ? "Avatar2" : "NoAvatar2";
+        } catch (err) {
+            console.error(`Erreur lors de la vérification de l'existence de l'avatar sur le serveur SFTP: ${err.message}`);
+        }
+
         content += `            new Member("assets/img/speakers/${member.fileName}.jpg", "${member.Prenom}", "${member.Nom}", "${member.Titre}", ${member.profilPage}, "${avatar}"),\n`;
-    });
+    }
 
     // Fin du template de MemberDAO.php
     content += `        );
@@ -103,6 +127,9 @@ class FriendsMemberDAO
             console.log('MemberDAO.php mis à jour avec succès.');
         }
     });
+
+     // Fermer la connexion SFTP
+     sftp.end();
 }
 
 module.exports = updateMemberDAO;
