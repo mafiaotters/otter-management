@@ -28,13 +28,17 @@ async function updateMemberDAO() {
         console.log(`Récupération du profil de ${discordName}...`);
   
         if (profileDoc.exists) {
-          const profileData = profileDoc.data();
+          const profileData = await profileDoc.data();
+
+            // Vérifiez si les champs Prenom et Nom existent et ne sont pas undefined
+            const prenom = profileData.Prenom || "Prénom";
+            const nom = profileData.Nom || "Nom";
 
           // Ajoutez ici les informations nécessaires à partir de profileData, dans le tableau membersList
           membersList.push({
             fileName: profileData.websiteInfo.fileName,
-            Prenom: profileData.websiteInfo.Prenom,
-            Nom: profileData.websiteInfo.Nom,
+            Prenom: prenom,
+            Nom: nom,
             Titre: role,
             profilPage: profileData.websiteInfo.profilPage,
           });

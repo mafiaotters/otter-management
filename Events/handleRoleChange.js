@@ -15,15 +15,17 @@ async function updateActiveMembers(newMember, highestGainedRoleName) {
   const userDocRef = profilesRef.doc(discordName);
   const activeRef = db.collection('activeMembers');
 
-  // Récupérer le pseudo principal de l'utilisateur depuis la collection profiles
-  const profileDoc = await userDocRef.get();
-  let mainCharacterName = "";
-  if (profileDoc.exists && profileDoc.data().mainCharacter) {
-    mainCharacterName = profileDoc.data().mainCharacter;
-  } else {
-    console.log(`Profil ou mainCharacter non défini pour l'utilisateur: ${discordName}`);
-    return; // Sortir de la fonction si le pseudo principal n'est pas trouvé
-  }
+    // Récupérer les informations de Prenom et Nom depuis la collection profiles
+    const profileDoc = await userDocRef.get();
+    let fullName = "";
+    if (profileDoc.exists && profileDoc.data().websiteInfo) {
+      const prenom = profileDoc.data().Prenom || "";
+      const nom = profileDoc.data().Nom || "";
+      fullName = `${prenom} ${nom}`;
+    } else {
+      console.log(`Profil ou websiteInfo non défini pour l'utilisateur: ${discordName}`);
+      return; // Sortir de la fonction si les informations ne sont pas trouvées
+    }
 
   // Parcourir chaque rôle dans rolePermissions pour retirer l'utilisateur si nécessaire
   for (const roleName of Object.keys(rolePermissions)) {
@@ -38,8 +40,8 @@ async function updateActiveMembers(newMember, highestGainedRoleName) {
 
   // Ajouter le discordId dans la collection du grade le plus élevé avec le pseudo principal
   const highestRoleRef = activeRef.doc(highestGainedRoleName).collection('members');
-  await highestRoleRef.doc(discordName).set({pseudo: mainCharacterName}); 
-  console.log(`Ajouté à la collection ${highestGainedRoleName} pour ${discordName} avec le pseudo: ${mainCharacterName}`);
+  await highestRoleRef.doc(discordName).set({pseudo: fullName}); 
+  console.log(`Ajouté à la collection ${highestGainedRoleName} pour ${discordName} avec le pseudo: ${fullName}`);
 
 } catch (error) {
   console.error('Erreur lors de la mise à jour des membres actifs:', error);
