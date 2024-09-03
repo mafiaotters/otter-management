@@ -29,7 +29,7 @@ async function updateOtterJson() {
                 let profilPageInfo = websiteInfo.profilPageInfo
 
                 // Ajouter les informations nécessaires dans l'objet ottersInfo avec fileName comme clé
-                ottersInfo[profilPageInfo.fileName] = {
+                ottersInfo[websiteInfo.fileName] = {
                     FirstName: profileDoc.data().Prenom,
                     LastName: profileDoc.data().Nom,
                     FileName: websiteInfo.fileName,
