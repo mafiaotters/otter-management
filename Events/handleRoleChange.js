@@ -65,6 +65,13 @@ try{
   const profilesRef = db.collection('profiles');
   const userDocRef = profilesRef.doc(discordName);
 
+  // Vérifier si le document de l'utilisateur existe
+  const userDoc = await userDocRef.get();
+  if (!userDoc.exists) {
+    console.log(`Document pour l'utilisateur ${discordName} n'existe pas.`);
+    return; // Sortir de la fonction si le document n'existe pas
+  }
+
   // Prendre la liste des rôles du gars, et prendre le rôle le plus élevé
 
   lostRoles.forEach(async lostRole => {

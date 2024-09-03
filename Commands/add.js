@@ -18,13 +18,12 @@ module.exports = {
     async run(bot, interaction, args) {
         const timestamp = new Date().toISOString();
         // Liste des ID des utilisateurs autorisés
-        const allowedUsers = ['207992750988197889', '173439968381894656', '239407042182381588']; // Jungso, Sefa, Kaaz
+        const allowedUsers = ['207992750988197889', '173439968381894656', '239407042182381588']; // Jungso, Sefa, Kaaz, compte test Sefa
         // Vérifie si l'utilisateur est un administrateur ou s'il est dans la liste des utilisateurs autorisés
-        const isAdmin = interaction.member.permissions.has('ADMINISTRATOR');// Les admins
         const isAllowedUser = allowedUsers.includes(interaction.user.id);
     
         // Vérifie l'autorisation
-        if (!isAdmin || !isAllowedUser) {
+        if (!isAllowedUser) {
             // Si l'utilisateur n'est ni admin ni dans la liste, on refuse l'exécution de la commande
             return interaction.reply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
         }

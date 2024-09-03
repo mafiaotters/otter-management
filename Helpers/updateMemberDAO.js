@@ -30,9 +30,9 @@ async function updateMemberDAO() {
         if (profileDoc.exists) {
           const profileData = await profileDoc.data();
 
-            // Vérifiez si les champs Prenom et Nom existent et ne sont pas undefined
-            const prenom = profileData.Prenom || "Prénom";
-            const nom = profileData.Nom || "Nom";
+           // Vérifiez si les champs Prenom et Nom existent, supprimez les guillemets s'ils existent, et utilisez des valeurs par défaut si non définis
+        const prenom = profileData.Prenom ? profileData.Prenom.replace(/"/g, '') : "Prénom";
+        const nom = profileData.Nom ? profileData.Nom.replace(/"/g, '') : "Nom";
 
           // Ajoutez ici les informations nécessaires à partir de profileData, dans le tableau membersList
           membersList.push({
