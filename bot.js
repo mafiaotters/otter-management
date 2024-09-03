@@ -3,6 +3,20 @@ Pour rajouter des valeurs par défaut sur les membres, c'est dans Commands/add.j
 
 */
 
+//HEALTH CHECK UP DE L'APPLICATION
+const express = require('express');
+const app = express();
+const PORT = process.env.PORT || 8000; // Utilisez la variable d'environnement PORT fournie par Heroku ou un port par défaut
+
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
+app.listen(PORT, () => {
+  console.log(`Le serveur est en écoute sur le port ${PORT}`);
+});
+//FIN DE HEALTH CHECK UP DE L'APPLICATION
+
 require('dotenv').config();
 
 const Discord = require('discord.js');

@@ -1,10 +1,12 @@
 const admin = require('firebase-admin');
 const fs = require('fs');
+require('dotenv').config();
+
 
 console.log('Initialisation de Firestore..')
 
 // Lire le fichier JSON et le convertir en objet
-const serviceAccount = JSON.parse(fs.readFileSync('./key-firebase.json', 'utf8'));
+const serviceAccount = JSON.parse(process.env.KEYSFIREBASE);
 
 module.exports = function loadDatabase() {
   // Initialiser l'application Firebase Admin

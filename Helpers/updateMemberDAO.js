@@ -28,9 +28,6 @@ async function updateMemberDAO() {
         if (profileDoc.exists) {
           const profileData = profileDoc.data();
 
-          console.log(profileData)
-          console.log('photo', profileData.websiteInfo.PhotoLoutre)
-
           // Ajoutez ici les informations nécessaires à partir de profileData, dans le tableau membersList
           membersList.push({
             PhotoLoutre: profileData.websiteInfo.PhotoLoutre,
@@ -42,8 +39,6 @@ async function updateMemberDAO() {
           });
         }else{console.log('ERROR: no profile data')}
       }
-
-      console.log('Membres :', membersList)
 
     }
   

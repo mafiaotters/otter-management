@@ -43,7 +43,7 @@ async function backupWebsite() {
 
 // Vous devrez adapter ou implémenter downloadDir pour ssh2-sftp-client
 // La fonction downloadDir ci-dessous est un placeholder et doit être implémentée correctement
-SftpClient.prototype.downloadDir = async function(sourceDir, destDir, excludeDirs = ['logs', 'cache', 'tmp', 'css', 'xivapi_poc', '.git', '.vscode', 'vendor', 'templates', 'guide', 'sitemap.xml', 'manifest.json', 'browserconfig.xml', '.gitignore', '404.html', 'backupBot', 'favicon.ico', 'backupWebsite', 'assets']) {
+SftpClient.prototype.downloadDir = async function(sourceDir, destDir, excludeDirs = ['logs', 'cache', 'tmp', 'css', 'xivapi_poc', '.git', '.vscode', 'vendor', 'templates', 'guide', 'sitemap.xml', 'manifest.json', 'browserconfig.xml', '.gitignore', '404.html', 'backupBot', 'favicon.ico', 'backupWebsite', 'assets', 'dev']) {
     const handleDir = async (currentSourceDir, currentDestDir) => {
         await fsExtra.ensureDir(currentDestDir); // Assurez-vous que le répertoire de destination existe
 
@@ -54,7 +54,6 @@ SftpClient.prototype.downloadDir = async function(sourceDir, destDir, excludeDir
                 continue; // Exclure les dossiers spécifiés
             }
             console.log('Téléchargement de:', item.name);
-            console.log('currentSourceDir:', currentSourceDir);
 
             if(currentSourceDir.includes('assets') && item.name !== 'speakers' && !currentSourceDir.endsWith('speakers')) {                continue; // Saute tous les dossiers de img, sauf speakers
             }

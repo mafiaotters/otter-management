@@ -2,9 +2,13 @@
   "name": "ottermanagement",
   "version": "1.0.0",
   "description": "<h2> Create venv: </h2> <h3> WINDOWS </h3> python -m venv venv source venv/bin/activate  # Sur Windows: venv\\Scripts\\activate",
-  "main": "index.js",
+  "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prestart": "npm install -g npm@10.8.3",
+    "start": "node bot.js"
+  },
+  "engines": {
+    "node": "20.5"
   },
   "keywords": [],
   "author": "Jungso",

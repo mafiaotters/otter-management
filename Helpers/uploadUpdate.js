@@ -20,12 +20,21 @@ async function uploadUpdate() {
         // Chemins spécifiques des fichiers à uploader
         const filesToUpload = [
             'memberDAO.php', 
-            path.join('data', 'otter.json') // Ajustement pour le dossier "data"
+           path.posix.join('data', 'otter.json') // Ajustement pour le dossier "data"
         ];
 
-        for (const fileName of filesToUpload) {
-            const localFilePath = path.join(tmpDirPath, fileName);
-            const remoteFilePath = path.posix.join('/', fileName); // Ajustez le chemin distant si nécessaire
+        let basePath = '/dev/'; // Chemin distant de base pour les fichiers à uploader
+        console.log('Chemin distant défini sur /dev.');
+        if (process.env.GITHUB_BRANCH === 'main') {
+            //basePath = '/'; // Changer le chemin distant pour le site principale
+            console.log('Chemin distant changé pour la branche principale.');
+            console.error('Attention: Branche principale demandée, mais non activé pour rester sur la dev.');
+        }
+        
+
+    for (const fileName of filesToUpload) {
+            const localFilePath = path.posix.join(tmpDirPath, fileName);
+            let remoteFilePath = path.posix.join(basePath, fileName); // Concatène le chemin de base avec le nom du fichier
 
             // Vérifie si le fichier existe localement avant de tenter l'upload
             const exists = await fsExtra.pathExists(localFilePath);

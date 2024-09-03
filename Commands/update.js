@@ -19,14 +19,16 @@ module.exports = {
         // Vérifie l'autorisation d'executer la commande
         if (!isAdmin || !isAllowedUser) {
             // Si l'utilisateur n'est ni admin ni dans la liste, on refuse l'exécution de la commande
-            return interaction.reply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
+            return interaction.deferReply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
         }
 
         console.log(`[${timestamp}]: Mise à jour du site web...`);
 
+        interaction.deferReply({ ephemeral: true });
+
         await updateFunction();
 
-        interaction.reply({ content: "Mise à jour du site web réalisée avec succès.", ephemeral: true });
+        interaction.editReply({ content: "Mise à jour du site web réalisée avec succès.", ephemeral: true });
         
     }
 }
