@@ -1,5 +1,38 @@
 const db = require('../Loader/loadDatabase'); 
 
+const rolePermissions = {
+    "Le Parrain": 6,
+    "Sottocapo": 5,
+    "Enroloutre": 4,
+    "Loutre Mafieuse": 3,
+    "Loutre Naissante": 2
+  };
+  
+  async function addMemberToActiveMembers(member, prenom, nom) {
+    console.log('member: ' + member);
+    console.log('member.id: ' + member.id);
+    console.log('member.user.username: ' + member.user.username);
+    const discordName = member.user.username;
+    const roles = member.roles.cache;
+    const activeRef = db.collection('activeMembers');
+  
+    // Trouver le rôle le plus élevé du membre
+    const highestRole = roles
+      .filter(role => rolePermissions[role.name])
+      .sort((a, b) => rolePermissions[b.name] - rolePermissions[a.name])
+      .first();
+  
+    if (!highestRole) {
+      console.log(`Aucun rôle significatif trouvé pour ${discordName}.`);
+      return;
+    }
+  
+    // Ajouter le membre dans la collection "activeMembers" sous le rôle le plus élevé
+    const highestRoleRef = activeRef.doc(highestRole.name).collection('members');
+    await highestRoleRef.doc(discordName).set({pseudo: prenom + " " + nom}); 
+    console.log(`Ajouté à la collection ${highestRole.name} pour ${discordName} avec le pseudo: ${discordName}`);
+  }  
+
 module.exports = {
     name: "add",
     description: "Ajoute un membre dans la BDD.",
@@ -50,13 +83,11 @@ module.exports = {
         const allowedUsers = ['207992750988197889', '173439968381894656', '239407042182381588']; // Jungso, Sefa, Kaaz, compte test Sefa
         // Vérifie si l'utilisateur est un administrateur ou s'il est dans la liste des utilisateurs autorisés
         const isAllowedUser = allowedUsers.includes(interaction.user.id);
-
-        interaction.deferReply({ ephemeral: true });
     
         // Vérifie l'autorisation
         if (!isAllowedUser) {
             // Si l'utilisateur n'est ni admin ni dans la liste, on refuse l'exécution de la commande
-            return interaction.editReply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
+            return interaction.reply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
         }
         
         // Supposons que args[0] est l'ID Discord du membre à ajouter
@@ -71,7 +102,7 @@ module.exports = {
         const docSnapshot = await userDocRef.get();
         if(docSnapshot.exists) {
             console.log(`${timestamp}: Membre déjà dans la base de données: ${discordName}`)
-            return interaction.editReply({ content: "Ce membre est déjà dans la base de données.", ephemeral: true });
+            return interaction.reply({ content: "Ce membre est déjà dans la base de données.", ephemeral: true });
         }
 
        /* console.log('displayName: ' + discordUser.displayName);
@@ -84,7 +115,6 @@ module.exports = {
         const prenom = interaction.options.getString('prenom');
         const titre = interaction.options.getString('titre') || "Loutre Mafieuse"; // Utilisez "Loutre Mafieuse" comme valeur par défaut si titre est vide
         const fileName = interaction.options.getString('filename');
-  
 
         try {
             await userDocRef.set({
@@ -107,11 +137,14 @@ module.exports = {
                     }
                 }
             });
+
+            addMemberToActiveMembers(await interaction.guild.members.fetch(discordUser), prenom, nom);
+
             console.log(`Membre ajouté avec succès: ${discordName}`)
-            return interaction.editReply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
+            return interaction.reply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
         } catch (error) {
             console.error(": Erreur lors de l'ajout du membre " + discordName, error);
-            return interaction.editReply({ content: "Une erreur est survenue lors de l'ajout du membre.", ephemeral: true });
+            return interaction.reply({ content: "Une erreur est survenue lors de l'ajout du membre.", ephemeral: true });
         }
 
         
