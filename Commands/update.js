@@ -16,11 +16,13 @@ module.exports = {
         const userId = interaction.user.id;
         const timestamp = new Date().getTime();
         const cooldownPeriod = 60000; // Délai en millisecondes, ici 60 secondes
+
+        interaction.deferReply({ ephemeral: true });
     
         // Vérifie si l'utilisateur a déjà utilisé la commande récemment
         if (lastUsed[userId] && timestamp - lastUsed[userId] < cooldownPeriod) {
             const timeLeft = ((cooldownPeriod - (timestamp - lastUsed[userId])) / 1000).toFixed(0);
-            return interaction.reply({ content: `Veuillez attendre ${timeLeft} secondes avant de réutiliser cette commande.`, ephemeral: true });
+            return interaction.editReply({ content: `Veuillez attendre ${timeLeft} secondes avant de réutiliser cette commande.`, ephemeral: true });
         }
     
         // Met à jour le timestamp de la dernière utilisation pour cet utilisateur
@@ -33,12 +35,10 @@ module.exports = {
         // Vérifie l'autorisation d'executer la commande
         if (!isAllowedUser) {
             // Si l'utilisateur n'est ni admin ni dans la liste, on refuse l'exécution de la commande
-            return interaction.reply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
+            return interaction.editReply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
         }
 
         console.log(` Mise à jour du site web...`);
-
-        interaction.deferReply({ ephemeral: true });
 
         await updateFunction();
 
