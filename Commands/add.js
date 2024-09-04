@@ -89,6 +89,8 @@ module.exports = {
             // Si l'utilisateur n'est ni admin ni dans la liste, on refuse l'exécution de la commande
             return interaction.reply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
         }
+
+        interaction.deferReply({ ephemeral: true });
         
         // Supposons que args[0] est l'ID Discord du membre à ajouter
         const discordUser = interaction.options.getUser('membre');
@@ -141,10 +143,10 @@ module.exports = {
             addMemberToActiveMembers(await interaction.guild.members.fetch(discordUser), prenom, nom);
 
             console.log(`Membre ajouté avec succès: ${discordName}`)
-            return interaction.reply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
+            interaction.editReply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
         } catch (error) {
             console.error(": Erreur lors de l'ajout du membre " + discordName, error);
-            return interaction.reply({ content: "Une erreur est survenue lors de l'ajout du membre.", ephemeral: true });
+            interaction.editReply({ content: "Une erreur est survenue lors de l'ajout du membre.", ephemeral: true });
         }
 
         
