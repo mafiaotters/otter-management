@@ -1,4 +1,24 @@
 const db = require('../Loader/loadDatabase'); 
+const fs = require('fs');
+const path = require('path');
+
+const lockFilePath = path.join(__dirname, 'lockfile');
+// Fonction pour vérifier si le verrou existe
+function isLocked() {
+    return fs.existsSync(lockFilePath);
+}
+// Fonction pour créer le verrou
+function lock() {
+    fs.writeFileSync(lockFilePath, 'locked');
+}
+// Fonction pour supprimer le verrou
+function unlock() {
+    if (isLocked()) {
+        fs.unlinkSync(lockFilePath);
+    }
+}
+
+
 
 const rolePermissions = {
     "Le Parrain": 6,
@@ -78,12 +98,24 @@ module.exports = {
     ],
 
     async run(bot, interaction, args) {
+        // Vérifier si la commande est verrouillée
+
+
+        if (isLocked()) {
+            console.log('Le processus est déjà verrouillé.');
+        } else {
+            console.log('Verrouillage du processus...');
+            lock();
+
+        try{
+
         const timestamp = new Date().toISOString();
         // Liste des ID des utilisateurs autorisés
         const allowedUsers = ['207992750988197889', '173439968381894656', '239407042182381588']; // Jungso, Sefa, Kaaz, compte test Sefa
         // Vérifie si l'utilisateur est un administrateur ou s'il est dans la liste des utilisateurs autorisés
         const isAllowedUser = allowedUsers.includes(interaction.user.id);
     
+
 
         await interaction.deferReply({ ephemeral: true });
 
@@ -150,7 +182,11 @@ module.exports = {
             console.error(": Erreur lors de l'ajout du membre " + discordName, error);
             interaction.editReply({ content: "Une erreur est survenue lors de l'ajout du membre.", ephemeral: true });
         }
-
+    } finally {
+        // Déverrouiller la commande
+        unlock();
+    }
+        }
         
     }
 }
