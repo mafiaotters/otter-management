@@ -17,7 +17,7 @@ module.exports = {
         const timestamp = new Date().getTime();
         const cooldownPeriod = 60000; // Délai en millisecondes, ici 60 secondes
 
-        interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: true });
     
         // Vérifie si l'utilisateur a déjà utilisé la commande récemment
         if (lastUsed[userId] && timestamp - lastUsed[userId] < cooldownPeriod) {
@@ -42,7 +42,7 @@ module.exports = {
 
         await updateFunction();
 
-        interaction.editReply({ content: "Mise à jour du site web réalisée avec succès.", ephemeral: true });
+        await interaction.editReply({ content: "Mise à jour du site web réalisée avec succès.", ephemeral: true });
         
     }
 }

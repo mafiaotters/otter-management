@@ -85,7 +85,7 @@ module.exports = {
         const isAllowedUser = allowedUsers.includes(interaction.user.id);
     
 
-        interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: true });
 
 
         // Vérifie l'autorisation
