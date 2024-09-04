@@ -56,7 +56,7 @@ module.exports = {
         // Vérifie l'autorisation
         if (!isAllowedUser) {
             // Si l'utilisateur n'est ni admin ni dans la liste, on refuse l'exécution de la commande
-            return interaction.reply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
+            return interaction.editReply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
         }
         
         // Supposons que args[0] est l'ID Discord du membre à ajouter
@@ -71,7 +71,7 @@ module.exports = {
         const docSnapshot = await userDocRef.get();
         if(docSnapshot.exists) {
             console.log(`${timestamp}: Membre déjà dans la base de données: ${discordName}`)
-            return interaction.reply({ content: "Ce membre est déjà dans la base de données.", ephemeral: true });
+            return interaction.editReply({ content: "Ce membre est déjà dans la base de données.", ephemeral: true });
         }
 
        /* console.log('displayName: ' + discordUser.displayName);
@@ -107,11 +107,11 @@ module.exports = {
                     }
                 }
             });
-            await interaction.deferReply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
             console.log(`Membre ajouté avec succès: ${discordName}`)
+            return interaction.editReply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
         } catch (error) {
             console.error(": Erreur lors de l'ajout du membre " + discordName, error);
-            await interaction.deferReply({ content: "Une erreur est survenue lors de l'ajout du membre.", ephemeral: true });
+            return interaction.editReply({ content: "Une erreur est survenue lors de l'ajout du membre.", ephemeral: true });
         }
 
         
