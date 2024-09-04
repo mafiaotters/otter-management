@@ -12,24 +12,51 @@ module.exports = {
             name: "membre",
             description: "Membre à ajouter dans la BDD.",
             required: true,
+            autocomplete: true,
+        },
+        {
+            type: "STRING",
+            name: "prenom",
+            description: "Prénom in-game du membre.",
+            required: true,
+            autocomplete: false,
+        },
+        {
+            type: "STRING",
+            name: "nom",
+            description: "Nom in-game du membre.",
+            required: true,
+            autocomplete: false,
+        },
+        {
+            type: "STRING",
+            name: "filename",
+            description: "Nom de fichier pour le profil du membre.",
+            required: true,
+            autocomplete: false,
+        },
+        {
+            type: "STRING",
+            name: "titre",
+            description: "Titre du site du membre. (Non-obligatoire)",
+            required: false,
+            autocomplete: false,
         }
     ],
 
     async run(bot, interaction, args) {
         const timestamp = new Date().toISOString();
         // Liste des ID des utilisateurs autorisés
-        const allowedUsers = ['207992750988197889', '173439968381894656', '239407042182381588']; // Jungso, Sefa, Kaaz
+        const allowedUsers = ['207992750988197889', '173439968381894656', '239407042182381588']; // Jungso, Sefa, Kaaz, compte test Sefa
         // Vérifie si l'utilisateur est un administrateur ou s'il est dans la liste des utilisateurs autorisés
-        const isAdmin = interaction.member.permissions.has('ADMINISTRATOR');// Les admins
         const isAllowedUser = allowedUsers.includes(interaction.user.id);
     
         // Vérifie l'autorisation
-        if (!isAdmin || !isAllowedUser) {
+        if (!isAllowedUser) {
             // Si l'utilisateur n'est ni admin ni dans la liste, on refuse l'exécution de la commande
             return interaction.reply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
         }
         
-        // La fonction
         // Supposons que args[0] est l'ID Discord du membre à ajouter
         const discordUser = interaction.options.getUser('membre');
         const discordId = discordUser.id;
@@ -50,13 +77,12 @@ module.exports = {
         console.log('tag: ' + discordUser.tag);
         console.log('discordUser: ' + discordUser.nickname);*/
 
-       let prenom = discordUser.displayName.split(' ')[0];
 
-       function extraireNom(nomComplet) {
-        const parties = nomComplet.split(' ');
-        return parties.length > 1 ? parties.slice(1).join(' ') : '';
-      }
-      let nom = extraireNom(discordUser.displayName);
+        const nom = interaction.options.getString('nom');
+        const prenom = interaction.options.getString('prenom');
+        const titre = interaction.options.getString('titre') || "Loutre Naissante"; // Utilisez "Loutre Naissante" comme valeur par défaut si titre est vide
+        const fileName = interaction.options.getString('filename');
+  
 
         try {
             await userDocRef.set({
@@ -68,8 +94,8 @@ module.exports = {
                 Prenom: prenom,
                 Nom: nom,
                 websiteInfo:{
-                    fileName: await prenom.toLowerCase(),
-                    Titre: "Loutre Naissante",
+                    fileName: fileName,
+                    Titre: titre,
                     profilPage: false,
                     profilPageInfo: {
                         descriptionHTML: " ",
