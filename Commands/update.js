@@ -42,7 +42,7 @@ module.exports = {
 
         await updateFunction();
 
-        await interaction.editReply({ content: "Mise à jour du site web réalisée avec succès.", ephemeral: true });
+        return interaction.editReply({ content: "Mise à jour du site web réalisée avec succès.", ephemeral: true });
         
     }
 }

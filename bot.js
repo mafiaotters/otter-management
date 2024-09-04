@@ -17,31 +17,6 @@ app.listen(PORT, () => {
 });
 //FIN DE HEALTH CHECK UP DE L'APPLICATION
 
-const lockFilePath = path.join(__dirname, 'lockfile');
-
-// Fonction pour vérifier si le verrou existe
-function isLocked() {
-    return fs.existsSync(lockFilePath);
-}
-
-// Fonction pour créer le verrou
-function lock() {
-    fs.writeFileSync(lockFilePath, 'locked');
-}
-
-// Fonction pour supprimer le verrou
-function unlock() {
-    if (isLocked()) {
-        fs.unlinkSync(lockFilePath);
-    }
-}
-if (isLocked()) {
-    console.log('Le processus est déjà verrouillé.');
-} else {
-    console.log('Verrouillage du démarrage du bot...');
-    lock();
-}
-
 require('dotenv').config();
 
 const Discord = require('discord.js');
@@ -97,10 +72,6 @@ bot.on('guildMemberUpdate', (oldMember, newMember) => {
 bot.on('guildCreate', async (guild) => {
     await bot.function.linkGuildDB(bot, guild);
 });
-
-
-console.log('Déverrouillage du démarrage du bot...');
-unlock();
 
 
 /* POUR LE DEVELOPPMENT UNIQUMENT

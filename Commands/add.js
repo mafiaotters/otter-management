@@ -2,24 +2,6 @@ const db = require('../Loader/loadDatabase');
 const fs = require('fs');
 const path = require('path');
 
-const lockFilePath = path.join(__dirname, 'lockfile');
-// Fonction pour vérifier si le verrou existe
-function isLocked() {
-    return fs.existsSync(lockFilePath);
-}
-// Fonction pour créer le verrou
-function lock() {
-    fs.writeFileSync(lockFilePath, 'locked');
-}
-// Fonction pour supprimer le verrou
-function unlock() {
-    if (isLocked()) {
-        fs.unlinkSync(lockFilePath);
-    }
-}
-
-
-
 const rolePermissions = {
     "Le Parrain": 6,
     "Sottocapo": 5,
@@ -98,14 +80,6 @@ module.exports = {
     ],
 
     async run(bot, interaction, args) {
-        // Vérifier si la commande est verrouillée
-
-
-        if (isLocked()) {
-            console.log('Le processus est déjà verrouillé.');
-        } else {
-            console.log('Verrouillage du processus...');
-            lock();
 
         try{
 
@@ -174,7 +148,7 @@ module.exports = {
                 }
             });
 
-            addMemberToActiveMembers(await interaction.guild.members.fetch(discordUser), prenom, nom);
+            await addMemberToActiveMembers(await interaction.guild.members.fetch(discordUser), prenom, nom);
 
             console.log(`Membre ajouté avec succès: ${discordName}`)
             interaction.editReply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
@@ -189,4 +163,3 @@ module.exports = {
         }
         
     }
-}
