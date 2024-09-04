@@ -154,10 +154,8 @@ module.exports = {
             console.error(": Erreur lors de l'ajout du membre " + discordName, error);
             interaction.editReply({ content: "Une erreur est survenue lors de l'ajout du membre.", ephemeral: true });
         }
-    } finally {
-        // Déverrouiller la commande
-        unlock();
-    }
+    } catch (error) {
+        console.error("Erreur lors de l'ajout du membre", error);}
         }
         
     }
