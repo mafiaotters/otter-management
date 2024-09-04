@@ -16,22 +16,22 @@ const rolePermissions = {
     const roles = member.roles.cache;
     const activeRef = db.collection('activeMembers');
   
-    // Trouver le rôle le plus élevé du membre
+    // Trouver le rôle le plus élevé du membre qui est également défini dans rolePermissions
     const highestRole = roles
       .filter(role => rolePermissions[role.name])
       .sort((a, b) => rolePermissions[b.name] - rolePermissions[a.name])
       .first();
   
-    if (!highestRole) {
+    if (!highestRole || !rolePermissions[highestRole.name]) {
       console.log(`Aucun rôle significatif trouvé pour ${discordName}.`);
       return;
     }
   
-    // Ajouter le membre dans la collection "activeMembers" sous le rôle le plus élevé
+    // Ajouter le membre dans la collection "activeMembers" sous le rôle le plus élevé trouvé
     const highestRoleRef = activeRef.doc(highestRole.name).collection('members');
     await highestRoleRef.doc(discordName).set({pseudo: prenom + " " + nom}); 
     console.log(`Ajouté à la collection ${highestRole.name} pour ${discordName} avec le pseudo: ${discordName}`);
-  }  
+}
 
 module.exports = {
     name: "add",
