@@ -50,6 +50,8 @@ module.exports = {
         const allowedUsers = ['207992750988197889', '173439968381894656', '239407042182381588']; // Jungso, Sefa, Kaaz, compte test Sefa
         // Vérifie si l'utilisateur est un administrateur ou s'il est dans la liste des utilisateurs autorisés
         const isAllowedUser = allowedUsers.includes(interaction.user.id);
+
+        interaction.deferReply({ ephemeral: true });
     
         // Vérifie l'autorisation
         if (!isAllowedUser) {
@@ -105,11 +107,11 @@ module.exports = {
                     }
                 }
             });
-            await interaction.reply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
-            console.log(`${timestamp}: Membre ajouté avec succès: ${discordName}`)
+            await interaction.deferReply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
+            console.log(`Membre ajouté avec succès: ${discordName}`)
         } catch (error) {
-            console.error(timestamp + ": Erreur lors de l'ajout du membre " + discordName, error);
-            await interaction.reply({ content: "Une erreur est survenue lors de l'ajout du membre.", ephemeral: true });
+            console.error(": Erreur lors de l'ajout du membre " + discordName, error);
+            await interaction.deferReply({ content: "Une erreur est survenue lors de l'ajout du membre.", ephemeral: true });
         }
 
         
