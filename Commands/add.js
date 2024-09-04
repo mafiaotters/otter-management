@@ -80,7 +80,7 @@ module.exports = {
 
         const nom = interaction.options.getString('nom');
         const prenom = interaction.options.getString('prenom');
-        const titre = interaction.options.getString('titre') || "Loutre Naissante"; // Utilisez "Loutre Naissante" comme valeur par défaut si titre est vide
+        const titre = interaction.options.getString('titre') || "Loutre Mafieuse"; // Utilisez "Loutre Mafieuse" comme valeur par défaut si titre est vide
         const fileName = interaction.options.getString('filename');
   
 
