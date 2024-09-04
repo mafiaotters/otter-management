@@ -2,24 +2,6 @@ const db = require('../Loader/loadDatabase');
 const fs = require('fs');
 const path = require('path');
 
-const lockFilePath = path.join(__dirname, 'lockfile');
-// Fonction pour vérifier si le verrou existe
-function isLocked() {
-    return fs.existsSync(lockFilePath);
-}
-// Fonction pour créer le verrou
-function lock() {
-    fs.writeFileSync(lockFilePath, 'locked');
-}
-// Fonction pour supprimer le verrou
-function unlock() {
-    if (isLocked()) {
-        fs.unlinkSync(lockFilePath);
-    }
-}
-
-
-
 const rolePermissions = {
     "Le Parrain": 6,
     "Sottocapo": 5,
@@ -98,14 +80,6 @@ module.exports = {
     ],
 
     async run(bot, interaction, args) {
-        // Vérifier si la commande est verrouillée
-
-
-        if (isLocked()) {
-            console.log('Le processus est déjà verrouillé.');
-        } else {
-            console.log('Verrouillage du processus...');
-            lock();
 
         try{
 
@@ -114,8 +88,6 @@ module.exports = {
         const allowedUsers = ['207992750988197889', '173439968381894656', '239407042182381588']; // Jungso, Sefa, Kaaz, compte test Sefa
         // Vérifie si l'utilisateur est un administrateur ou s'il est dans la liste des utilisateurs autorisés
         const isAllowedUser = allowedUsers.includes(interaction.user.id);
-    
-
 
         await interaction.deferReply({ ephemeral: true });
 
@@ -174,7 +146,7 @@ module.exports = {
                 }
             });
 
-            addMemberToActiveMembers(await interaction.guild.members.fetch(discordUser), prenom, nom);
+            await addMemberToActiveMembers(await interaction.guild.members.fetch(discordUser), prenom, nom);
 
             console.log(`Membre ajouté avec succès: ${discordName}`)
             interaction.editReply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
@@ -189,4 +161,3 @@ module.exports = {
         }
         
     }
-}
