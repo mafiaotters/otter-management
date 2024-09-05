@@ -73,9 +73,14 @@ bot.on('guildMemberUpdate', (oldMember, newMember) => {
 bot.on('guildCreate', async (guild) => {
     await bot.function.linkGuildDB(bot, guild);
 });
-bot.on('interactionCreate', async (interaction) => {
-  // Supprimer les écouteurs d'événements existants, pour prévenir de certains bugs.
+
+// Supprimer les écouteurs d'événements existants avant de vérifier le nombre de listeners, pour prévenir de certains bugs.
 bot.removeAllListeners('interactionCreate');
+
+// Avant d'ajouter le listener
+console.log(`Nombre de listeners pour 'interactionCreate' avant ajout: ${bot.listenerCount('interactionCreate')}`);
+
+bot.on('interactionCreate', async (interaction) => {
   console.log('Nouvelle interaction reçue:', interaction.id);
   if (interaction.isCommand()) {
     console.log('Tentative de différer l\'interaction:', interaction.id);
@@ -92,7 +97,8 @@ bot.removeAllListeners('interactionCreate');
   };
   bot.hasInteractionCreateListener = true; // Marque que l'écouteur a été ajouté
 })
-
+// Après avoir ajouté le listener
+console.log(`Nombre de listeners pour 'interactionCreate' après ajout: ${bot.listenerCount('interactionCreate')}`);
 
 /* POUR LE DEVELOPPMENT UNIQUMENT
 const downloadGitWebsite = require('./Helpers/downloadGitWebsite');
