@@ -50,7 +50,7 @@ module.exports = {
         if (!interaction.deferred && !interaction.replied) {
             await interaction.followUp({ content: "Une erreur est survenue.", ephemeral: true });
           }
-        
+         
           
     }
 }
