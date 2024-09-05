@@ -97,7 +97,7 @@ module.exports = {
         // Vérifie l'autorisation
         if (!isAllowedUser) {
             // Si l'utilisateur n'est ni admin ni dans la liste, on refuse l'exécution de la commande
-            return interaction.editReply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
+            return interaction.followUp({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
         }
         
         // Supposons que args[0] est l'ID Discord du membre à ajouter
@@ -112,7 +112,7 @@ module.exports = {
         const docSnapshot = await userDocRef.get();
         if(docSnapshot.exists) {
             console.log(`${timestamp}: Membre déjà dans la base de données: ${discordName}`)
-            return interaction.editReply({ content: "Ce membre est déjà dans la base de données.", ephemeral: true });
+            return interaction.followUp({ content: "Ce membre est déjà dans la base de données.", ephemeral: true });
         }
 
        /* console.log('displayName: ' + discordUser.displayName);
@@ -150,15 +150,11 @@ module.exports = {
             await addMemberToActiveMembers(await interaction.guild.members.fetch(discordUser), prenom, nom);
 
             console.log(`Membre ajouté avec succès: ${discordName}`)
-            if (!interaction.replied) {
-                interaction.reply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
-            } else{
-                interaction.editReply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
-            }
+            await interaction.followUp({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
         } catch (error) {
         console.error("Erreur lors de l'ajout du membre:", error);
         if (!interaction.deferred && !interaction.replied) {
-            await interaction.reply({ content: "Une erreur est survenue lors de l'exécution de la commande.", ephemeral: true }).catch(console.error);
+            await interaction.followUp({ content: "Une erreur est survenue lors de l'exécution de la commande.", ephemeral: true }).catch(console.error);
         }
     }}
         
