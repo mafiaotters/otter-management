@@ -24,7 +24,7 @@ module.exports = {
         // Vérifie si l'utilisateur a déjà utilisé la commande récemment
         if (lastUsed[userId] && timestamp - lastUsed[userId] < cooldownPeriod) {
             const timeLeft = ((cooldownPeriod - (timestamp - lastUsed[userId])) / 1000).toFixed(0);
-            return interaction.editReply({ content: `Veuillez attendre ${timeLeft} secondes avant de réutiliser cette commande.`, ephemeral: true });
+            return interaction.followUp({ content: `Veuillez attendre ${timeLeft} secondes avant de réutiliser cette commande.`, ephemeral: true });
         }
     
         // Met à jour le timestamp de la dernière utilisation pour cet utilisateur
@@ -37,19 +37,17 @@ module.exports = {
         // Vérifie l'autorisation d'executer la commande
         if (!isAllowedUser) {
             // Si l'utilisateur n'est ni admin ni dans la liste, on refuse l'exécution de la commande
-            return interaction.editReply({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
+            return interaction.followUp({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
         }
 
         console.log(` Mise à jour du site web...`);
 
         await updateFunction();
 
-        if (!interaction.replied) {
-            return await interaction.editReply({ content: `Le membre ${discordName} a été retiré avec succès.`, ephemeral: true });
-        }        
+        await interaction.followUp({ content: "Mise à jour du site web effectuée avec succès." });
     } catch (error) { 
     if (!interaction.deferred && !interaction.replied) {
-        await interaction.reply({ content: "Une erreur est survenue lors de l'exécution de la commande.", ephemeral: true }).catch(console.error);
+        await interaction.followUp({ content: "Une erreur est survenue lors de l'exécution de la commande.", ephemeral: true }).catch(console.error);
 
     }}
     }

@@ -57,6 +57,12 @@ bot.on('ready', () => {
     loadSlashCommands(bot);
 });
 
+
+// Supprimer les écouteurs d'événements existants, pour prévenir de certains bugs.
+bot.removeAllListeners('guildMemberUpdate');
+bot.removeAllListeners('guildCreate');
+bot.removeAllListeners('interactionCreate');
+
 // UPDATE FUNCTION
 const updateFunction = require('./Helpers/updateFunction');
 updateFunction();
@@ -72,6 +78,19 @@ bot.on('guildMemberUpdate', (oldMember, newMember) => {
 bot.on('guildCreate', async (guild) => {
     await bot.function.linkGuildDB(bot, guild);
 });
+
+if (!bot.hasInteractionCreateListener) {
+  bot.on('interactionCreate', async (interaction) => {
+    if(interaction.type === Discord.InteractionType.ApplicationCommand) {
+      // Then take the command name 
+      let command = require(`./Commands/${interaction.commandName}`);
+      console.log('Commande: ' + command.name)
+      //Run the command
+      command.run(bot, interaction, command.options);
+  } 
+  });
+  bot.hasInteractionCreateListener = true; // Marque que l'écouteur a été ajouté
+}
 
 
 /* POUR LE DEVELOPPMENT UNIQUMENT
