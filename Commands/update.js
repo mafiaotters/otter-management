@@ -10,7 +10,6 @@ module.exports = {
     dm: true,
     category: "User",
 
-  
 
     async run(bot, interaction, args) {
         const userId = interaction.user.id;
@@ -18,8 +17,9 @@ module.exports = {
         const cooldownPeriod = 60000; // Délai en millisecondes, ici 60 secondes
 
         try{ 
-
-        await interaction.deferReply({ ephemeral: true });
+            if (!interaction.deferred && !interaction.replied) {
+                await interaction.deferReply({ ephemeral: true });
+            }
     
         // Vérifie si l'utilisateur a déjà utilisé la commande récemment
         if (lastUsed[userId] && timestamp - lastUsed[userId] < cooldownPeriod) {
@@ -46,9 +46,12 @@ module.exports = {
 
         await interaction.followUp({ content: "Mise à jour du site web effectuée avec succès." });
     } catch (error) { 
-    if (!interaction.deferred && !interaction.replied) {
-        await interaction.followUp({ content: "Une erreur est survenue lors de l'exécution de la commande.", ephemeral: true }).catch(console.error);
-
-    }}
+        console.error("Erreur lors de la mise à jour du site web:", error);
+        if (!interaction.deferred && !interaction.replied) {
+            await interaction.followUp({ content: "Une erreur est survenue.", ephemeral: true });
+          }
+        
+          
     }
+}
 }

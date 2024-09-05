@@ -6,11 +6,15 @@ async function deleteMember(discordName, interaction) {
     const profilesRef = db.collection('profiles');
     const userDocRef = profilesRef.doc(discordName);
 
+    if (!interaction.deferred && !interaction.replied) {
+        await interaction.deferReply({ ephemeral: true });
+    }
+
     const docSnapshot = await userDocRef.get();
     if(!docSnapshot.exists) {
-        console.log(`: Membre inexistant dans la base de données: ${discordName}`);
+        console.log(`Membre inexistant dans la base de données: ${discordName}`);
         if (interaction) {
-            return interaction.reply({ content: "Ce membre n'est pas dans la base de données.", ephemeral: true });
+            return interaction.editReply({ content: "Ce membre n'est pas dans la base de données.", ephemeral: true });
         } else {
             // Gérer le cas où interaction n'est pas défini
             console.log("Action impossible : Ce membre n'est pas dans la base de données.");
@@ -21,7 +25,7 @@ async function deleteMember(discordName, interaction) {
     // Supprimer le membre de la collection activeMembers
     await handleMemberLeave(null, { user: { username: discordName } });
 
-    await interaction.reply({ content: `Le membre ${discordName} a été retiré avec succès.`, ephemeral: true });
+    await interaction.editReply({ content: `Le membre ${discordName} a été retiré avec succès.`, ephemeral: true });
 
 }
 
