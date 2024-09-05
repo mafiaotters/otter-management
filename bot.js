@@ -81,16 +81,23 @@ bot.on('guildCreate', async (guild) => {
 
 if (!bot.hasInteractionCreateListener) {
   bot.on('interactionCreate', async (interaction) => {
-    if(interaction.type === Discord.InteractionType.ApplicationCommand) {
-      // Then take the command name 
-      let command = require(`./Commands/${interaction.commandName}`);
-      console.log('Commande: ' + command.name)
-      //Run the command
-      command.run(bot, interaction, command.options);
-  } 
-  });
-  bot.hasInteractionCreateListener = true; // Marque que l'écouteur a été ajouté
-}
+    console.log('Nouvelle interaction reçue:', interaction.id);
+    if (interaction.isCommand()) {
+      console.log('Tentative de différer l\'interaction:', interaction.id);
+      await interaction.deferReply({ ephemeral: true });
+      console.log('Interaction différée:', interaction.id);
+
+      if(interaction.type === Discord.InteractionType.ApplicationCommand) {
+        // Then take the command name 
+        let command = require(`./Commands/${interaction.commandName}`);
+        console.log('Commande: ' + command.name)
+        //Run the command
+        command.run(bot, interaction, command.options);
+    } 
+    };
+    bot.hasInteractionCreateListener = true; // Marque que l'écouteur a été ajouté
+  })
+  }
 
 
 /* POUR LE DEVELOPPMENT UNIQUMENT
