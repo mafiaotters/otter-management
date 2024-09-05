@@ -155,7 +155,9 @@ module.exports = {
             interaction.editReply({ content: "Une erreur est survenue lors de l'ajout du membre.", ephemeral: true });
         }
     } catch (error) {
-        console.error("Erreur lors de l'ajout du membre", error);}
+        if (!interaction.deferred && !interaction.replied) {
+            await interaction.reply({ content: "Une erreur est survenue lors de l'exécution de la commande.", ephemeral: true }).catch(console.error);
         }
+    }}
         
-    }
+}

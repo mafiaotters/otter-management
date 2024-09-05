@@ -17,6 +17,8 @@ module.exports = {
         const timestamp = new Date().getTime();
         const cooldownPeriod = 60000; // Délai en millisecondes, ici 60 secondes
 
+        try{ 
+
         await interaction.deferReply({ ephemeral: true });
     
         // Vérifie si l'utilisateur a déjà utilisé la commande récemment
@@ -44,5 +46,9 @@ module.exports = {
 
         return interaction.editReply({ content: "Mise à jour du site web réalisée avec succès.", ephemeral: true });
         
-    }
+    } catch (error) { 
+    if (!interaction.deferred && !interaction.replied) {
+        await interaction.reply({ content: "Une erreur est survenue lors de l'exécution de la commande.", ephemeral: true }).catch(console.error);
+
+}}}
 }
