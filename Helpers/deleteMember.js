@@ -6,6 +6,8 @@ async function deleteMember(discordName, interaction) {
     const profilesRef = db.collection('profiles');
     const userDocRef = profilesRef.doc(discordName);
 
+    interaction.deferReply({ ephemeral: true });
+
     const docSnapshot = await userDocRef.get();
     if(!docSnapshot.exists) {
         console.log(`: Membre inexistant dans la base de données: ${discordName}`);
@@ -26,6 +28,7 @@ async function deleteMember(discordName, interaction) {
     } else if (interaction.deferred || interaction.replied) {
         await interaction.editReply({ content: `Le membre ${discordName} a été retiré avec succès.` });
     }
+
 }
 
 module.exports = deleteMember;
