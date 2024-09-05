@@ -44,11 +44,13 @@ module.exports = {
 
         await updateFunction();
 
-        return interaction.editReply({ content: "Mise à jour du site web réalisée avec succès.", ephemeral: true });
-        
+        if (!interaction.replied) {
+            return await interaction.editReply({ content: `Le membre ${discordName} a été retiré avec succès.`, ephemeral: true });
+        }        
     } catch (error) { 
     if (!interaction.deferred && !interaction.replied) {
         await interaction.reply({ content: "Une erreur est survenue lors de l'exécution de la commande.", ephemeral: true }).catch(console.error);
 
-}}}
+    }}
+    }
 }

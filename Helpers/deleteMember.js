@@ -19,9 +19,9 @@ async function deleteMember(discordName, interaction) {
     }
     await userDocRef.delete();
     // Supprimer le membre de la collection activeMembers
-    handleMemberLeave(null, { user: { username: discordName } });
+    await handleMemberLeave(null, { user: { username: discordName } });
     
-    if (interaction) {
+    if (!interaction.replied) {
         await interaction.reply({ content: `Le membre ${discordName} a été retiré avec succès.`, ephemeral: true });
     } else {
         // Gérer le cas où interaction n'est pas défini

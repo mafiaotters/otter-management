@@ -149,10 +149,15 @@ module.exports = {
             await addMemberToActiveMembers(await interaction.guild.members.fetch(discordUser), prenom, nom);
 
             console.log(`Membre ajouté avec succès: ${discordName}`)
-            interaction.editReply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
+            if (!interaction.replied) {
+                interaction.editReply({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
+            }
         } catch (error) {
             console.error(": Erreur lors de l'ajout du membre " + discordName, error);
+            if (!interaction.replied) {
+                await interaction.reply({ content: `Le membre ${discordName} a été retiré avec succès.`, ephemeral: true });        
             interaction.editReply({ content: "Une erreur est survenue lors de l'ajout du membre.", ephemeral: true });
+            }
         }
     } catch (error) {
         if (!interaction.deferred && !interaction.replied) {
