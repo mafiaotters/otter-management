@@ -13,13 +13,13 @@ async function updateMemberDAO(bot) {
     for (const role of Object.keys(rolePermissions).sort((a, b) => rolePermissions[b] - rolePermissions[a])) {
       const roleRef = db.collection('activeMembers').doc(role).collection('members');
       const membersSnapshot = await roleRef.get();
-      console.log(`Récupération des membres pour le rôle ${role}...`);
+      console.warn(`${role} : Récupération des membres du rôle ...`);
   
       for (const memberDoc of membersSnapshot.docs) {
         const discordName = memberDoc.id;
         const profileDoc = await db.collection('profiles').doc(discordName).get();
 
-        console.log(`Récupération du profil de ${discordName}...`);
+        console.log(`${discordName} : Récupération du profil...`);
   
         if (profileDoc.exists) {
           const profileData = await profileDoc.data();
@@ -76,7 +76,7 @@ class MemberDAO
     
     // Générer les lignes pour chaque membre
     for (const member of membersList) {
-        console.error(`Vérification de l'existence de l'avatar pour ${member.Prenom} ${member.Nom}...`);
+        console.log(`${member.Prenom} ${member.Nom} : Vérification de l'existence de l'avatar...`);
         const basePath = process.env.GITHUB_BRANCH === 'main' ? '/assets/img/speakers' : '/dev/assets/img/speakers';
         const remoteAvatarPath = `${basePath}/${member.fileName}_1.jpg`;
         let avatar = "NoAvatar2";

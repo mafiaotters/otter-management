@@ -11,7 +11,7 @@ async function updateOtterJson(bot) {
     for (const role of Object.keys(rolePermissions).sort((a, b) => rolePermissions[b] - rolePermissions[a])) {
         const roleRef = db.collection('activeMembers').doc(role).collection('members');
         const membersSnapshot = await roleRef.get();
-        console.log(`Récupération des membres pour le rôle ${role}...`);
+        console.warn(`${role} : Récupération des profils complets pour le rôle ...`);
 
         for (const memberDoc of membersSnapshot.docs) {
             const discordName = memberDoc.id;

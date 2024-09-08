@@ -36,7 +36,6 @@ async function removeMemberFromActiveMembers(activeRef, discordName, bot) {
 
 
 async function updateMemberRole(bot) {
-    //const bot = botFile.bot;
     const guild = await bot.guilds.fetch(process.env.GUILD_ID);
     console.log(`Récupération de la guilde: ${guild.name}`);
   
