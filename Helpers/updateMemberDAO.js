@@ -41,6 +41,8 @@ async function updateMemberDAO(bot) {
 
     }
   
+    console.log(membersList)
+
     // Une fois tous les membres récupérés, générer le fichier MemberDAO.php
     await writeMemberDAO(membersList);
   }
