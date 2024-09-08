@@ -33,7 +33,7 @@ async function updateMemberDAO(bot) {
             fileName: profileData.websiteInfo.fileName,
             Prenom: prenom,
             Nom: nom,
-            Titre: role,
+            Titre: profileData.websiteInfo.Titre,
             profilPage: profileData.websiteInfo.profilPage,
           });
         }else{console.log('ERROR: no profile data')}
