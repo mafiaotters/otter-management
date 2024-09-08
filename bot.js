@@ -73,10 +73,10 @@ const updateFunction = require('./Helpers/updateFunction');
 updateFunction(bot);
 
 // Quand un membre change de role
-const handleRoleChange = require('./Events/handleRoleChange');
+/*const handleRoleChange = require('./Events/handleRoleChange');
 bot.on('guildMemberUpdate', (oldMember, newMember) => {
   handleRoleChange(bot, oldMember, newMember);
-});
+});*/
 
 
 //When bot join a guild

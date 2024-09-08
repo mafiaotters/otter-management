@@ -76,6 +76,7 @@ class MemberDAO
     
     // Générer les lignes pour chaque membre
     for (const member of membersList) {
+        console.error(`Vérification de l'existence de l'avatar pour ${member.Prenom} ${member.Nom}...`);
         const basePath = process.env.GITHUB_BRANCH === 'main' ? '/assets/img/speakers' : '/dev/assets/img/speakers';
         const remoteAvatarPath = `${basePath}/${member.fileName}_1.jpg`;
         let avatar = "NoAvatar2";
