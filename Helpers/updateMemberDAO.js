@@ -41,8 +41,6 @@ async function updateMemberDAO(bot) {
 
     }
   
-    console.log(membersList)
-
     // Une fois tous les membres récupérés, générer le fichier MemberDAO.php
     await writeMemberDAO(membersList);
   }
@@ -78,6 +76,7 @@ class MemberDAO
     
     // Générer les lignes pour chaque membre
     for (const member of membersList) {
+        console.error(`Vérification de l'existence de l'avatar pour ${member.Prenom} ${member.Nom}...`);
         const basePath = process.env.GITHUB_BRANCH === 'main' ? '/assets/img/speakers' : '/dev/assets/img/speakers';
         const remoteAvatarPath = `${basePath}/${member.fileName}_1.jpg`;
         let avatar = "NoAvatar2";
