@@ -20,7 +20,7 @@ module.exports = {
         const discordUser = interaction.options.getUser('membre');
         const discordName = discordUser.username; // Récupérer le nom d'utilisateur Discord
 
-        await deleteMember(discordName, interaction);
+        await deleteMember(discordName, interaction, bot);
 
     }
 }

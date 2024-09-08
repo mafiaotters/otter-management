@@ -42,7 +42,7 @@ module.exports = {
 
         console.log(` Mise à jour du site web...`);
 
-        await updateFunction();
+        await updateFunction(bot);
 
         await interaction.followUp({ content: "Mise à jour du site web effectuée avec succès." });
     } catch (error) { 

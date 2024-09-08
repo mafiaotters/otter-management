@@ -3,6 +3,7 @@ Pour rajouter des valeurs par défaut sur les membres, c'est dans Commands/add.j
 
 */
 
+
 //HEALTH CHECK UP DE L'APPLICATION
 const express = require('express');
 const app = express();
@@ -22,6 +23,14 @@ require('dotenv').config();
 const Discord = require('discord.js');
 const intents = new Discord.IntentsBitField(3276799) // Indents used for the bot
 const bot = new Discord.Client({intents});
+
+bot.rolePermissions = {
+  "Le Parrain": 6,
+  "Sottocapo": 5,
+  "Enroloutre": 4,
+  "Loutre Mafieuse": 3,
+  "Loutre Naissante": 2
+};
 
 const loadCommands = require('./Loader/loadCommands');
 const loadEvents = require('./Loader/loadEvents');
@@ -60,7 +69,7 @@ bot.on('ready', () => {
 
 // UPDATE FUNCTION
 const updateFunction = require('./Helpers/updateFunction');
-updateFunction();
+updateFunction(bot);
 
 // Quand un membre change de role
 const handleRoleChange = require('./Events/handleRoleChange');
@@ -81,16 +90,13 @@ bot.removeAllListeners('interactionCreate');
 console.log(`Nombre de listeners pour 'interactionCreate' avant ajout: ${bot.listenerCount('interactionCreate')}`);
 
 bot.on('interactionCreate', async (interaction) => {
-  console.log('Nouvelle interaction reçue:', interaction.id);
   if (interaction.isCommand()) {
-    console.log('Tentative de différer l\'interaction:', interaction.id);
     await interaction.deferReply({ ephemeral: true });
-    console.log('Interaction différée:', interaction.id);
 
     if(interaction.type === Discord.InteractionType.ApplicationCommand) {
       // Then take the command name 
       let command = require(`./Commands/${interaction.commandName}`);
-      console.log('Commande: ' + command.name)
+      console.log('Commande: ' + command.name + ' par: ' + interaction.user.username);
       //Run the command
       command.run(bot, interaction, command.options);
   } 
@@ -103,3 +109,4 @@ console.log(`Nombre de listeners pour 'interactionCreate' après ajout: ${bot.li
 /* POUR LE DEVELOPPMENT UNIQUMENT
 const downloadGitWebsite = require('./Helpers/downloadGitWebsite');
 downloadGitWebsite('https://github.com/Satalis/LOUTRES_SITE/', './devWebsite')*/
+

@@ -1,20 +1,12 @@
 const db = require('../Loader/loadDatabase'); 
 
-const rolePermissions = {
-  "Le Parrain": 6,
-  "Sottocapo": 5,
-  "Enroloutre": 4,
-  "Loutre Mafieuse": 3,
-  "Loutre Naissante": 2
-};
-
 module.exports = async (bot, member) => {
   const discordName = member.user.username;
   const activeRef = db.collection('activeMembers');
 
   try {
     // Parcourir chaque rôle dans rolePermissions pour supprimer l'utilisateur si nécessaire
-    for (const roleName of Object.keys(rolePermissions)) {
+    for (const roleName of Object.keys(bot.rolePermissions)) {
       const roleRef = activeRef.doc(roleName).collection('members');
       const memberDoc = await roleRef.doc(discordName).get();
 

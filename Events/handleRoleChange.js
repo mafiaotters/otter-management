@@ -8,7 +8,7 @@ const rolePermissions = {
   "Loutre Naissante": 2
 };
 
-async function updateActiveMembers(newMember, highestGainedRoleName) {
+async function updateActiveMembers(newMember, highestGainedRoleName, bot) {
   try{
   const discordName = newMember.user.username;
   const profilesRef = db.collection('profiles');
@@ -28,7 +28,7 @@ async function updateActiveMembers(newMember, highestGainedRoleName) {
     }
 
   // Parcourir chaque rôle dans rolePermissions pour retirer l'utilisateur si nécessaire
-  for (const roleName of Object.keys(rolePermissions)) {
+  for (const roleName of Object.keys(bot.rolePermissions)) {
     const roleRef = activeRef.doc(roleName).collection('members');
     const memberDoc = await roleRef.doc(discordName).get();
 
@@ -48,6 +48,8 @@ async function updateActiveMembers(newMember, highestGainedRoleName) {
 }
 }
 module.exports = async (bot, oldMember, newMember) => {
+
+  rolePermissions = bot.rolePermissions;
 try{
   const timestamp = new Date().toISOString();
   const guildIds = ["675543520425148416", "653689680906420235"];
@@ -107,7 +109,7 @@ gainedRoles.forEach(async gainedRole => {
       await userDocRef.update({
         currentRole: highestGainedRole.name
       })
-      updateActiveMembers(newMember, highestGainedRole.name)
+      updateActiveMembers(newMember, highestGainedRole.name, bot)
       ;
     } else {
       console.log(`[${timestamp}] Rôle ajouté à ${newMember.displayName}: ${gainedRole.name}; aucun rôle significatif gagné`);

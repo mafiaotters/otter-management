@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const db = require('../Loader/loadDatabase'); 
 const handleMemberLeave = require('../Events/handleMemberLeave');
 
-async function deleteMember(discordName, interaction) {
+async function deleteMember(discordName, interaction, bot) {
     const profilesRef = db.collection('profiles');
     const userDocRef = profilesRef.doc(discordName);
 
@@ -23,7 +23,7 @@ async function deleteMember(discordName, interaction) {
     }
     await userDocRef.delete();
     // Supprimer le membre de la collection activeMembers
-    await handleMemberLeave(null, { user: { username: discordName } });
+    await handleMemberLeave(bot, { user: { username: discordName } });
 
     await interaction.followUp({ content: `Le membre ${discordName} a été retiré avec succès.`, ephemeral: true });
 

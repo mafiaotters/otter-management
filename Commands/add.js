@@ -1,19 +1,9 @@
 const db = require('../Loader/loadDatabase'); 
 const fs = require('fs');
-const path = require('path');
+const path = require('path');  
 
-const rolePermissions = {
-    "Le Parrain": 6,
-    "Sottocapo": 5,
-    "Enroloutre": 4,
-    "Loutre Mafieuse": 3,
-    "Loutre Naissante": 2
-  };
-  
-  async function addMemberToActiveMembers(member, prenom, nom) {
-    console.log('member: ' + member);
-    console.log('member.id: ' + member.id);
-    console.log('member.user.username: ' + member.user.username);
+/*  async function addMemberToActiveMembers(member, prenom, nom, bot) {
+    rolePermissions = bot.rolePermissions
     const discordName = member.user.username;
     const roles = member.roles.cache;
     const activeRef = db.collection('activeMembers');
@@ -33,7 +23,7 @@ const rolePermissions = {
     const highestRoleRef = activeRef.doc(highestRole.name).collection('members');
     await highestRoleRef.doc(discordName).set({pseudo: prenom + " " + nom}); 
     console.log(`Ajouté à la collection ${highestRole.name} pour ${discordName} avec le pseudo: ${discordName}`);
-}
+}*/
 
 module.exports = {
     name: "add",
@@ -131,7 +121,7 @@ module.exports = {
             lodestoneId: " ",
             verified: false,
             discordId: discordId,
-            currentRole: " ",
+            currentRole: "Attente Update",
             Prenom: prenom,
             Nom: nom,
             websiteInfo:{
@@ -147,7 +137,7 @@ module.exports = {
             }
         });
 
-            await addMemberToActiveMembers(await interaction.guild.members.fetch(discordUser), prenom, nom);
+            //await addMemberToActiveMembers(await interaction.guild.members.fetch(discordUser), prenom, nom, bot);
 
             console.log(`Membre ajouté avec succès: ${discordName}`)
             await interaction.followUp({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });

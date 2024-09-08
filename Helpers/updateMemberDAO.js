@@ -5,14 +5,8 @@ const SftpClient = require('ssh2-sftp-client');
 const sftp = new SftpClient();
 
 
-async function updateMemberDAO() {
-    const rolePermissions = {
-      "Le Parrain": 6,
-      "Sottocapo": 5,
-      "Enroloutre": 4,
-      "Loutre Mafieuse": 3,
-      "Loutre Naissante": 2
-    };
+async function updateMemberDAO(bot) {
+    const rolePermissions = bot.rolePermissions;
   
     let membersList = [];
   
