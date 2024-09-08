@@ -25,7 +25,8 @@ const intents = new Discord.IntentsBitField(3276799) // Indents used for the bot
 const bot = new Discord.Client({intents});
 
 bot.rolePermissions = {
-  "Le Parrain": 6,
+  "Le Parrain": 7,
+  "Loutre Lanceuse de Pantoufles": 6,
   "Loutre Sottocapo": 5,
   "L'Enrôloutre": 4,
   "Loutre Mafieuse": 3,
