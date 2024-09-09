@@ -1,7 +1,7 @@
 const checkCollectionExists = require('./checkCollectionExists');
 
 module.exports = async (bot, guild) => {
-  const db = require('../Loader/loadDatabase');
+  const db = require('../../Loader/loadDatabase');
   const serversRef = db.collection('Servers');
 
   console.log('Vérification de la collection des serveurs Discord...')

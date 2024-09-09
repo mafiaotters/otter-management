@@ -44,10 +44,6 @@ const timestamp = new Date().toISOString();
 bot.color = "#95A5A6" // Set bot color
 
 bot.commands = new Discord.Collection(); // Create collection of commands
-bot.function = {
-    //All functions of bot should go here
-    linkGuildDB: require('./Helpers/checkGuildComponent')
-}
 
 console.log(timestamp + ': Connexion à Discord...')
 bot.login(process.env.DISCORD_TOKEN); // Login to Discord
