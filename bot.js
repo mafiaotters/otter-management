@@ -63,10 +63,21 @@ bot.on('ready', () => {
     loadSlashCommands(bot);
 });
 
+// SYSTEME DE CITATIONS
+const saveQuote = require('./Helpers/quoteSystem');
+// Écouteur d'événements pour les nouveaux messages
+bot.on('messageCreate', async (message) => {
+  if (message.author.bot) return; // Ne pas répondre aux messages du bot lui-même
+  if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
+
+  // Appeler saveQuote quand un message est reçu
+  await saveQuote(message, bot);
+});
+
 
 // UPDATE FUNCTION
 const updateFunction = require('./Helpers/updateFunction');
-updateFunction(bot);
+//updateFunction(bot);
 
 // Quand un membre change de role
 /*const handleRoleChange = require('./Events/handleRoleChange');
