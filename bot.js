@@ -3,6 +3,13 @@ Pour rajouter des valeurs par défaut sur les membres, c'est dans Commands/add.j
 
 */
 
+/*
+A ACTIVER POUR L'ANNIVERSAIRE
+- Systeme de citations ( await saveQuote(message, bot) )
+- 
+
+*/
+
 
 //HEALTH CHECK UP DE L'APPLICATION
 const express = require('express');
@@ -73,12 +80,10 @@ bot.on('messageCreate', async (message) => {
   if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
 
   // Appeler saveQuote quand un message est reçu
-  await saveQuote(message, bot);
+  //await saveQuote(message, bot);
 });
 // Après avoir ajouté le listener
 console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
-
-
 
 // UPDATE FUNCTION
 const updateFunction = require('./Helpers/updateFunction');
