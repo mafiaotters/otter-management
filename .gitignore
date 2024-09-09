@@ -2,6 +2,7 @@ key-firebase.json
 node_modules/
 devWebsite/
 backupWebsite/
+backups/
 .env
 devWebsite/
 tmp/

@@ -78,12 +78,18 @@ class MemberDAO
     for (const member of membersList) {
         console.log(`${member.Prenom} ${member.Nom} : Vérification de l'existence de l'avatar...`);
         const basePath = process.env.GITHUB_BRANCH === 'main' ? '/assets/img/speakers' : '/dev/assets/img/speakers';
-        const remoteAvatarPath = `${basePath}/${member.fileName}_1.jpg`;
+        const remoteAvatarPathJpg = `${basePath}/${member.fileName}_1.jpg`;
+        const remoteAvatarPathPng = `${basePath}/${member.fileName}_1.png`;
         let avatar = "NoAvatar2";
 
         try {
-            const exists = await sftp.exists(remoteAvatarPath);
+            let exists = await sftp.exists(remoteAvatarPathJpg); //Vérifier Jpg, la plus courante.
+            if(exists){
+                avatar = "Avatar2";
+            } else {
+                let exists = await sftp.exists(remoteAvatarPathPng); // Si pas de jpg, vérifie le png dans le doute
             avatar = exists ? "Avatar2" : "NoAvatar2";
+            }
         } catch (err) {
             console.error(`Erreur lors de la vérification de l'existence de l'avatar sur le serveur SFTP: ${err.message}`);
         }
