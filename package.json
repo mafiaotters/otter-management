@@ -4,6 +4,7 @@
   "description": "<h2> Create venv: </h2> <h3> WINDOWS </h3> python -m venv venv source venv/bin/activate  # Sur Windows: venv\\Scripts\\activate",
   "main": "bot.js",
   "scripts": {
+    "start": "node bot.js"
   },
   "engines": {
     "node": "20.5"
