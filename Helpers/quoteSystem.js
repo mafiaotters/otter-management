@@ -9,7 +9,7 @@ const alreadySave = ["Je sais déjà qu'il a dis ça !",
 
 ]
 
-const saveDone = ["C'est dans la boîte !",
+const saveDone = ["Allez hop, j'enregistre sa phrase on la ressortira plus tard !",
 
 ]
 
@@ -76,23 +76,29 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
         const quotesSnapshot = await quotesRef.get();
 
         if (!quotesSnapshot.empty) {
-          // Convertir les documents en un tableau de citations
-          const quotes = quotesSnapshot.docs.map(doc => doc.data().quote);
-          // Sélectionner une citation aléatoire
-          const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-          // Envoyer la citation aléatoire dans le canal
-          message.reply(`"${randomQuote}" - ${discordUsername}`);
-        } else {
+          // Sélectionner une citation au hasard pour cet utilisateur
+          const quotes = [];
+          quotesSnapshot.forEach(doc => quotes.push(doc.data()));
+          if (quotes.length > 0) {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            // Afficher la citation et la date
+            const dataUser = (await userDocRef.get()).data();
+            const prenom = dataUser.Prenom || mentionedUser.displayName;
+            const quoteContent = randomQuote.quote;
+            const quoteDate = randomQuote.date;
+            await message.reply(`"${quoteContent}" — ${prenom}, le ${quoteDate.toDate().toLocaleDateString()}`);
+        }} else {
           // Gérer le cas où l'utilisateur mentionné n'a pas de citations sauvegardées
-          message.reply(`Aucune citation trouvée pour ${discordUsername}.`);
+          message.reply("Cette personne n'as pas de citations. Pas très drôle...");
         }
       } else {
         // Gérer le cas où aucun utilisateur n'est mentionné avec le bot
         const randomOnlyMention = onlyMention[Math.floor(Math.random() * onlyMention.length)];
-        message.channel.reply(randomOnlyMention);
+        message.reply(randomOnlyMention);
       }
     }
   }
 }
+
 
 module.exports = saveQuote;
