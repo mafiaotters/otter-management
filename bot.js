@@ -49,7 +49,6 @@ console.log(timestamp + ': Connexion à Discord...')
 bot.login(process.env.DISCORD_TOKEN); // Login to Discord
 console.log('Connexion validée !')
 
-
 bot.db = loadDatabase()
 
 loadCommands(bot); // Load all commands in collection, to the bot
@@ -65,6 +64,9 @@ bot.on('ready', () => {
 
 // SYSTEME DE CITATIONS
 const saveQuote = require('./Helpers/quoteSystem');
+bot.removeAllListeners('messageCreate');
+// Avant d'ajouter le listener
+console.log(`Nombre de listeners pour 'messageCreate' avant ajout: ${bot.listenerCount('messageCreate')}`);
 // Écouteur d'événements pour les nouveaux messages
 bot.on('messageCreate', async (message) => {
   if (message.author.bot) return; // Ne pas répondre aux messages du bot lui-même
@@ -73,11 +75,14 @@ bot.on('messageCreate', async (message) => {
   // Appeler saveQuote quand un message est reçu
   await saveQuote(message, bot);
 });
+// Après avoir ajouté le listener
+console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
+
 
 
 // UPDATE FUNCTION
 const updateFunction = require('./Helpers/updateFunction');
-//updateFunction(bot);
+updateFunction(bot);
 
 // Quand un membre change de role
 /*const handleRoleChange = require('./Events/handleRoleChange');
@@ -93,10 +98,8 @@ bot.on('guildCreate', async (guild) => {
 
 // Supprimer les écouteurs d'événements existants avant de vérifier le nombre de listeners, pour prévenir de certains bugs.
 bot.removeAllListeners('interactionCreate');
-
 // Avant d'ajouter le listener
 console.log(`Nombre de listeners pour 'interactionCreate' avant ajout: ${bot.listenerCount('interactionCreate')}`);
-
 bot.on('interactionCreate', async (interaction) => {
   if (interaction.isCommand()) {
     await interaction.deferReply({ ephemeral: true });
