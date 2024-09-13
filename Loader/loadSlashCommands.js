@@ -17,17 +17,26 @@ module.exports = async bot => {
         // Put permission "Aucune" if no permission is given.
         .setDefaultMemberPermissions(command.permission === "Aucune" ? null : command.permission)
 
+        // Si on a des options.
         if(command.options?.length >= 1) {
             for(let i = 0; i < command.options.length; i++) {
+
+                if(command.options[i].type === "SUB_COMMAND") {
+                    slashCommand.addSubcommand(subcommand => 
+                        subcommand.setName(command.options[i].name)
+                        .setDescription(command.options[i].description)
+                        // Ici, vous pouvez ajouter des options spécifiques à la sous-commande si nécessaire
+                    )
+                }
                 //If it's a string, add command
-                if(command.options[i].type === "STRING") {
+                 else if(command.options[i].type === "STRING") {
                     slashCommand[`add${command.options[i].type.charAt(0).toUpperCase()
                         + command.options[i].type.slice(1).toLowerCase()}Option`]
                     (optionBuilder => 
                     optionBuilder.setName(command.options[i].name)
                     .setDescription(command.options[i].description)
                     .setAutocomplete(command.options[i].autocomplete)
-                    .setRequired(command.options[i].required))
+                    .setRequired(command.options[i].required)) 
                 }
                 else{
                 // Put in the format capital letter for first caracter. Then put name, description and required.
