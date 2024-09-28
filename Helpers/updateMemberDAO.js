@@ -16,10 +16,10 @@ async function updateMemberDAO(bot) {
       console.warn(`${role} : Récupération des membres du rôle ...`);
   
       for (const memberDoc of membersSnapshot.docs) {
-        const discordName = memberDoc.id;
-        const profileDoc = await db.collection('profiles').doc(discordName).get();
+        const discordId = memberDoc.id;
+        const profileDoc = await db.collection('profiles').doc(discordId).get();
 
-        console.log(`${discordName} : Récupération du profil...`);
+        console.log(`${discordId} : Récupération du profil...`);
   
         if (profileDoc.exists) {
           const profileData = await profileDoc.data();
@@ -78,23 +78,25 @@ class MemberDAO
     for (const member of membersList) {
         console.log(`${member.Prenom} ${member.Nom} : Vérification de l'existence de l'avatar...`);
         const basePath = process.env.GITHUB_BRANCH === 'main' ? '/assets/img/speakers' : '/dev/assets/img/speakers';
-        const remoteAvatarPathJpg = `${basePath}/${member.fileName}_1.jpg`;
-        const remoteAvatarPathPng = `${basePath}/${member.fileName}_1.png`;
-        let avatar = "NoAvatar2";
 
-        try {
-            let exists = await sftp.exists(remoteAvatarPathJpg); //Vérifier Jpg, la plus courante.
-            if(exists){
-                avatar = "Avatar2";
-            } else {
-                let exists = await sftp.exists(remoteAvatarPathPng); // Si pas de jpg, vérifie le png dans le doute
-            avatar = exists ? "Avatar2" : "NoAvatar2";
-            }
+        try{
+            // Trouver l'extension png/jpg du joueur
+            let extension = "jpg"; // Par défaut, jpg
+            let existsExt = await sftp.exists(`${basePath}/${member.fileName}.jpg`); //Vérifier Jpg, la plus courante.
+            extension = existsExt ? "jpg" : "png"; // Définit l'extension de l'avatar
+
+
+            const remoteAvatarPath = `${basePath}/${member.fileName}_1.${extension}`;
+            let avatar = "NoAvatar2"; // Par défaut, pas d'avatar
+
+            let exists = await sftp.exists(remoteAvatarPath); //Vérifier Jpg, la plus courante.
+            avatar = exists ? "Avatar2" : "NoAvatar2";     
+            content += `            new Member("assets/img/speakers/${member.fileName}.${extension}", "${member.Prenom}", "${member.Nom}", "${member.Titre}", ${member.profilPage}, "${avatar}"),\n`;
+            
         } catch (err) {
             console.error(`Erreur lors de la vérification de l'existence de l'avatar sur le serveur SFTP: ${err.message}`);
         }
 
-        content += `            new Member("assets/img/speakers/${member.fileName}.jpg", "${member.Prenom}", "${member.Nom}", "${member.Titre}", ${member.profilPage}, "${avatar}"),\n`;
     }
 
     // Fin du template de MemberDAO.php

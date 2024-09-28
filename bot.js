@@ -3,6 +3,13 @@ Pour rajouter des valeurs par défaut sur les membres, c'est dans Commands/add.j
 
 */
 
+/*
+A ACTIVER POUR L'ANNIVERSAIRE
+- Systeme de citations ( await saveQuote(message, bot) )
+- 
+
+*/
+
 
 //HEALTH CHECK UP DE L'APPLICATION
 const express = require('express');
@@ -44,15 +51,10 @@ const timestamp = new Date().toISOString();
 bot.color = "#95A5A6" // Set bot color
 
 bot.commands = new Discord.Collection(); // Create collection of commands
-bot.function = {
-    //All functions of bot should go here
-    linkGuildDB: require('./Helpers/checkGuildComponent')
-}
 
 console.log(timestamp + ': Connexion à Discord...')
 bot.login(process.env.DISCORD_TOKEN); // Login to Discord
 console.log('Connexion validée !')
-
 
 bot.db = loadDatabase()
 
@@ -67,6 +69,21 @@ bot.on('ready', () => {
     loadSlashCommands(bot);
 });
 
+// SYSTEME DE CITATIONS
+const saveQuote = require('./Helpers/quoteSystem');
+bot.removeAllListeners('messageCreate');
+// Avant d'ajouter le listener
+console.log(`Nombre de listeners pour 'messageCreate' avant ajout: ${bot.listenerCount('messageCreate')}`);
+// Écouteur d'événements pour les nouveaux messages
+bot.on('messageCreate', async (message) => {
+  if (message.author.bot) return; // Ne pas répondre aux messages du bot lui-même
+  if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
+
+  // Appeler saveQuote quand un message est reçu
+  //await saveQuote(message, bot);
+});
+// Après avoir ajouté le listener
+console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
 
 // UPDATE FUNCTION
 const updateFunction = require('./Helpers/updateFunction');
@@ -77,7 +94,7 @@ updateFunction(bot);
 bot.on('guildMemberUpdate', (oldMember, newMember) => {
   handleRoleChange(bot, oldMember, newMember);
 });*/
-
+ 
 
 //When bot join a guild
 bot.on('guildCreate', async (guild) => {
@@ -86,10 +103,8 @@ bot.on('guildCreate', async (guild) => {
 
 // Supprimer les écouteurs d'événements existants avant de vérifier le nombre de listeners, pour prévenir de certains bugs.
 bot.removeAllListeners('interactionCreate');
-
 // Avant d'ajouter le listener
 console.log(`Nombre de listeners pour 'interactionCreate' avant ajout: ${bot.listenerCount('interactionCreate')}`);
-
 bot.on('interactionCreate', async (interaction) => {
   if (interaction.isCommand()) {
     await interaction.deferReply({ ephemeral: true });

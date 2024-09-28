@@ -12,8 +12,9 @@ async function updateActiveMembers(newMember, highestGainedRoleName, bot) {
   try{
   const discordName = newMember.user.username;
   const profilesRef = db.collection('profiles');
-  const userDocRef = profilesRef.doc(discordName);
+  const userDocRef = profilesRef.doc(discordId);
   const activeRef = db.collection('activeMembers');
+  const discordId = newMember.user.id
 
     // Récupérer les informations de Prenom et Nom depuis la collection profiles
     const profileDoc = await userDocRef.get();
@@ -30,17 +31,17 @@ async function updateActiveMembers(newMember, highestGainedRoleName, bot) {
   // Parcourir chaque rôle dans rolePermissions pour retirer l'utilisateur si nécessaire
   for (const roleName of Object.keys(bot.rolePermissions)) {
     const roleRef = activeRef.doc(roleName).collection('members');
-    const memberDoc = await roleRef.doc(discordName).get();
+    const memberDoc = await roleRef.doc(discordId).get();
 
     if (memberDoc.exists) {
-      await roleRef.doc(discordName).delete();
+      await roleRef.doc(discordId).delete();
       console.log(`Retiré de la collection ${roleName} pour ${discordName}`);
     }
   }
 
   // Ajouter le discordId dans la collection du grade le plus élevé avec le pseudo principal
   const highestRoleRef = activeRef.doc(highestGainedRoleName).collection('members');
-  await highestRoleRef.doc(discordName).set({pseudo: fullName}); 
+  await highestRoleRef.doc(discordId).set({pseudo: fullName}); 
   console.log(`Ajouté à la collection ${highestGainedRoleName} pour ${discordName} avec le pseudo: ${fullName}`);
 
 } catch (error) {
@@ -64,8 +65,9 @@ try{
   const gainedRoles = newRoles.filter(role => !oldRoles.has(role.id));
 
   const discordName = newMember.user.username;
+  const discordId = newMember.user.id
   const profilesRef = db.collection('profiles');
-  const userDocRef = profilesRef.doc(discordName);
+  const userDocRef = profilesRef.doc(discordId);
 
   // Vérifier si le document de l'utilisateur existe
   const userDoc = await userDocRef.get();

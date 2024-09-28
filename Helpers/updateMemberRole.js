@@ -22,14 +22,14 @@ function getHighestRole(memberRoles, bot) {
     return highestRole;
   }
 
-async function removeMemberFromActiveMembers(activeRef, discordName, bot) {
+async function removeMemberFromActiveMembers(activeRef, discordId, bot) {
     for (const roleName of Object.keys(bot.rolePermissions)) {
         const roleRef = activeRef.doc(roleName).collection('members');
-        const memberDoc = await roleRef.doc(discordName).get();
+        const memberDoc = await roleRef.doc(discordId).get();
       
         if (memberDoc.exists) {
-          await roleRef.doc(discordName).delete();
-          console.log(`Retiré de la collection ${roleName} pour ${discordName}`);
+          await roleRef.doc(discordId).delete();
+          console.log(`Retiré de la collection ${roleName} pour ${discordId}`);
         }
       }
     }
@@ -44,8 +44,8 @@ async function updateMemberRole(bot) {
     console.log(`Récupération de tous les profils Firestore...`);
   
     for (const profileDoc of profilesSnapshot.docs) {
-      const discordId = profileDoc.data().discordId; // Récupération de discordId
-      const discordName = profileDoc.id;
+      const discordName = profileDoc.data().Prenom;
+      const discordId = profileDoc.id;
 
     // Vérifiez si discordId est défini
       if (!discordId) {
@@ -75,7 +75,7 @@ async function updateMemberRole(bot) {
                 await profileDoc.ref.update({ currentRole: highestRole });
 
                 // Retrait l'ancien profil de activeMembers - Aucune distinction du rôle actuel, puisqu'il a changé.
-                await removeMemberFromActiveMembers(activeRef, discordName, bot);
+                await removeMemberFromActiveMembers(activeRef, discordId, bot);
 
                   // Variable fullName
                   const prenom = profileDoc.data().Prenom || "";
@@ -84,12 +84,12 @@ async function updateMemberRole(bot) {
 
                   // Ajout du nouveau profil dans activeMembers
                 const highestRoleRef = activeRef.doc(highestRole).collection('members');
-                await highestRoleRef.doc(discordName).set({pseudo: fullName}); 
+                await highestRoleRef.doc(discordId).set({pseudo: fullName}); 
                 console.log(`${discordName} : Ajouté à la collection ${highestRole} avec le pseudo: ${fullName}`);
             }
         } else {
             console.log(`${discordName} : Aucun rôle significatif trouvé. Suppression du profil de activeMembers.`);
-            removeMemberFromActiveMembers(activeRef, discordName, bot);
+            removeMemberFromActiveMembers(activeRef, discordId, bot);
         }
       } catch (error) {
         if(error.message.includes('Unknown Member')){

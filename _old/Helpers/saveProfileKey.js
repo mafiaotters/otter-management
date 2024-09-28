@@ -1,4 +1,4 @@
-const db = require('../Loader/loadDatabase');
+const db = require('../../Loader/loadDatabase');
 
 async function saveProfileKey(discordId, keyGenerated, lodestoneId, discordName) {
   const profilesRef = db.collection('profiles');
