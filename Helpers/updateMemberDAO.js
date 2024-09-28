@@ -16,10 +16,10 @@ async function updateMemberDAO(bot) {
       console.warn(`${role} : Récupération des membres du rôle ...`);
   
       for (const memberDoc of membersSnapshot.docs) {
-        const discordName = memberDoc.id;
-        const profileDoc = await db.collection('profiles').doc(discordName).get();
+        const discordId = memberDoc.id;
+        const profileDoc = await db.collection('profiles').doc(discordId).get();
 
-        console.log(`${discordName} : Récupération du profil...`);
+        console.log(`${discordId} : Récupération du profil...`);
   
         if (profileDoc.exists) {
           const profileData = await profileDoc.data();

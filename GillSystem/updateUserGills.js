@@ -3,8 +3,8 @@ const db = require('../Loader/loadDatabase');
 async function updateUserGills(user, gillsToAdd) {
   const profilesGillSystemRef = db.collection('gillSystem').doc(user.id)
 
-  const discordName = user.username
-  const profileRef = db.collection('profiles').doc(discordName);
+  const discordId = user.id
+  const profileRef = db.collection('profiles').doc(discordId);
 
 
 
@@ -15,7 +15,7 @@ async function updateUserGills(user, gillsToAdd) {
     updateGillFirestore(profileRef, gillsToAdd);
 
     }catch (error) {
-    console.error("Erreur lors de la mise à jour des gills pour " + discordName, error);
+    console.error("Erreur lors de la mise à jour des gills pour " + discordId, error);
   }
 }
 

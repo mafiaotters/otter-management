@@ -94,7 +94,7 @@ updateFunction(bot);
 bot.on('guildMemberUpdate', (oldMember, newMember) => {
   handleRoleChange(bot, oldMember, newMember);
 });*/
-
+ 
 
 //When bot join a guild
 bot.on('guildCreate', async (guild) => {
