@@ -7,3 +7,4 @@ backups/
 devWebsite/
 tmp/
 .DS_Store
+.venv
