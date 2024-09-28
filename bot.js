@@ -6,7 +6,7 @@ Pour rajouter des valeurs par défaut sur les membres, c'est dans Commands/add.j
 /*
 A ACTIVER POUR L'ANNIVERSAIRE
 - Systeme de citations ( await saveQuote(message, bot) )
-- 
+- Déplacer gill.js dans "Commands"
 
 */
 
@@ -87,7 +87,7 @@ console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listen
 
 // UPDATE FUNCTION
 const updateFunction = require('./Helpers/updateFunction');
-updateFunction(bot);
+//updateFunction(bot);
 
 // Quand un membre change de role
 /*const handleRoleChange = require('./Events/handleRoleChange');
