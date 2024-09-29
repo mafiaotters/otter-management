@@ -5,19 +5,23 @@ const db = require('../Loader/loadDatabase');
 async function collecte(bot, interaction) {
     const userRef = db.collection('gillSystem').doc(interaction.user.id);
     const doc = await userRef.get();
-
-    if (doc.exists && doc.data().isCollecting) {
+    
+    if (!doc.exists) {
+        // Si le document n'existe pas, créez-le avec isCollecting à true
+        await userRef.set({ isCollecting: true, gills: 0, lastCollected: new Date() });
+    } else if (doc.exists && doc.data().isCollecting) {
         // L'utilisateur est déjà en train de collecter, refusez la nouvelle tentative
         return interaction.editReply({ content: "Veuillez attendre la fin de votre collecte précédente.", ephemeral: true });
     }
-    // Marquez l'utilisateur comme étant en train de collecter
-    await userRef.update({ isCollecting: true });
+    // Si le document existe et que l'utilisateur n'est pas en train de collecter, marquez-le comme tel
+    if (doc.exists) {
+        await userRef.update({ isCollecting: true });
+    }
 
+    const lastCollectedData = doc.data() ? doc.data().lastCollected : undefined;
+    const lastCollected = lastCollectedData ? lastCollectedData.toDate() : new Date().setFullYear(1970);
 
     const now = new Date();
-
-    const lastCollected = doc.data().lastCollected.toDate(); // Convertit Firestore Timestamp en objet Date
-
 
     // Vérifie si la dernière collecte a été faite après 2h du matin aujourd'hui
     const resetTime = new Date(now);
