@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
-const pourquoi = require('./pourquoi');
-const collecte = require('./collecte');
-const classement = require('./classement');
-const casino = require('./casino');
+const pourquoi = require('../GillSystem/pourquoi');
+const collecte = require('../GillSystem/collecte');
+const classement = require('../GillSystem/classement');
+const casino = require('../GillSystem/casino');
 
 module.exports = {
     name: "gill",

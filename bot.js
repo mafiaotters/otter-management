@@ -1,12 +1,16 @@
 /* INFOS
 Pour rajouter des valeurs par défaut sur les membres, c'est dans Commands/add.js
 
+
+TODO:
+- Quand une personne qui a un grade concerné MAIS n'est pas dans la base de données firestore. Avertir par un message dans le chan bot.
 */
 
 /*
 A ACTIVER POUR L'ANNIVERSAIRE
 - Systeme de citations ( await saveQuote(message, bot) )
 - Déplacer gill.js dans "Commands"
+- Ré-activer l'update au démarrage
 
 */
 
@@ -80,7 +84,7 @@ bot.on('messageCreate', async (message) => {
   if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
 
   // Appeler saveQuote quand un message est reçu
-  //await saveQuote(message, bot);
+  await saveQuote(message, bot);
 });
 // Après avoir ajouté le listener
 console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
