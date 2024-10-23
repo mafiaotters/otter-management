@@ -35,6 +35,7 @@ async function updateMemberDAO(bot) {
             Nom: nom,
             Titre: profileData.websiteInfo.Titre,
             profilPage: profileData.websiteInfo.profilPage,
+            hidden : profileData.websiteInfo.hidden
           });
         }else{console.log('ERROR: no profile data')}
       }
@@ -76,6 +77,10 @@ class MemberDAO
     
     // Générer les lignes pour chaque membre
     for (const member of membersList) {
+        if(member.hidden ?? false) {
+            console.warn(`${member.Prenom} ${member.Nom} : Membre caché du site.`);
+            continue;
+        } //Si on veut cacher le membre du site, 
         console.log(`${member.Prenom} ${member.Nom} : Vérification de l'existence de l'avatar...`);
         const basePath = process.env.GITHUB_BRANCH === 'main' ? '/assets/img/speakers' : '/dev/assets/img/speakers';
 
