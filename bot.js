@@ -72,7 +72,7 @@ bot.on('ready', () => {
     if(process.env.GITHUB_BRANCH === 'main'){
       bot.channels.fetch("1282684525259919462").send('Je suis de nouveau en ligne !'); // Met une indication dans le channel admin MAIN
     }
-    bot.user.setActivity('!help | Version: Main', { type: 'WATCHING' });
+    bot.user.setActivity('GILLS', { type: 'WATCHING' });
 
     // Load slash commands
     loadSlashCommands(bot);
