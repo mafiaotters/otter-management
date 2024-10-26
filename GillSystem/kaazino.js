@@ -1,19 +1,20 @@
+const db = require('../Loader/loadDatabase'); 
 const updateUserGills = require('./updateUserGills');
 const { EmbedBuilder } = require('discord.js');
 
 const objects = [
-    {symbole: '🍓', coeff: 3}, 
-    {symbole:'🍪', coeff: 2.78}, 
-    {symbole:'🍑', coeff: 2.48},
-    {symbole: '🍉', coeff: 2.82}, 
-    {symbole:'🍒', coeff: 2.65}, 
-    {symbole:'🍌', coeff: 3.27}, 
-    {symbole:'🍐', coeff: 2.98},
-    {symbole: '🐟', coeff : 7.5}
+    {symbole: '🍓', coeff: 2.2}, 
+    {symbole:'🍪', coeff: 2.3}, 
+    {symbole:'🍑', coeff: 2.4},
+    {symbole: '🍉', coeff: 2}, 
+    {symbole:'🍒', coeff: 1.9}, 
+    {symbole:'🍌', coeff: 1.9}, 
+    {symbole:'🍐', coeff: 1.8},
+    {symbole: '🐟', coeff : 4.7}
 ];
 
 // FONCTION DE DEVELOPPEMENT SIMULATEGAINS - Permet de voir le gain par tentative, lissé.
-/*function simulateGains(numSimulations) {
+function simulateGains(numSimulations) {
     console.warn("[DEV] Simulation des gains en cours...");
     let totalGains = 0;
     for (let i = 0; i < numSimulations; i++) {
@@ -22,7 +23,7 @@ const objects = [
     }
     return totalGains / numSimulations;
 }
-console.log(`Gains moyens par tour: ${simulateGains(90000000)}`);*/
+console.warn(`Gains moyens par tour: ${simulateGains(300000)}`);
 
 
 function generateRandomLine() {
@@ -35,19 +36,43 @@ function generateRandomLine() {
 }
 
 async function kaazino(bot, interaction) {
+    const userRef = db.collection('gillSystem').doc(interaction.user.id);
+    const doc = await userRef.get();
+
+    if (!doc.exists) {
+        return interaction.editReply({ content: 'Tu n\'as pas encore de compte GillSystem. Utilisez la commande `/collecte` pour avoir tes premiers gills !', ephemeral: true });
+    }    
+    const lastPlayedKaazinoData = doc.data() ? doc.data().lastPlayedKaazino : undefined;
+    const lastPlayedKaazino = lastPlayedKaazinoData ? lastPlayedKaazinoData.toDate() : new Date().setFullYear(1970);
+    const now = new Date();
+    const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000); // 10 minutes en millisecondes
+
+    if (lastPlayedKaazino && lastPlayedKaazino > tenMinutesAgo) {
+        // L'utilisateur a déjà joué dans les 10 dernières minutes
+        return interaction.editReply({ content: "Vous avez déjà joué à la machine à sous dans les 10 dernières minutes. Revenez plus tard !", ephemeral: true });
+    }
+
+    // L'utilisateur peut jouer à la machine à sous
+    // Redéfinir la date à maintenant, pour éviter des spams.
+    //await userRef.update({ lastPlayedKaazino: new Date() });
+
+
     const gillsToSpend = Math.floor(Math.random() * (12 - 8 + 1)) + 8; // Dépense aléatoire entre 8 et 12 gills
+    if(doc.data().gills < gillsToSpend) {
+        return interaction.editReply({ content: `Tu n'as pas assez de gills pour la machine à sous, SALE PAUVRE TOCARD`, ephemeral: true });
+    }
 
     // Mettre à jour le solde de gills de l'utilisateur
-    await updateUserGills(interaction.user, -gillsToSpend);
+    await updateUserGills(interaction.user, Math.floor(gillsToSpend) * -1);
 
     // Création de l'embed initial
     let embed = new EmbedBuilder()
         .setTitle('Machine à Sous')
         .setDescription('La machine à sous tourne...')
-        .setColor('#0099ff');
+        .setColor('#003aff');
 
     // Envoyer l'embed initial
-    await interaction.editReply({ content: `:slot_machine::slot_machine::slot_machine: • <@${interaction.user.id}> envoie ${gillsToSpend} :fish: pour la machine à sous..`, embeds: [embed], ephemeral: false });
+    await interaction.editReply({ content: `:slot_machine: • <@${interaction.user.id}> envoie ${gillsToSpend} :fish: pour la machine à sous..`, embeds: [embed], ephemeral: false });
 
     // Simuler le temps de rotation de la machine à sous 3 fois
     for (let i = 0; i < 3; i++) {
@@ -63,23 +88,24 @@ async function kaazino(bot, interaction) {
     // Calculer les gains en utilisant les coefficients
     const gains = calculateGains(result);
 
-   /* // Mise à jour de l'embed avec le résultat de la machine à sous et les gains
-    embed.setDescription(`${result}\nVous avez gagné ${gains} gills !`)
-        .setColor('#0099ff');*/
+    // Mise à jour de l'embed avec le résultat de la machine à sous et les gains
+    embed.setDescription(`${result}`)
 
     // Déterminer le texte à afficher en fonction des gains
     let resultText = '';
     if (gains === 0) {
         resultText = 'et perd :otter_cry~1:';
+        embed.setColor('#a40303');
     } else {
         resultText = 'et gagne ! :otter_pompom:';
+        embed.setColor('#28a403');
     }
 
     // Mise à jour du message avec le nouvel embed
     await interaction.editReply({ content: `:slot_machine: • <@${interaction.user.id}> envoie ${gillsToSpend} :fish: pour la machine à sous... ${resultText}`, embeds: [embed], epheremal: false });
 
     // Mettre à jour le solde de gills de l'utilisateur avec les gains
-    await updateUserGills(interaction.user, gains);
+    await updateUserGills(interaction.user, Math.floor(gains));
 }
 
 function calculateGains(result) {
@@ -100,11 +126,10 @@ function calculateGains(result) {
     objects.forEach(obj => {
         const count = symbolCounts[obj.symbole];
         if (count === 2) {
-            gains += obj.coeff * 8; // Gain pour 2 occurrences
+            gains += obj.coeff * 11.25; // Gain pour 2 occurrences
         } else if (count === 3) {
-            gains += obj.coeff * 20; // Gain pour 3 occurrences
+            gains += obj.coeff * 27; // Gain pour 3 occurrences
         }
-        gain = Math.floor(gains);
     });
     //console.log("Gains: " + gains);
     return gains;
