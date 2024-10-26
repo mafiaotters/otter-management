@@ -5,6 +5,9 @@ require('dotenv').config();
 
 async function saveQuote(message, bot) {
 
+  const botDevId = "1110950106842284072";
+  const botMainId = "1106850900682747974";
+
 const alreadySave = ["Je sais déjà qu'il a dis ça !",
 
 ]
@@ -22,13 +25,22 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
     // Vérifier si le message est une réponse à un autre message
     if (message.reference && message.reference.messageId) {
       const originalMessage = await message.channel.messages.fetch(message.reference.messageId);
+      const discordId = originalMessage.author.id;
+
+      // Vérifier si l'ID de l'auteur est celui du bot de dev ou du bot principal
+      if (discordId === botDevId || discordId === botMainId) {
+        return //await message.reply("Pas besoin de toi pour retenir ce que je dis. :ko:");
+      }
+      const messageId = originalMessage.id;
       const discordUsername = originalMessage.author.username;
       const quoteContent = originalMessage.content;
       const quoteDate = originalMessage.createdAt;
 
       // Accéder à Firestore pour créer ou mettre à jour le document
       const profilesRef = db.collection('profiles');
-      const userDocRef = profilesRef.doc(discordUsername);
+      const userDocRef = profilesRef.doc(discordId);
+      const quotesRef = userDocRef.collection('citations');
+      const quoteDocRef = quotesRef.doc(messageId); // Utiliser l'ID du message comme référence du document
 
       // Vérifier si le profil existe déjà
       const doc = await userDocRef.get();
@@ -43,18 +55,17 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
         }
       }
 
-      const quotesRef = userDocRef.collection('citations');
 
       // Vérifier si la citation existe déjà
-      const existingQuotes = await quotesRef.where('quote', '==', quoteContent).get();
-      if(!existingQuotes.empty) {
+      const quoteExists = await quoteDocRef.get();
+      if(quoteExists.exists) { // Si la citation existe déjà
         const randomAlreadySave = alreadySave[Math.floor(Math.random() * alreadySave.length)]; // Phrase aléatoire de la liste alreadySave
         message.reply(randomAlreadySave);
         return;
       }
 
       // Sauvegarder la citation
-      await quotesRef.add({
+      await quoteDocRef.set({
         quote: quoteContent,
         date: quoteDate
       });
@@ -63,15 +74,25 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
       
 
     } else {
-      // Si le bot est mentionné sans message de réponse
+      // Si le bot est mentionné sans message de réponse, c'est donc qu'un utilisateur veut montrer la citation de quelqu'un
       const mentionedUsers = message.mentions.users.filter(user => user.id !== bot.user.id);
       if (mentionedUsers.size > 0) {
-          // Prendre le premier utilisateur mentionné
-        const mentionedUser = mentionedUsers.first();
-        const discordUsername = mentionedUser.username;
+         // Prendre le premier utilisateur mentionné
+        let mentionedUser = mentionedUsers.first();  
+        // Vérifier si l'ID du premier utilisateur mentionné correspond à celui du bot dev ou main
+        if (mentionedUser.id === botDevId || mentionedUser.id === botMainId) {
+          // Essayer de prendre le second utilisateur mentionné, si disponible
+          const mentionedUsersArray = mentionedUsers.array(); // Convertir en tableau si nécessaire
+          if (mentionedUsersArray.length > 1) {
+            mentionedUser = mentionedUsersArray[1]; // Prendre le second utilisateur mentionné
+          }
+        }
+
+        const discordId = mentionedUser.id;
+// Utiliser discordId comme nécessaire
         // Accéder à Firestore pour récupérer les citations de l'utilisateur mentionné
         const profilesRef = db.collection('profiles');
-        const userDocRef = profilesRef.doc(discordUsername);
+        const userDocRef = profilesRef.doc(discordId);
         const quotesRef = userDocRef.collection('citations');
         const quotesSnapshot = await quotesRef.get();
 

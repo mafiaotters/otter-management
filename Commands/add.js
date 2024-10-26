@@ -97,7 +97,7 @@ module.exports = {
 
         // Accéder à Firestore pour créer ou mettre à jour le document
         const profilesRef = db.collection('profiles');
-        const userDocRef = profilesRef.doc(discordName);
+        const userDocRef = profilesRef.doc(discordId);
 
         const docSnapshot = await userDocRef.get();
         if(docSnapshot.exists) {

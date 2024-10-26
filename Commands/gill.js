@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
-const pourquoi = require('./pourquoi');
-const collecte = require('./collecte');
-const classement = require('./classement');
-const casino = require('./casino');
+const pourquoi = require('../GillSystem/pourquoi');
+const collecte = require('../GillSystem/collecte');
+const classement = require('../GillSystem/classement');
+const kaazino = require('../GillSystem/kaazino');
 
 module.exports = {
     name: "gill",
@@ -23,7 +23,7 @@ module.exports = {
         },
         {
             type: "SUB_COMMAND",
-            name: "casino",
+            name: "kaazino",
             description: "Pariez vos petits poissons pour en avoir plus ! _(peut-être)_",
         },
         {
@@ -42,8 +42,8 @@ module.exports = {
             case "classement":
                 classement(bot, interaction);
                 break;
-            case "casino":
-                casino(bot, interaction);
+            case "kaazino":
+                kaazino(bot, interaction);
                 break;
             case "pourquoi":
                 pourquoi(bot, interaction);
