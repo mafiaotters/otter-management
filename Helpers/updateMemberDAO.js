@@ -74,12 +74,24 @@ class MemberDAO
         return array(
 `;
 
+    // Séparer les premiers 6 membres du reste
+    const firstMembers = membersList.slice(0, 8);
+    let remainingMembers = membersList.slice(8);
+
+    // Mélanger les membres restants
+    remainingMembers = remainingMembers.sort(() => Math.random() - 0.5);
+
+    // Combiner les deux parties
+    const combinedMembers = [...firstMembers, ...remainingMembers];
+
+
     
     // Générer les lignes pour chaque membre
-    for (const member of membersList) {
+    for (const member of combinedMembers) {
         if(member.hidden ?? false) {
             console.warn(`${member.Prenom} ${member.Nom} : Membre caché du site.`);
             continue;
+
         } //Si on veut cacher le membre du site, 
         console.log(`${member.Prenom} ${member.Nom} : Vérification de l'existence de l'avatar...`);
         const basePath = process.env.GITHUB_BRANCH === 'main' ? '/assets/img/speakers' : '/dev/assets/img/speakers';

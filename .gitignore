@@ -8,3 +8,5 @@ devWebsite/
 tmp/
 .DS_Store
 .venv
+package-lock.json
+.github/

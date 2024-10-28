@@ -36,6 +36,17 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
       const quoteContent = originalMessage.content;
       const quoteDate = originalMessage.createdAt;
 
+      if(!quoteContent.lenght || quoteContent.lenght < 2) {
+        return message.reply("Mais c'est pas une phrase ça ! :ko:");
+      }
+      // Vérifier que le contenu est inférieur à 2000 caractères
+      if (quoteContent.length > 1980) {
+        return message.reply("C'est trop long ! Je m'en souviendrai JA.MAIS ! :ko:");
+      }
+      // Vérifier si le message contient une image
+
+      
+
       // Accéder à Firestore pour créer ou mettre à jour le document
       const profilesRef = db.collection('profiles');
       const userDocRef = profilesRef.doc(discordId);
@@ -64,10 +75,12 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
         return;
       }
 
+
+
       // Sauvegarder la citation
       await quoteDocRef.set({
         quote: quoteContent,
-        date: quoteDate
+        date: quoteDate,
       });
       const randomSaveDone = saveDone[Math.floor(Math.random() * saveDone.length)]; // Phrase aléatoire de la liste saveDone
       message.reply(randomSaveDone);
@@ -89,7 +102,7 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
         }
 
         const discordId = mentionedUser.id;
-// Utiliser discordId comme nécessaire
+      // Utiliser discordId comme nécessaire
         // Accéder à Firestore pour récupérer les citations de l'utilisateur mentionné
         const profilesRef = db.collection('profiles');
         const userDocRef = profilesRef.doc(discordId);
@@ -100,15 +113,38 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
           // Sélectionner une citation au hasard pour cet utilisateur
           const quotes = [];
           quotesSnapshot.forEach(doc => quotes.push(doc.data()));
-          if (quotes.length > 0) {
-            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-            // Afficher la citation et la date
-            const dataUser = (await userDocRef.get()).data();
-            const prenom = dataUser.Prenom || mentionedUser.displayName;
-            const quoteContent = randomQuote.quote;
-            const quoteDate = randomQuote.date;
-            await message.reply(`"${quoteContent}" — ${prenom}, le ${quoteDate.toDate().toLocaleDateString()}`);
-        }} else {
+
+          // On rentre dans une boucle pour voir toutes les citations
+          while (quotes.length > 0) {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            const randomQuote = quotes[randomIndex];
+            try {
+              const originalQuoteMessage = await message.channel.messages.fetch(randomQuote.messageId);
+              if (originalQuoteMessage) {
+                const dataUser = (await userDocRef.get()).data();
+                const prenom = dataUser.Prenom || mentionedUser.displayName;
+                const quoteContent = randomQuote.quote;
+                const quoteDate = randomQuote.date;
+                console.log(`[quoteSystem] Enregistrement : ${discordUsername} a dit "${quoteContent}" le ${quoteDate}.`); // Met une indication dans la console (pq pas au channel admin)
+                await message.reply(`" ${quoteContent} " — ${prenom}, le ${quoteDate.toDate().toLocaleDateString()}`);
+                break; // Si on a une citation valide, on sort de la boucle
+              }
+              else{ // Citation non trouvée
+                await quotesRef.doc(randomQuote.messageId).delete();
+                quotes.splice(randomIndex, 1);
+              }
+              // Si le message original n'existe pas, on supprime la citation de la base de données
+            } catch (error) {
+              if (error.code === 10008) { // Message not found
+                await quotesRef.doc(randomQuote.messageId).delete();
+                quotes.splice(randomIndex, 1);
+              } else {
+                throw error;
+              }
+            }
+        }
+      
+      } else {
           // Gérer le cas où l'utilisateur mentionné n'a pas de citations sauvegardées
           message.reply("Cette personne n'as pas de citations. Pas très drôle...");
         }

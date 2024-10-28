@@ -69,6 +69,10 @@ loadEvents(bot); // Load all commands in collection, to the bot
 // Quand le bot est prêt et connecté
 bot.on('ready', () => {
     console.log(`Bot opérationnel sous le nom: ${bot.user.tag}!`);
+    if(process.env.GITHUB_BRANCH === 'main'){
+      bot.channels.fetch("1282684525259919462").send('Je suis de nouveau en ligne !'); // Met une indication dans le channel admin MAIN
+    }
+    bot.user.setActivity('GILLS', { type: 'WATCHING' });
 
     // Load slash commands
     loadSlashCommands(bot);
