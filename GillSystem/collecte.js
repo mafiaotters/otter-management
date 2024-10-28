@@ -30,6 +30,7 @@ async function collecte(bot, interaction) {
     try {
         if (lastCollected && lastCollected > resetTime) {
             // L'utilisateur a déjà collecté ses gills aujourd'hui
+            console.log(`[Collecte] L'utilisateur ${interaction.user.id} a déjà collecté ses gills aujourd'hui.`);
             return interaction.editReply({ content: "Tu as déjà collecté vos gills aujourd'hui. Reviens demain !", ephemeral: true });
         }
         // Générer un nombre aléatoire de gills entre 15 et 22
@@ -40,9 +41,10 @@ async function collecte(bot, interaction) {
 
         // Informer l'utilisateur du nombre de gills collectés
         await interaction.deleteReply();
+        console.log(`[Collecte] L'utilisateur ${interaction.user.id} a collecté ${gills} gills !`);
         await interaction.channel.send({ content: `<@${interaction.user.id}> a collecté ${gills} gills ! :fish:`, ephemeral: false });
     } catch (error) {
-        console.error("Erreur lors de la collecte des gills :", error);
+        console.error("[Collecte] Erreur lors de la collecte des gills :", error);
         await interaction.editReply({ content: "Une erreur est survenue lors de la collecte des gills. Veuillez réessayer plus tard, ou contact Jungso", ephemeral: true });
     } finally {
         // Marquez l'utilisateur comme ayant terminé la collecte

@@ -16,11 +16,22 @@ module.exports = {
         }
     ],
     async run(bot, interaction) {
+        // Liste des ID des utilisateurs autorisés
+        const allowedUsers = ['207992750988197889', '173439968381894656', '239407042182381588']; // Jungso, Sefa, Kaaz
+        // Vérifie si l'utilisateur est un administrateur ou s'il est dans la liste des utilisateurs autorisés
+        const isAllowedUser = allowedUsers.includes(interaction.user.id);
+
+        // Vérifie l'autorisation
+        if (!isAllowedUser) {
+            // Si l'utilisateur n'est ni admin ni dans la liste, on refuse l'exécution de la commande
+            console.log( `[Delete] Utilisateur non autorisé: ${interaction.user.username}`);
+            return interaction.followUp({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
+        }
+
      // Supposons que args[0] est l'ID Discord du membre à ajouter
         const discordUser = interaction.options.getUser('membre');
         const discordName = discordUser.username; // Récupérer le nom d'utilisateur Discord
-
+        console.log(`[Delete] Suppression du membre ${discordName} en cours...`);
         await deleteMember(discordName, interaction, bot);
-
     }
 }

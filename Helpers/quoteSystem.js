@@ -36,7 +36,7 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
       const quoteContent = originalMessage.content;
       const quoteDate = originalMessage.createdAt;
 
-      if(!quoteContent.lenght || quoteContent.lenght < 2) {
+      if(!quoteContent.length || quoteContent.length < 2) {
         return message.reply("Mais c'est pas une phrase ça ! :ko:");
       }
       // Vérifier que le contenu est inférieur à 2000 caractères
@@ -60,9 +60,11 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
         if(process.env.GITHUB_BRANCH === "main"){
           const channel = await bot.channels.fetch("1282684525259919462"); // Met une indication dans le channel admin MAIN
           await channel.send(`quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`);    
+          console.warn(`quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`); // Met une indication dans la console 
         } else{
           const channel = await bot.channels.fetch("1252901298798460978"); // Met une indication dans le channel admin DEV
-          await channel.send(`quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`);    
+          await channel.send(`quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`);   
+          console.warn(`quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`); // Met une indication dans la console
         }
       }
 
@@ -74,13 +76,13 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
         message.reply(randomAlreadySave);
         return;
       }
-      
+
       // Sauvegarder la citation
       await quoteDocRef.set({
         quote: quoteContent,
         date: quoteDate,
       });
-      console.log(`[quoteSystem] Enregistrement : ${discordUsername} a dit "${quoteContent}" le ${quoteDate}.`); // Met une indication dans la console (pq pas au channel admin)
+      console.log(`[quoteSystem] Enregistrement : ${discordUsername} a dit "${quoteContent}" dans ${message.channel.name} le ${quoteDate}.`); // Met une indication dans la console (pq pas au channel admin)
       const randomSaveDone = saveDone[Math.floor(Math.random() * saveDone.length)]; // Phrase aléatoire de la liste saveDone
       message.reply(randomSaveDone);
       
@@ -125,11 +127,13 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
                 const quoteContent = randomQuote.quote;
                 const quoteDate = randomQuote.date;
                 await message.reply(`" ${quoteContent} " — ${prenom}, le ${quoteDate.toDate().toLocaleDateString()}`);
+                console.log('[quoteSystem] Citation de', prenom ,' affichée dans salon :', message.channel.name, " contenu: " ,randomQuote.quote);
                 break; // Si on a une citation valide, on sort de la boucle
               }
               else{ // Citation non trouvée
                 await quotesRef.doc(randomQuote.messageId).delete();
                 quotes.splice(randomIndex, 1);
+                console.log(`[quoteSystem] Citation non trouvée de ${mentionedUser.displayName}, suppression de la base de données`);
               }
               // Si le message original n'existe pas, on supprime la citation de la base de données
             } catch (error) {
