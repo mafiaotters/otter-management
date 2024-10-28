@@ -39,10 +39,8 @@ async function kaazino(bot, interaction) {
     const userRef = db.collection('gillSystem').doc(interaction.user.id);
     const doc = await userRef.get();
 
-    await interaction.deleteReply();
-
     if (!doc.exists) {
-        await interaction.channel.send({ content: 'Tu n\'as pas encore de compte GillSystem. Utilisez la commande `/collecte` pour avoir tes premiers gills !', ephemeral: true });
+        return await interaction.editReply({ content: 'Tu n\'as pas encore de compte GillSystem. Utilisez la commande `/collecte` pour avoir tes premiers gills !', ephemeral: true });
     }    
     const lastPlayedKaazinoData = doc.data() ? doc.data().lastPlayedKaazino : undefined;
     const lastPlayedKaazino = lastPlayedKaazinoData ? lastPlayedKaazinoData.toDate() : new Date().setFullYear(1970);
@@ -51,18 +49,21 @@ async function kaazino(bot, interaction) {
 
     if (lastPlayedKaazino && lastPlayedKaazino > tenMinutesAgo) {
         // L'utilisateur a déjà joué dans les 10 dernières minutes
-        await interaction.channel.send({ content: "Vous avez déjà joué à la machine à sous dans les 10 dernières minutes. Revenez plus tard !", ephemeral: true });
+        return await interaction.editReply({ content: "Vous avez déjà joué à la machine à sous dans les 10 dernières minutes. Revenez plus tard !", ephemeral: true });
     }
-
-    // L'utilisateur peut jouer à la machine à sous
-    // Redéfinir la date à maintenant, pour éviter des spams.
-    //await userRef.update({ lastPlayedKaazino: new Date() });
-
 
     const gillsToSpend = Math.floor(Math.random() * (12 - 8 + 1)) + 8; // Dépense aléatoire entre 8 et 12 gills
     if(doc.data().gills < gillsToSpend) {
-        await interaction.channel.send({ content: `Tu n'as pas assez de gills pour la machine à sous, SALE PAUVRE TOCARD`, ephemeral: true });
+        return await interaction.editReply({ content: `Tu n'as pas assez de gills pour la machine à sous, SALE PAUVRE TOCARD`, ephemeral: true });
     }
+
+        // L'utilisateur peut jouer à la machine à sous
+    // Redéfinir la date à maintenant, pour éviter des spams.
+    await userRef.update({ lastPlayedKaazino: new Date() });
+
+    
+    // Si les messages de vérification sont faits, on sait que la suite est un "succès"
+    await interaction.deleteReply();
 
     // Mettre à jour le solde de gills de l'utilisateur
     await updateUserGills(interaction.user, Math.floor(gillsToSpend) * -1);

@@ -39,7 +39,6 @@ async function getDisplayName(discordId) {
         .setDescription(embedDescription)
         .setColor('#0099ff');
 
-    //await interaction.editReply({ embeds: [embed], ephemeral: false });
     await interaction.channel.send({ embeds: [embed], ephemeral: false });
     await interaction.deleteReply();
     
