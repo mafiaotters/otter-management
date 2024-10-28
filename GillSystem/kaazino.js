@@ -39,8 +39,10 @@ async function kaazino(bot, interaction) {
     const userRef = db.collection('gillSystem').doc(interaction.user.id);
     const doc = await userRef.get();
 
+    await interaction.deleteReply();
+
     if (!doc.exists) {
-        return interaction.editReply({ content: 'Tu n\'as pas encore de compte GillSystem. Utilisez la commande `/collecte` pour avoir tes premiers gills !', ephemeral: true });
+        await interaction.channel.send({ content: 'Tu n\'as pas encore de compte GillSystem. Utilisez la commande `/collecte` pour avoir tes premiers gills !', ephemeral: true });
     }    
     const lastPlayedKaazinoData = doc.data() ? doc.data().lastPlayedKaazino : undefined;
     const lastPlayedKaazino = lastPlayedKaazinoData ? lastPlayedKaazinoData.toDate() : new Date().setFullYear(1970);
@@ -49,7 +51,7 @@ async function kaazino(bot, interaction) {
 
     if (lastPlayedKaazino && lastPlayedKaazino > tenMinutesAgo) {
         // L'utilisateur a déjà joué dans les 10 dernières minutes
-        return interaction.editReply({ content: "Vous avez déjà joué à la machine à sous dans les 10 dernières minutes. Revenez plus tard !", ephemeral: true });
+        await interaction.channel.send({ content: "Vous avez déjà joué à la machine à sous dans les 10 dernières minutes. Revenez plus tard !", ephemeral: true });
     }
 
     // L'utilisateur peut jouer à la machine à sous
@@ -59,7 +61,7 @@ async function kaazino(bot, interaction) {
 
     const gillsToSpend = Math.floor(Math.random() * (12 - 8 + 1)) + 8; // Dépense aléatoire entre 8 et 12 gills
     if(doc.data().gills < gillsToSpend) {
-        return interaction.editReply({ content: `Tu n'as pas assez de gills pour la machine à sous, SALE PAUVRE TOCARD`, ephemeral: true });
+        await interaction.channel.send({ content: `Tu n'as pas assez de gills pour la machine à sous, SALE PAUVRE TOCARD`, ephemeral: true });
     }
 
     // Mettre à jour le solde de gills de l'utilisateur
@@ -72,14 +74,14 @@ async function kaazino(bot, interaction) {
         .setColor('#003aff');
 
     // Envoyer l'embed initial
-    await interaction.editReply({ content: `:slot_machine: • <@${interaction.user.id}> envoie ${gillsToSpend} :fish: pour la machine à sous..`, embeds: [embed], ephemeral: false });
+    const message = await interaction.channel.send({ content: `:slot_machine: • <@${interaction.user.id}> envoie ${gillsToSpend} :fish: pour la machine à sous..`, embeds: [embed], ephemeral: false });
 
     // Simuler le temps de rotation de la machine à sous 3 fois
     for (let i = 0; i < 3; i++) {
         await new Promise(resolve => setTimeout(resolve, 1000)); // Attendre 1 seconde
         const currentResult = `${generateRandomLine()}\n${generateRandomLine()}\n${generateRandomLine()}`;
         embed.setDescription(`\n${currentResult}`);
-        await interaction.editReply({ embeds: [embed] });
+        await message.edit({ embeds: [embed] });
     }
 
     // Générer le dernier embed de la machine à sous
@@ -102,7 +104,7 @@ async function kaazino(bot, interaction) {
     }
 
     // Mise à jour du message avec le nouvel embed
-    await interaction.editReply({ content: `:slot_machine: • <@${interaction.user.id}> envoie ${gillsToSpend} :fish: pour la machine à sous... ${resultText}`, embeds: [embed], epheremal: false });
+    await message.edit({ content: `:slot_machine: • <@${interaction.user.id}> envoie ${gillsToSpend} :fish: pour la machine à sous... ${resultText}`, embeds: [embed], epheremal: false });
 
     // Mettre à jour le solde de gills de l'utilisateur avec les gains
     await updateUserGills(interaction.user, Math.floor(gains));

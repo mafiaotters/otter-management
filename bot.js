@@ -118,7 +118,7 @@ bot.removeAllListeners('interactionCreate');
 console.log(`Nombre de listeners pour 'interactionCreate' avant ajout: ${bot.listenerCount('interactionCreate')}`);
 bot.on('interactionCreate', async (interaction) => {
   if (interaction.isCommand()) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply();
 
     if(interaction.type === Discord.InteractionType.ApplicationCommand) {
       // Then take the command name 
