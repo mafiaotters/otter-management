@@ -74,14 +74,13 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
         message.reply(randomAlreadySave);
         return;
       }
-
-
-
+      
       // Sauvegarder la citation
       await quoteDocRef.set({
         quote: quoteContent,
         date: quoteDate,
       });
+      console.log(`[quoteSystem] Enregistrement : ${discordUsername} a dit "${quoteContent}" le ${quoteDate}.`); // Met une indication dans la console (pq pas au channel admin)
       const randomSaveDone = saveDone[Math.floor(Math.random() * saveDone.length)]; // Phrase aléatoire de la liste saveDone
       message.reply(randomSaveDone);
       
@@ -125,7 +124,6 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
                 const prenom = dataUser.Prenom || mentionedUser.displayName;
                 const quoteContent = randomQuote.quote;
                 const quoteDate = randomQuote.date;
-                console.log(`[quoteSystem] Enregistrement : ${discordUsername} a dit "${quoteContent}" le ${quoteDate}.`); // Met une indication dans la console (pq pas au channel admin)
                 await message.reply(`" ${quoteContent} " — ${prenom}, le ${quoteDate.toDate().toLocaleDateString()}`);
                 break; // Si on a une citation valide, on sort de la boucle
               }
