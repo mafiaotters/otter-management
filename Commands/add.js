@@ -87,6 +87,7 @@ module.exports = {
         // Vérifie l'autorisation
         if (!isAllowedUser) {
             // Si l'utilisateur n'est ni admin ni dans la liste, on refuse l'exécution de la commande
+            console.log( `[Add] Utilisateur non autorisé: ${interaction.user.username}`);
             return interaction.followUp({ content: "Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
         }
         
@@ -139,12 +140,12 @@ module.exports = {
 
             //await addMemberToActiveMembers(await interaction.guild.members.fetch(discordUser), prenom, nom, bot);
 
-            console.log(`Membre ajouté avec succès: ${discordName}`)
+            console.log(`[Add] Membre ajouté avec succès: ${discordName}`)
             await interaction.followUp({ content: `Le membre ${discordName} a été ajouté avec succès.`, ephemeral: true });
         } catch (error) {
         console.error("Erreur lors de l'ajout du membre:", error);
         if (!interaction.deferred && !interaction.replied) {
-            await interaction.followUp({ content: "Une erreur est survenue lors de l'exécution de la commande.", ephemeral: true }).catch(console.error);
+            await interaction.followUp({ content: "Une erreur est survenue lors de l'exécution de la commande.", ephemeral: true }).catch("Erreur lors de l'ajout d'un membre en BDD: ", console.error);
         }
     }}
         

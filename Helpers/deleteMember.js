@@ -25,6 +25,7 @@ async function deleteMember(discordName, interaction, bot) {
     // Supprimer le membre de la collection activeMembers
     await handleMemberLeave(bot, { user: { username: discordName } });
 
+    console.log(`Membre ${discordName} supprimé de la base de données.`);
     await interaction.followUp({ content: `Le membre ${discordName} a été retiré avec succès.`, ephemeral: true });
 
 }
