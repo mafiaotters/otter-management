@@ -75,7 +75,7 @@ bot.on('ready', () => {
     if (guild) {
         const channel = guild.channels.cache.get("1282684525259919462");
         if (channel) {
-            channel.send('Message envoyé dans le serveur et le channel spécifiés.');
+            channel.send('Je suis de nouveau là ! :otter_pompom:');
         } else {
             console.error('Channel non trouvé');
         }
