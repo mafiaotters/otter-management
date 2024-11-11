@@ -51,7 +51,7 @@ async function backupWebsite() {
 
 // Vous devrez adapter ou implémenter downloadDir pour ssh2-sftp-client
 // La fonction downloadDir ci-dessous est un placeholder et doit être implémentée correctement
-SftpClient.prototype.downloadDir = async function(sourceDir, destDir, excludeDirs = ['logs', 'cache', 'tmp', 'css', 'xivapi_poc', '.git', '.vscode', 'vendor', 'templates', 'guide', 'sitemap.xml', 'manifest.json', 'browserconfig.xml', '.gitignore', '404.html', 'backupBot', 'favicon.ico', 'backups', 'assets', 'dev']) {
+SftpClient.prototype.downloadDir = async function(sourceDir, destDir, excludeDirs = ['logs', 'cache', 'tmp', 'css', 'xivapi_poc', '.git', '.vscode', 'vendor', 'templates', 'guide', 'sitemap.xml', 'manifest.json', 'browserconfig.xml', '.gitignore', '404.html', 'backupBot', 'favicon.ico', 'backups', 'assets', 'dev', 'wp']) {
     const handleDir = async (currentSourceDir, currentDestDir) => {
         await fsExtra.ensureDir(currentDestDir); // Assurez-vous que le répertoire de destination existe
 
