@@ -26,9 +26,9 @@ async function uploadUpdate() {
         let basePath = '/dev/'; // Chemin distant de base pour les fichiers à uploader
         console.log('Chemin distant défini sur /dev.');
         if (process.env.GITHUB_BRANCH === 'main') {
-            //basePath = '/'; // Changer le chemin distant pour le site principale
+            basePath = '/'; // Changer le chemin distant pour le site principale
             console.log('Chemin distant changé pour la branche principale.');
-            console.error('Attention: Branche principale demandée, mais non activé pour rester sur la dev.');
+            //console.error('Attention: Branche principale demandée, mais non activé pour rester sur la dev.');
         }
         
 
