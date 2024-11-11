@@ -70,7 +70,19 @@ loadEvents(bot); // Load all commands in collection, to the bot
 bot.on('ready', () => {
     console.log(`Bot opérationnel sous le nom: ${bot.user.tag}!`);
     if(process.env.GITHUB_BRANCH === 'main'){
-      bot.channels.fetch("1282684525259919462").send('Je suis de nouveau en ligne !'); // Met une indication dans le channel admin MAIN
+    // Envoyer un message dans le serveur et le channel spécifiés
+    const guild = bot.guilds.cache.get("675543520425148416");
+    if (guild) {
+        const channel = guild.channels.cache.get("1282684525259919462");
+        if (channel) {
+            channel.send('Message envoyé dans le serveur et le channel spécifiés.');
+        } else {
+            console.error('Channel non trouvé');
+        }
+    } else {
+        console.error('Serveur non trouvé');
+    }
+
     }
     bot.user.setActivity('GILLS', { type: 'WATCHING' });
 
