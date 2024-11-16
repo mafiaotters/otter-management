@@ -96,11 +96,11 @@ const noCitations = [
       const quoteDate = originalMessage.createdAt;
 
       if(!quoteContent.length || quoteContent.length < 2) {
-        return message.reply("Mais c'est pas une phrase ça ! :ko:");
+        return message.reply("Mais c'est pas une phrase ça ! <:ko:870697965201805433>");
       }
       // Vérifier que le contenu est inférieur à 2000 caractères
       if (quoteContent.length > 1980) {
-        return message.reply("C'est trop long ! Je m'en souviendrai JA.MAIS ! :ko:");
+        return message.reply("C'est trop long ! Je m'en souviendrai JA.MAIS ! <:ko:870697965201805433>");
       }
       // Vérifier si le message contient une image
 
