@@ -9,14 +9,57 @@ async function saveQuote(message, bot) {
   const botMainId = "1106850900682747974";
 
 const alreadySave = ["Je sais déjà qu'il a dis ça !",
+  "C’est déjà dans les annales de la Mafia des Loutres ! ",
+  "Pas besoin de l’ajouter deux fois, même si c’est brillant.",
+  "Ça, c’est un écho du passé… déjà sauvegardé !",
+  "Tu veux vraiment qu’on la sauvegarde deux fois ? Elle est bien, mais pas à ce point !",
+  "Déjà archivé dans le grand tome des loutres, c’est du réchauffé.",
+  "Encore cette phrase ? T’as un problème avec le spam ?",
+  "Tu veux vraiment que je double ça ? Même Hydaelyn a une limite.",
+  "La magie des loutres ne fait pas de doublons, désolé !",
+  "Cette phrase est déjà dans notre cristal mémoriel, passe à autre chose.",
+  "Une fois suffit, pas la peine de nous spammer avec ce chef-d'œuvre.",
+  "Elle est bien, mais pas besoin de la voir deux fois, si ?",
+  "Cette phrase est déjà un classique, inutile d’insister.",
+  "Répéter, c’est bien… mais on est pas dans une quête FedEx, merci.",
+  "Eh, même un mog pourrait se souvenir que c’est déjà noté. ",
+  "Cette phrase est tellement vieille qu’elle est presque pré-Heavensward.",
+  "Déjà enregistré, même si t’insistes, ce n’est pas une macro spammable."
 
 ]
 
 const saveDone = ["Allez hop, j'enregistre sa phrase on la ressortira plus tard !",
+  "Mission accomplie, l’écho est sauvegardé.",
+  "Le message rejoint la grande tapisserie de la Mafia.",
+  "Voilà, gravé dans le livre à Lavandière (22-36) !",
+  "Une phrase de plus pour le Hall des Loutres. Merci ! ",
+  "Le message est prêt à être ressorti dans une bonne vanne.",
+  "Voilà qui est inscrit dans le grimoire des loutres ! ",
+  "Une sauvegarde de plus pour le musée des phrases épiques. ",
+  "Sauvegardé avec la bénédiction des douze (surtout Nymeia, évidemment).",
+  "Enregistré ! Même un Lalafell pourrait s’en souvenir maintenant.",
+  "C’est noté dans le registre des loutres… juste à côté de la recette du ragoût de chocobo.",
+  "Gravé avec plus de précision qu’un bonus critique d’Astromancien. ",
+  "C’est noté ! Et promis, aucun Lalafell ne l’utilisera pour du RP bizarre.",
+  "Ajouté dans le musée des phrases, là où les Lalafells ne peuvent pas atteindre."
+
 
 ]
 
 const onlyMention = ["Tu veux quoi ? _(feur)_",
+  "Oui, noble aventurier ? Vous avez invoqué une loutre légendaire ?",
+  ":sweat_drops: La loutre AI est là ! Que puis-je pour toi ? ",
+  "J’étais en train de farmer des alexandrites, tu veux quoi ? _feur_ ",
+  "Tu as prononcé mon nom, et hop, me voici ! Mais t'as besoin d'un truc ?",
+  "On parle de moi ? Pas de souci, je suis là comme un mog prêt à servir !",
+  "Tu m’appelles toujours pour rien, toi, hein ?",
+  "Encore toi ? J’espère que c’est important cette fois. Ah... Bah non.",
+  "Oh, une invocation ! Et moi qui pensais qu’on m’oubliait.",
+  "T’es sûr que tu veux déranger une loutre occupée à pêcher ?",
+  "Arrête de m’invoquer pour des bêtises, ou je vais pêcher ailleurs.",
+  "Encore toi ? T’as pas un raid à faire ?",
+  "Moi, invoqué ? J’espère que c’est une mission importante.",
+  "Quoi ? Si tu veux juste parler, va trouver un mog."
 
 ]
 
