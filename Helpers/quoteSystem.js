@@ -2,6 +2,7 @@ const e = require('express');
 const db = require('../Loader/loadDatabase');
 require('dotenv').config();
 
+const {dateFormatLog} = require('./logTools');
 
 async function saveQuote(message, bot) {
 
@@ -63,7 +64,19 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
   "Une mention pour quoi ? Si c’est pour un praeto, je passe mon tour. Vas voir Zedo si j'y suis",
   "J’espère que c’est urgent, sinon je te mets en file d’attente comme un DPS.",
   "Une loutre invoquée sans raison, c’est comme un wipe en raid : ça fait mal à l’ego. "
+]
 
+const noCitations = [
+  "Rien d’enregistré ? Elle est aussi vide que le carnet de notes de Tataru.",
+  "Pas de traces de sagesse ? Peut-être qu’elle attend encore un loot d’inspiration.",
+  "Rien ? Elle est aussi discrète qu’une Lalafell qui veut passer inaperçue.",
+  "Rien sur elle dans mes archives. Peut-être qu’elle parle en langage primal qu’on n’a pas capté ",
+  "Hmm. j’ai fouillé mes archives, mais rien sur elle n’a été sauvegardé. Une stratégie pour rester mystérieuse, peut-être ? ",
+  "Pas de chance, elle n’a laissé aucune trace mémorable. Peut-être qu’elle garde tout pour la prochaine extension ?",
+  "Pas une seule citation. Elle est aussi vide qu’un coffre après le passage d'Orwen. ",
+  "Désolé, mais elle n’a pas encore gravé son nom dans l’histoire des Loutres.",
+  "Pas de citation. Elle doit être en train de méditer à la guilde des érudits.",
+  "Hmm… rien à dire. Elle doit être comme ces joueurs AFK à Gridania."
 ]
 
   // Vérifier si le bot est mentionné
@@ -102,15 +115,15 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
       // Vérifier si le profil existe déjà
       const doc = await userDocRef.get();
       if (!doc.exists) {
-          console.warn(`quoteSystem : Le profil de ${discordUsername} n'existe pas.`); // Met une indication dans la console (pq pas au channel admin)
+          console.warn(`${await dateFormatLog()}quoteSystem : Le profil de ${discordUsername} n'existe pas.`); // Met une indication dans la console (pq pas au channel admin)
         if(process.env.GITHUB_BRANCH === "main"){
           const channel = await bot.channels.fetch("1282684525259919462"); // Met une indication dans le channel admin MAIN
           await channel.send(`quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`);    
-          console.warn(`quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`); // Met une indication dans la console 
+          console.warn(`${await dateFormatLog()}quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`); // Met une indication dans la console 
         } else{
           const channel = await bot.channels.fetch("1252901298798460978"); // Met une indication dans le channel admin DEV
           await channel.send(`quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`);   
-          console.warn(`quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`); // Met une indication dans la console
+          console.warn(`${await dateFormatLog()}quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`); // Met une indication dans la console
         }
       }
 
@@ -128,7 +141,7 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
         quote: quoteContent,
         date: quoteDate,
       });
-      console.log(`[quoteSystem] Enregistrement : ${discordUsername} a dit "${quoteContent}" dans ${message.channel.name} le ${quoteDate}.`); // Met une indication dans la console (pq pas au channel admin)
+      console.log(`${await dateFormatLog()}[quoteSystem] Enregistrement : ${discordUsername} a dit "${quoteContent}" dans ${message.channel.name} le ${quoteDate}.`); // Met une indication dans la console (pq pas au channel admin)
       const randomSaveDone = saveDone[Math.floor(Math.random() * saveDone.length)]; // Phrase aléatoire de la liste saveDone
       message.reply(randomSaveDone);
       
@@ -173,13 +186,13 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
                 const quoteContent = randomQuote.quote;
                 const quoteDate = randomQuote.date;
                 await message.reply(`" ${quoteContent} " — ${prenom}, le ${quoteDate.toDate().toLocaleDateString()}`);
-                console.log('[quoteSystem] Citation de', prenom ,' affichée dans salon :', message.channel.name, " contenu: " ,randomQuote.quote);
+                console.log(await dateFormatLog() + '[quoteSystem] Citation de', prenom ,' affichée dans salon :', message.channel.name, " contenu: " ,randomQuote.quote);
                 break; // Si on a une citation valide, on sort de la boucle
               }
               else{ // Citation non trouvée
                 await quotesRef.doc(randomQuote.messageId).delete();
                 quotes.splice(randomIndex, 1);
-                console.log(`[quoteSystem] Citation non trouvée de ${mentionedUser.displayName}, suppression de la base de données`);
+                console.log(`${await dateFormatLog()}[quoteSystem] Citation non trouvée de ${mentionedUser.displayName}, suppression de la base de données`);
               }
               // Si le message original n'existe pas, on supprime la citation de la base de données
             } catch (error) {
@@ -194,7 +207,8 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
       
       } else {
           // Gérer le cas où l'utilisateur mentionné n'a pas de citations sauvegardées
-          message.reply("Cette personne n'as pas de citations. Pas très drôle...");
+          const randomNoCitations = noCitations[Math.floor(Math.random() * noCitations.length)];
+          message.reply(randomNoCitations);  
         }
       } else {
         // Gérer le cas où aucun utilisateur n'est mentionné avec le bot

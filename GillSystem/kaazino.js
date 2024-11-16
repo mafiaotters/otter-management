@@ -2,6 +2,8 @@ const db = require('../Loader/loadDatabase');
 const updateUserGills = require('./updateUserGills');
 const { EmbedBuilder } = require('discord.js');
 
+const {dateFormatLog} = require('../Helpers/logTools');
+
 const objects = [
     {symbole: '🍓', coeff: 2.2}, 
     {symbole:'🍪', coeff: 2.3}, 
@@ -14,8 +16,8 @@ const objects = [
 ];
 
 // FONCTION DE DEVELOPPEMENT SIMULATEGAINS - Permet de voir le gain par tentative, lissé.
-function simulateGains(numSimulations) {
-    console.warn("[DEV] Simulation des gains en cours...");
+async function simulateGains(numSimulations) {
+    console.warn(await dateFormatLog() + "[DEV] Simulation des gains en cours...");
     let totalGains = 0;
     for (let i = 0; i < numSimulations; i++) {
         const result = `${generateRandomLine()}\n${generateRandomLine()}\n${generateRandomLine()}\n-------------\n${generateRandomLine()}\n-------------`;

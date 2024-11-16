@@ -32,6 +32,8 @@ app.listen(PORT, () => {
 
 require('dotenv').config();
 
+const {dateFormatLog} = require('./Helpers/logTools');
+
 const Discord = require('discord.js');
 const intents = new Discord.IntentsBitField(3276799) // Indents used for the bot
 const bot = new Discord.Client({intents});
@@ -135,7 +137,7 @@ bot.on('interactionCreate', async (interaction) => {
     if(interaction.type === Discord.InteractionType.ApplicationCommand) {
       // Then take the command name 
       let command = require(`./Commands/${interaction.commandName}`);
-      console.log('Commande: ' + command.name + ' par: ' + interaction.user.username);
+      console.log(await dateFormatLog() +  '- Commande: ' + command.name + ' par: ' + interaction.user.username);
       //Run the command
       command.run(bot, interaction, command.options);
   } 

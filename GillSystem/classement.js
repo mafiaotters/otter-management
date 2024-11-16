@@ -1,6 +1,8 @@
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const db = require('../Loader/loadDatabase');
 
+const {dateFormatLog} = require('../Helpers/logTools');
+
 
 async function getDisplayName(discordId) {
     const profilesRef = db.collection('profiles');
@@ -14,11 +16,11 @@ async function getDisplayName(discordId) {
         const displayName = `${prenom} ${nom}`;
         return displayName;
       } else {
-        console.log(`Aucun document trouvé pour l'ID: ${discordId}`);
+        console.log(`${await dateFormatLog()}Aucun document trouvé pour l'ID: ${discordId}`);
         return null;
       }
     } catch (error) {
-      console.error("Erreur lors de la récupération du displayName", error);
+      console.error(await dateFormatLog() + "Erreur lors de la récupération du displayName", error);
       return null;
     }
   }

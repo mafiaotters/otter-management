@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 const db = require('../Loader/loadDatabase'); 
 const handleMemberLeave = require('../Events/handleMemberLeave');
 
+const {dateFormatLog} = require('./logTools');
+
 async function deleteMember(discordName, interaction, bot) {
     const profilesRef = db.collection('profiles');
     const userDocRef = profilesRef.doc(discordName);
@@ -12,12 +14,12 @@ async function deleteMember(discordName, interaction, bot) {
 
     const docSnapshot = await userDocRef.get();
     if(!docSnapshot.exists) {
-        console.log(`Membre inexistant dans la base de données: ${discordName}`);
+        console.log(`${await dateFormatLog()} Membre inexistant dans la base de données: ${discordName}`);
         if (interaction) {
             return interaction.followUp({ content: "Ce membre n'est pas dans la base de données.", ephemeral: true });
         } else {
             // Gérer le cas où interaction n'est pas défini
-            console.log("Action impossible : Ce membre n'est pas dans la base de données.");
+            console.log(await dateFormatLog() + "Action impossible : Ce membre n'est pas dans la base de données.");
             return;
         }
     }
