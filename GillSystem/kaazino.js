@@ -99,10 +99,10 @@ async function kaazino(bot, interaction) {
     // Déterminer le texte à afficher en fonction des gains
     let resultText = '';
     if (gains === 0) {
-        resultText = 'et perd :otter_cry~1:';
+        resultText = 'et perd <:otter_cry~1:883792001202532372>';
         embed.setColor('#a40303');
     } else {
-        resultText = 'et gagne ! :otter_pompom:';
+        resultText = 'et gagne ! <:otter_pompom:747554032582787163>';
         embed.setColor('#28a403');
     }
 
