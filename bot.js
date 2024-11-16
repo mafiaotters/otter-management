@@ -99,7 +99,7 @@ console.log(`Nombre de listeners pour 'messageCreate' avant ajout: ${bot.listene
 bot.on('messageCreate', async (message) => {
   if (message.author.bot) return; // Ne pas répondre aux messages du bot lui-même
   if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
-
+  if (message.mentions.everyone) return; // Ne pas traiter les messages qui mentionnent @everyone ou @here
 
 
   // Appeler saveQuote quand un message est reçu
