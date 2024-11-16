@@ -42,16 +42,12 @@ const saveDone = ["Allez hop, j'enregistre sa phrase on la ressortira plus tard 
   "Gravé avec plus de précision qu’un bonus critique d’Astromancien. ",
   "C’est noté ! Et promis, aucun Lalafell ne l’utilisera pour du RP bizarre.",
   "Ajouté dans le musée des phrases, là où les Lalafells ne peuvent pas atteindre."
-
-
 ]
 
 const onlyMention = ["Tu veux quoi ? _(feur)_",
   "Oui, noble aventurier ? Vous avez invoqué une loutre légendaire ?",
-  ":sweat_drops: La loutre AI est là ! Que puis-je pour toi ? ",
   "J’étais en train de farmer des alexandrites, tu veux quoi ? _feur_ ",
   "Tu as prononcé mon nom, et hop, me voici ! Mais t'as besoin d'un truc ?",
-  "On parle de moi ? Pas de souci, je suis là comme un mog prêt à servir !",
   "Tu m’appelles toujours pour rien, toi, hein ?",
   "Encore toi ? J’espère que c’est important cette fois. Ah... Bah non.",
   "Oh, une invocation ! Et moi qui pensais qu’on m’oubliait.",
@@ -59,7 +55,14 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
   "Arrête de m’invoquer pour des bêtises, ou je vais pêcher ailleurs.",
   "Encore toi ? T’as pas un raid à faire ?",
   "Moi, invoqué ? J’espère que c’est une mission importante.",
-  "Quoi ? Si tu veux juste parler, va trouver un mog."
+  "Quoi ? Si tu veux juste parler, va trouver un mog.",
+  "T’es sûr que c’était nécessaire de m'appeler ? Je n’ai pas signé pour être ton servant mog. ",
+  "Tu me déranges… encore ? T’es pire qu’un heal qui spam Medica II.",
+  "T’as pas un Lalafell à embêter plutôt ? ",
+  "Tu fais ça souvent, d’appeler les loutres sans raison ? T’as des gils à gaspiller ? ORWEN, JUNGSO ! ",
+  "Une mention pour quoi ? Si c’est pour un praeto, je passe mon tour. Vas voir Zedo si j'y suis",
+  "J’espère que c’est urgent, sinon je te mets en file d’attente comme un DPS.",
+  "Une loutre invoquée sans raison, c’est comme un wipe en raid : ça fait mal à l’ego. "
 
 ]
 
