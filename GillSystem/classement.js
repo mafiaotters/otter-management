@@ -37,7 +37,7 @@ async function getDisplayName(discordId) {
     }
 
     const embed = new EmbedBuilder()
-        .setTitle('Classement des Gills')
+        .setTitle('Classement des Gills <:otter_pompom:747554032582787163>')
         .setDescription(embedDescription)
         .setColor('#0099ff');
 
