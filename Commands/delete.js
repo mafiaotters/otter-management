@@ -31,7 +31,8 @@ module.exports = {
      // Supposons que args[0] est l'ID Discord du membre à ajouter
         const discordUser = interaction.options.getUser('membre');
         const discordName = discordUser.username; // Récupérer le nom d'utilisateur Discord
+        const discordId = discordUser.id
         console.log(`[Delete] Suppression du membre ${discordName} en cours...`);
-        await deleteMember(discordName, interaction, bot);
+        await deleteMember(discordId, interaction, bot);
     }
 }
