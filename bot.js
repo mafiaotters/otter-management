@@ -32,6 +32,8 @@ app.listen(PORT, () => {
 
 require('dotenv').config();
 
+const {dateFormatLog} = require('./Helpers/logTools');
+
 const Discord = require('discord.js');
 const intents = new Discord.IntentsBitField(3276799) // Indents used for the bot
 const bot = new Discord.Client({intents});
@@ -75,7 +77,7 @@ bot.on('ready', () => {
     if (guild) {
         const channel = guild.channels.cache.get("1282684525259919462");
         if (channel) {
-            channel.send('Je suis de nouveau là ! :otter_pompom:');
+            channel.send('Je suis de nouveau là ! <:otter_pompom:747554032582787163>');
         } else {
             console.error('Channel non trouvé');
         }
@@ -99,7 +101,7 @@ console.log(`Nombre de listeners pour 'messageCreate' avant ajout: ${bot.listene
 bot.on('messageCreate', async (message) => {
   if (message.author.bot) return; // Ne pas répondre aux messages du bot lui-même
   if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
-
+  if (message.mentions.everyone) return; // Ne pas traiter les messages qui mentionnent @everyone ou @here
 
 
   // Appeler saveQuote quand un message est reçu
@@ -135,7 +137,7 @@ bot.on('interactionCreate', async (interaction) => {
     if(interaction.type === Discord.InteractionType.ApplicationCommand) {
       // Then take the command name 
       let command = require(`./Commands/${interaction.commandName}`);
-      console.log('Commande: ' + command.name + ' par: ' + interaction.user.username);
+      console.log(await dateFormatLog() +  '- Commande: ' + command.name + ' par: ' + interaction.user.username);
       //Run the command
       command.run(bot, interaction, command.options);
   } 

@@ -2,6 +2,8 @@ const db = require('../Loader/loadDatabase');
 const updateUserGills = require('./updateUserGills');
 const { EmbedBuilder } = require('discord.js');
 
+const {dateFormatLog} = require('../Helpers/logTools');
+
 const objects = [
     {symbole: '🍓', coeff: 2.2}, 
     {symbole:'🍪', coeff: 2.3}, 
@@ -14,8 +16,8 @@ const objects = [
 ];
 
 // FONCTION DE DEVELOPPEMENT SIMULATEGAINS - Permet de voir le gain par tentative, lissé.
-function simulateGains(numSimulations) {
-    console.warn("[DEV] Simulation des gains en cours...");
+async function simulateGains(numSimulations) {
+    console.warn(await dateFormatLog() + "[DEV] Simulation des gains en cours...");
     let totalGains = 0;
     for (let i = 0; i < numSimulations; i++) {
         const result = `${generateRandomLine()}\n${generateRandomLine()}\n${generateRandomLine()}\n-------------\n${generateRandomLine()}\n-------------`;
@@ -97,10 +99,10 @@ async function kaazino(bot, interaction) {
     // Déterminer le texte à afficher en fonction des gains
     let resultText = '';
     if (gains === 0) {
-        resultText = 'et perd :otter_cry~1:';
+        resultText = 'et perd <:otter_cry~1:883792001202532372>';
         embed.setColor('#a40303');
     } else {
-        resultText = 'et gagne ! :otter_pompom:';
+        resultText = 'et gagne ! <:otter_pompom:747554032582787163>';
         embed.setColor('#28a403');
     }
 
