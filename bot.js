@@ -95,7 +95,7 @@ bot.on('ready', () => {
 // SYSTEME DE CITATIONS
 const saveQuote = require('./Helpers/quoteSystem');
 // SYSTEME DE FEUR
-const verifyFeur = require('./Helpers/verifyFeur')
+const verifyWord = require('./Helpers/verifyWord')
 
 bot.removeAllListeners('messageCreate');
 // Avant d'ajouter le listener
@@ -103,7 +103,7 @@ console.log(`Nombre de listeners pour 'messageCreate' avant ajout: ${bot.listene
 // Écouteur d'événements pour les nouveaux messages
 bot.on('messageCreate', async (message) => {
   if (message.mentions.everyone) return; // Ne pas traiter les messages qui mentionnent @everyone ou @here
-  await verifyFeur(message, bot)
+  await verifyWord(message, bot)
 
   if (message.author.bot) return; // Ne pas répondre aux messages du bot lui-même
   if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
