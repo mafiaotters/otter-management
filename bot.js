@@ -123,6 +123,18 @@ bot.on('guildMemberUpdate', (oldMember, newMember) => {
   handleRoleChange(bot, oldMember, newMember);
 });*/
  
+// MESSAGE DE BIENVENUE
+const { welcomeMember } = require('./Helpers/welcomeMessage');
+
+bot.on('guildMemberAdd', async (member) => {
+    try {
+        // Appeler la fonction pour gérer le message de bienvenue
+        await welcomeMember(member);
+    } catch (error) {
+        console.error('Erreur lors de l’accueil du nouveau membre :', error);
+    }
+});
+
 
 //When bot join a guild
 bot.on('guildCreate', async (guild) => {
