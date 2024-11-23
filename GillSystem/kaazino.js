@@ -16,7 +16,7 @@ const objects = [
 ];
 
 // FONCTION DE DEVELOPPEMENT SIMULATEGAINS - Permet de voir le gain par tentative, lissé.
-async function simulateGains(numSimulations) {
+/*async function simulateGains(numSimulations) {
     console.warn(await dateFormatLog() + "[DEV] Simulation des gains en cours...");
     let totalGains = 0;
     for (let i = 0; i < numSimulations; i++) {
@@ -25,7 +25,7 @@ async function simulateGains(numSimulations) {
     }
     return totalGains / numSimulations;
 }
-console.warn(`Gains moyens par tour: ${simulateGains(300000)}`);
+console.warn(`Gains moyens par tour: ${simulateGains(300000)}`);*/
 
 
 function generateRandomLine() {
