@@ -68,6 +68,15 @@ bot.db = loadDatabase()
 loadCommands(bot); // Load all commands in collection, to the bot
 loadEvents(bot); // Load all commands in collection, to the bot
 
+
+// Configuration des flux RSS et des canaux
+const { checkRSS } = require('./Helpers/rssHandler');
+const RSS_FEEDS = [
+  { url: 'https://fr.finalfantasyxiv.com/lodestone/news/news.xml' }, // Canal de maintenance
+  { url: 'https://fr.finalfantasyxiv.com/lodestone/news/topics.xml' }  // Canal des annonces importantes
+];
+
+
 // Quand le bot est prêt et connecté
 bot.on('ready', () => {
     console.log(`Bot opérationnel sous le nom: ${bot.user.tag}!`);
@@ -90,6 +99,13 @@ bot.on('ready', () => {
 
     // Load slash commands
     loadSlashCommands(bot);
+
+    // Vérifier les flux RSS Lodestone toutes les 10 minutes
+    setInterval(() => {
+      RSS_FEEDS.forEach(feed => {
+          checkRSS(bot, feed.url);
+      });
+  }, 10 * 60 * 1000); // Check toutes les 10m
 });
 
 // SYSTEME DE CITATIONS
