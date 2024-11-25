@@ -7,7 +7,7 @@ module.exports = {
 
 
     async run(bot, interaction, args) {
-        return interaction.followUp({ content: "Lien pour faire des suggestions du site ou Chantal : https://forms.gle/bDPFqH9btrb6QFhi6", ephemeral: true });
+        return interaction.reply({ content: "Lien pour faire des suggestions du site ou Chantal : https://forms.gle/bDPFqH9btrb6QFhi6", ephemeral: true });
        
     }
 }
