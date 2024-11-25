@@ -5,15 +5,15 @@ module.exports = {
     description: "système de quote",
     permission: "Aucune",
     dm: false,
-    options: [
+    /*options: [
         {
             type: "SUB_COMMAND",
             name: "delete",
             description: "Choisissez une de vos quotes à supprimer.",
         }
-    ],
+    ],*/
     async run(bot, interaction, args) {
-        const subCommand = interaction.options.getSubcommand();
+        /*const subCommand = interaction.options.getSubcommand();
     
         switch(subCommand) {
             case "delete":
@@ -21,6 +21,7 @@ module.exports = {
                 break;
             default:
                 await interaction.reply({ content: "Option non reconnue.", ephemeral: true });
-        }
+        }*/
+        fetchAndDisplayQuotes(interaction);
     }
 }
