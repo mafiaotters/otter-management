@@ -1,5 +1,5 @@
 const e = require('express');
-const db = require('../Loader/loadDatabase');
+const db = require('@loader/loadDatabase');
 require('dotenv').config();
 
 const {dateFormatLog} = require('./logTools');

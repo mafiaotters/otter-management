@@ -132,7 +132,7 @@ bot.on('messageCreate', async (message) => {
 console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
 
 // UPDATE FUNCTION
-const updateFunction = require('./Helpers/website/updateFunction');
+const updateFunction = require('@websiteUtils/updateFunction');
 //updateFunction(bot);
 
 // Quand un membre change de role

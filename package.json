@@ -10,7 +10,8 @@
     "@loader": "./Loader",
     "@helpers": "./Helpers",
     "@gill": "./GillSystem",
-    "@commands": "./Commands"
+    "@commands": "./Commands",
+    "@websiteUtils": "./WebsiteUtils"
   },
   "engines": {
     "node": "20.5"
