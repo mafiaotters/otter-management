@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const db = require('../Loader/loadDatabase');
+const db = require('@loader/loadDatabase');
 const SftpClient = require('ssh2-sftp-client');
 const sftp = new SftpClient();
 

@@ -1,4 +1,4 @@
-const db = require('../Loader/loadDatabase'); // Assurez-vous que cette importation est correcte
+const db = require('@loader/loadDatabase'); // Assurez-vous que cette importation est correcte
 require('dotenv').config();
 
 function getHighestRole(memberRoles, bot) {

@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
-const db = require('../Loader/loadDatabase'); 
-const deleteMember = require('../Helpers/deleteMember');
+const db = require('@loader/loadDatabase'); 
+const deleteMember = require('../Helpers/website/deleteMember');
 
 
 module.exports = {

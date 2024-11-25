@@ -15,6 +15,8 @@ A ACTIVER POUR L'ANNIVERSAIRE
 - Ré-activer l'update au démarrage
 */
 
+// Charge les modules alias
+require('module-alias/register');
 
 //HEALTH CHECK UP DE L'APPLICATION
 const express = require('express');
@@ -130,7 +132,7 @@ bot.on('messageCreate', async (message) => {
 console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
 
 // UPDATE FUNCTION
-const updateFunction = require('./Helpers/updateFunction');
+const updateFunction = require('./Helpers/website/updateFunction');
 //updateFunction(bot);
 
 // Quand un membre change de role

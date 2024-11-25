@@ -1,5 +1,5 @@
 const db = require('../Loader/loadDatabase'); 
-const updateFunction = require('../Helpers/updateFunction');
+const updateFunction = require('../Helpers/website/updateFunction');
 
 const lastUsed = {};
 

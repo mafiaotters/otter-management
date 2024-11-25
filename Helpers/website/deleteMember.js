@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
-const db = require('../Loader/loadDatabase'); 
-const handleMemberLeave = require('../Events/handleMemberLeave');
+const db = require('@loader/loadDatabase'); 
+const handleMemberLeave = require('../../Events/handleMemberLeave');
 
-const {dateFormatLog} = require('./logTools');
+const {dateFormatLog} = require('../logTools');
 
 async function deleteMember(discordName, interaction, bot) {
     const profilesRef = db.collection('profiles');
