@@ -2,7 +2,7 @@ const { fetchAndDisplayQuotes } = require('@helpers/deleteQuote')
 
 module.exports = {
     name: "quote",
-    description: "système de quote",
+    description: "Affiche vos citations et vous permet de les supprimer en 1 clic",
     permission: "Aucune",
     dm: false,
     /*options: [
