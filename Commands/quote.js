@@ -1,4 +1,4 @@
-const collecte = require('../GillSystem/collecte');
+const { fetchAndDisplayQuotes } = require('@helpers/deleteQuote')
 
 module.exports = {
     name: "quote",
@@ -8,7 +8,7 @@ module.exports = {
     options: [
         {
             type: "SUB_COMMAND",
-            name: "suppr",
+            name: "delete",
             description: "Choisissez une de vos quotes à supprimer.",
         }
     ],
@@ -16,8 +16,8 @@ module.exports = {
         const subCommand = interaction.options.getSubcommand();
     
         switch(subCommand) {
-            case "suppr":
-                collecte(bot, interaction);
+            case "delete":
+                fetchAndDisplayQuotes(interaction);
                 break;
             default:
                 await interaction.reply({ content: "Option non reconnue.", ephemeral: true });
