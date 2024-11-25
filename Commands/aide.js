@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
-    name: "help",
+    name: "aide",
     description: "Liste les commandes de Chantal",
     permission: "Aucune",
     dm: false,
@@ -11,16 +11,18 @@ module.exports = {
             // Créer l'embed
             const embed = new EmbedBuilder()
                 .setTitle("📖 Liste des commandes")
-                .setDescription("Voici la liste des commandes disponibles pour **Chantal**.")
+                .setDescription("Voici la liste des commandes disponibles pour **Chantal**." + 
+                    "\nBesoin de plus d'aide ? Contactez : <@207992750988197889> ou <@239407042182381588> !"
+                )
                 .addFields(
                     { name: "/gill", value: "Affiche les commandes de notre économie fun : les Gills ! :fish:" },
                     { name: "/quote", value: "Affiche vos citations et vous permet de les supprimer si besoin." },
                     { name: "/suggestion", value: "Donne le lien du forms pour toutes vos suggestions ! <:otter_pompom:747554032582787163>" },
-                    { name: "/help", value: "Affiche cette liste." }
+                    { name: "/aide", value: "Affiche cette liste." }
                 )
                 .setColor("#00BFFF")
                 .setThumbnail(bot.user.displayAvatarURL({ dynamic: true }))
-                .setFooter({ text: "Besoin de plus d'aide ? <@207992750988197889> ou <@239407042182381588> !" })
+                .setFooter({ text: "Chantal, la loutre IA qui dépassera ChatGPT." })
                 //.setImage(bot.user.displayAvatarURL({ size: 512 }));
 
             // Envoyer l'embed
