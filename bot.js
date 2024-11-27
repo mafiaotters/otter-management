@@ -170,4 +170,3 @@ console.log(`Nombre de listeners pour 'interactionCreate' après ajout: ${bot.li
 /* POUR LE DEVELOPPMENT UNIQUMENT
 const downloadGitWebsite = require('./Helpers/downloadGitWebsite');
 downloadGitWebsite('https://github.com/Satalis/LOUTRES_SITE/', './devWebsite')*/
-

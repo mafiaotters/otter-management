@@ -12,7 +12,7 @@ const objects = [
     {symbole:'🍒', coeff: 40}, 
     {symbole:'🍌', coeff: 30}, 
     {symbole:'🍐', coeff: 20},
-    {symbole: '🐟', coeff : 80}
+    {symbole: '🐟', coeff : 65}
 ];
 
 function generateRandomLine() {
@@ -96,7 +96,7 @@ async function kaazino(bot, interaction) {
     } else {
         resultText = `et gagne **${Math.floor(gains)} :fish:** ! <:otter_pompom:747554032582787163> <:tada:> <:otter_pompom:747554032582787163>`;
         embed.setColor('#28a403');
-        if(gains >= 100){ 
+        if(gains >= 150){ 
             await interaction.channel.send({ content: `<@${interaction.user.id}> OMG !!`, ephemeral: false });
         }
     }
