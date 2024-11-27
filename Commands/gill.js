@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const pourquoi = require('../GillSystem/pourquoi');
 const collecte = require('../GillSystem/collecte');
 const classement = require('../GillSystem/classement');
-const kaazino = require('../GillSystem/kaazino');
+const {kaazino} = require('../GillSystem/kaazino');
 
 module.exports = {
     name: "gill",
