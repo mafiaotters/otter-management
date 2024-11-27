@@ -140,6 +140,13 @@ bot.on('guildMemberAdd', async (member) => {
     }
 });
 
+// MESSAGE DE AU REVOIR
+const goodbyeMessage = require('./Helpers/goodbyeMessage');
+bot.on('guildMemberRemove', async (member) => {
+  console.log(`${member.displayName} a quitté le serveur ${member.guild.name}.`);
+  await goodbyeMessage(member); // Appel de la fonction goodbyeMessage
+});
+
 
 //When bot join a guild
 bot.on('guildCreate', async (guild) => {

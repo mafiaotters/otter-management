@@ -15,7 +15,7 @@ async function welcomeMember(member) {
         if(process.env.GITHUB_BRANCH == "main"){ channelWelcomeID = '675910340936204288'}
         else{ channelWelcomeID = '653689680906420238' }
 
-        const welcomeChannel = member.guild.channels.cache.get(channelWelcomeID);
+        const welcomeChannel = await member.guild.channels.cache.get(channelWelcomeID);
         if (welcomeChannel) {
             await new Promise(resolve => setTimeout(resolve, 2000)); // Attendre 1 seconde
 
