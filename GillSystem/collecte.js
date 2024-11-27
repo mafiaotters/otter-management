@@ -33,7 +33,7 @@ async function collecte(bot, interaction) {
         if (lastCollected && lastCollected > resetTime) {
             // L'utilisateur a déjà collecté ses gills aujourd'hui
             console.log(`${await dateFormatLog()} [Collecte] L'utilisateur ${interaction.user.id} a déjà collecté ses gills aujourd'hui.`);
-            return interaction.editReply({ content: "Tu as déjà collecté vos gills aujourd'hui. Reviens demain !", ephemeral: true });
+            return interaction.editReply({ content: "Tu as déjà collecté tes gills aujourd'hui. Reviens demain !", ephemeral: true });
         }
         // Générer un nombre aléatoire de gills entre 15 et 22
         const gills = Math.floor(Math.random() * (22 - 15 + 1)) + 15;
