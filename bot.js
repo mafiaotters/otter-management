@@ -107,6 +107,13 @@ bot.removeAllListeners('messageCreate');
 console.log(`Nombre de listeners pour 'messageCreate' avant ajout: ${bot.listenerCount('messageCreate')}`);
 // Écouteur d'événements pour les nouveaux messages
 bot.on('messageCreate', async (message) => {
+
+  const exceptionsChannels = ['704404247445373029', '791052204823281714'] // table ronde, antre mafieuse, 
+
+  if (exceptionsChannels.includes(message.chanel.id)) {
+      return
+  }
+
   if (message.mentions.everyone) return; // Ne pas traiter les messages qui mentionnent @everyone ou @here
   await verifyWord(message, bot)
 
