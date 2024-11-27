@@ -2,31 +2,18 @@ const db = require('../Loader/loadDatabase');
 const updateUserGills = require('./updateUserGills');
 const { EmbedBuilder } = require('discord.js');
 
-const {dateFormatLog} = require('../Helpers/logTools');
+const { dateFormatLog } = require('../Helpers/logTools');
 
 const objects = [
-    {symbole: '🍓', coeff: 2.2}, 
-    {symbole:'🍪', coeff: 2.3}, 
-    {symbole:'🍑', coeff: 2.4},
-    {symbole: '🍉', coeff: 2}, 
-    {symbole:'🍒', coeff: 1.9}, 
-    {symbole:'🍌', coeff: 1.9}, 
-    {symbole:'🍐', coeff: 1.8},
-    {symbole: '🐟', coeff : 4.7}
+    {symbole: '🍓', coeff: 14}, 
+    {symbole:'🍪', coeff: 50}, 
+    {symbole:'🍑', coeff: 18},
+    {symbole: '🍉', coeff: 13}, 
+    {symbole:'🍒', coeff: 40}, 
+    {symbole:'🍌', coeff: 30}, 
+    {symbole:'🍐', coeff: 20},
+    {symbole: '🐟', coeff : 65}
 ];
-
-// FONCTION DE DEVELOPPEMENT SIMULATEGAINS - Permet de voir le gain par tentative, lissé.
-async function simulateGains(numSimulations) {
-    console.warn(await dateFormatLog() + "[DEV] Simulation des gains en cours...");
-    let totalGains = 0;
-    for (let i = 0; i < numSimulations; i++) {
-        const result = `${generateRandomLine()}\n${generateRandomLine()}\n${generateRandomLine()}\n-------------\n${generateRandomLine()}\n-------------`;
-        totalGains += calculateGains(result);
-    }
-    return totalGains / numSimulations;
-}
-console.warn(`Gains moyens par tour: ${simulateGains(300000)}`);
-
 
 function generateRandomLine() {
     const line = [];
@@ -38,6 +25,7 @@ function generateRandomLine() {
 }
 
 async function kaazino(bot, interaction) {
+
     const userRef = db.collection('gillSystem').doc(interaction.user.id);
     const doc = await userRef.get();
 
@@ -91,7 +79,8 @@ async function kaazino(bot, interaction) {
     const result = `${generateRandomLine()}\n${generateRandomLine()}\n${generateRandomLine()}\n-------------\n${generateRandomLine()}\n-------------`;
 
     // Calculer les gains en utilisant les coefficients
-    const gains = calculateGains(result);
+    // Appeler calculateGains
+    const { actualGains: gains, potentialGains } = calculateGains(result);
 
     // Mise à jour de l'embed avec le résultat de la machine à sous et les gains
     embed.setDescription(`${result}`)
@@ -101,24 +90,32 @@ async function kaazino(bot, interaction) {
     if (gains === 0) {
         resultText = 'et perd <:otter_cry_1:883792001202532372>';
         embed.setColor('#a40303');
+    } else if (gains === 1) { //La valeur des gains potentiels : ${Math.floor(potentialGains)}
+        resultText = `et n'était pas loin de gagner ! <:otter_afraid:747554031349661836>`;
+        embed.setColor('#f5a623');
     } else {
-        resultText = 'et gagne ! <:otter_pompom:747554032582787163>';
+        resultText = `et gagne **${Math.floor(gains)} :fish:** ! <:otter_pompom:747554032582787163> <:tada:> <:otter_pompom:747554032582787163>`;
         embed.setColor('#28a403');
+        if(gains >= 150){ 
+            await interaction.channel.send({ content: `<@${interaction.user.id}> OMG !!`, ephemeral: false });
+        }
     }
 
     // Mise à jour du message avec le nouvel embed
     await message.edit({ content: `:slot_machine: • <@${interaction.user.id}> envoie ${gillsToSpend} :fish: pour la machine à sous... ${resultText}`, embeds: [embed], epheremal: false });
 
+    if(gains <= 1) { //Si le joueur n'as pas gagné (gains 0 = rien ; = presque ! ; + = gagné)
+        return
+    }
     // Mettre à jour le solde de gills de l'utilisateur avec les gains
     await updateUserGills(interaction.user, Math.floor(gains));
 }
 
 function calculateGains(result) {
     let gains = 0;
+    let potentialGains = 0; // Gains potentiels si une troisième occurrence est ajoutée
     const lines = result.split('\n');
-    const lastLine = lines[lines.length - 2]; // Prendre uniquement l'avant dernière ligne, soit la dernière ligne avec symbole
-
-    //console.log("Dernière ligne:", lastLine);
+    const lastLine = lines[lines.length - 2]; // Prendre uniquement l'avant-dernière ligne, soit la dernière ligne avec symbole
 
     // Compter les occurrences de chaque symbole
     const symbolCounts = {};
@@ -131,13 +128,116 @@ function calculateGains(result) {
     objects.forEach(obj => {
         const count = symbolCounts[obj.symbole];
         if (count === 2) {
-            gains += obj.coeff * 11.25; // Gain pour 2 occurrences
-        } else if (count === 3) {
-            gains += obj.coeff * 27; // Gain pour 3 occurrences
+            gains = 1; // Indique qu'il a presque gagné
+            potentialGains += obj.coeff * 5; // Calcul des gains si une troisième occurrence est ajoutée
+        }
+        if (count === 3) {
+            gains += obj.coeff * 5.2; // Gain pour 3 occurrences
         }
     });
-    //console.log("Gains: " + gains);
-    return gains;
+
+    return { actualGains: Math.floor(gains), potentialGains }; // Retourne les gains réels et les gains potentiels
 }
 
-module.exports = kaazino;
+
+module.exports = { kaazino, analyzeGame, calculateAverageGainsByEmoji, simulateGains}
+
+/* 
+=================================
+        ANALYSE DU JEU
+Faire les appels via bot.js
+=================================
+*/
+function analyzeGame(numSimulations) {
+    const symbolOccurrences = {};
+    let wins = 0;
+    let nearWins = 0;
+    let totalGains = 0;
+
+    // Initialisation des symboles
+    objects.forEach(obj => {
+        symbolOccurrences[obj.symbole] = 0;
+    });
+
+    for (let i = 0; i < numSimulations; i++) {
+        const result = `${generateRandomLine()}\n${generateRandomLine()}\n${generateRandomLine()}\n-------------\n${generateRandomLine()}\n-------------`;
+        const { actualGains: gains, potentialGains } = calculateGains(result);
+
+        // Comptage des victoires et des quasi-victoires
+        if (gains > 0) wins++;
+        if (gains === 1) nearWins++;
+
+        totalGains += gains;
+
+        // Compter les occurrences de chaque symbole
+        const lines = result.split('\n');
+        const lastLine = lines[lines.length - 2]; // Prendre la dernière ligne valide
+        objects.forEach(obj => {
+            const count = (lastLine.match(new RegExp(obj.symbole, 'g')) || []).length;
+            symbolOccurrences[obj.symbole] += count;
+        });
+    }
+
+    // Résultats
+    const winRate = (wins / numSimulations) * 100;
+    const nearWinRate = (nearWins / numSimulations) * 100;
+    const averageGain = totalGains / numSimulations;
+
+    return {
+        winRate,
+        nearWinRate,
+        averageGain,
+        symbolOccurrences,
+    };
+}
+
+// FONCTION DE DEVELOPPEMENT SIMULATEGAINS - Permet de voir le gain par tentative, lissé.
+async function simulateGains(numSimulations) {
+    console.warn(await dateFormatLog() + "[DEV] Simulation des gains en cours...");
+    let totalGains = 0;
+    for (let i = 0; i < numSimulations; i++) {
+        const result = `${generateRandomLine()}\n${generateRandomLine()}\n${generateRandomLine()}\n-------------\n${generateRandomLine()}\n-------------`;
+        const { actualGains: gains, potentialGains } = calculateGains(result);
+        totalGains += gains;
+    }
+    return totalGains / numSimulations;
+}
+
+async function calculateAverageGainsByEmoji(numSimulations = 100000) {
+    const emojiGains = {}; // Stocke les gains totaux pour chaque émoji
+    const emojiOccurrences = {}; // Stocke les occurrences où chaque émoji a contribué à un gain
+
+    // Initialiser les compteurs
+    objects.forEach(obj => {
+        emojiGains[obj.symbole] = 0;
+        emojiOccurrences[obj.symbole] = 0;
+    });
+
+    for (let i = 0; i < numSimulations; i++) {
+        const result = `${generateRandomLine()}\n${generateRandomLine()}\n${generateRandomLine()}\n-------------\n${generateRandomLine()}\n-------------`;
+
+        const { actualGains } = calculateGains(result);
+
+        if (actualGains > 0) {
+            const lines = result.split('\n');
+            const lastLine = lines[lines.length - 2]; // Prendre uniquement la ligne gagnante
+            objects.forEach(obj => {
+                const count = (lastLine.match(new RegExp(obj.symbole, 'g')) || []).length;
+                if (count >= 3) {
+                    emojiGains[obj.symbole] += actualGains;
+                    emojiOccurrences[obj.symbole] += 1;
+                }
+            });
+        }
+    }
+
+    // Calculer le gain moyen par émoji
+    const averageGains = {};
+    objects.forEach(obj => {
+        averageGains[obj.symbole] = emojiOccurrences[obj.symbole] > 0
+            ? emojiGains[obj.symbole] / emojiOccurrences[obj.symbole]
+            : 0; // Si jamais l'émoji n'a jamais contribué à un gain
+    });
+
+    return { averageGains, emojiOccurrences };
+}

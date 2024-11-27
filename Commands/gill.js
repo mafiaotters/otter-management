@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const pourquoi = require('../GillSystem/pourquoi');
 const collecte = require('../GillSystem/collecte');
 const classement = require('../GillSystem/classement');
-const kaazino = require('../GillSystem/kaazino');
+const {kaazino} = require('../GillSystem/kaazino');
 
 module.exports = {
     name: "gill",
@@ -34,6 +34,10 @@ module.exports = {
     ],
     async run(bot, interaction, args) {
         const subCommand = interaction.options.getSubcommand();
+
+        if (!interaction.deferred && !interaction.replied) {
+            await interaction.deferReply({ ephemeral: true });
+        }
     
         switch(subCommand) {
             case "collecte":
@@ -49,7 +53,7 @@ module.exports = {
                 pourquoi(bot, interaction);
                 break;
             default:
-                await interaction.reply({ content: "Option non reconnue.", ephemeral: true });
+                await interaction.followUp({ content: "Option non reconnue.", ephemeral: true });
         }
     }
 }
