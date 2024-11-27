@@ -1,5 +1,10 @@
 const { dateFormatLog } = require('./logTools');
 
+// Variable pour stocker le dernier moment où un "feur" a été envoyé
+let lastFeurTimestamp = 0; // Stocke un timestamp (en millisecondes)
+let lastKeenvTimestamp = 0; // Stocke un timestamp (en millisecondes)
+
+
 async function verifyWord(message, bot) {
     const feurSentences = [
         "Feur !",
@@ -23,15 +28,25 @@ async function verifyWord(message, bot) {
     const cki2 = /\bc ki[\s\.,!?]*$/i;
     const cki3 = /\bc['’]est ki[\s\.,!?]*$/i;
 
+    const now = Date.now(); // Timestamp actuel
+
     // Vérification pour "feur"
     if (feur1.test(message.content) || feur2.test(message.content) || feur3.test(message.content)) {
         // Générer une probabilité
-        const chance = Math.random();
-        console.log(`Chance (feur): ${chance}`);
+        let chance = Math.random();
 
-        if (chance <= 0.50) { //50%
+        if (chance <= 0.60) { // 40% de chance
+            if (now - lastFeurTimestamp < 10 * 60 * 1000) { // Vérifie si moins de 10 minutes se sont écoulées
+                console.warn(`${await dateFormatLog()} Un "feur" a été ignoré dans ${message.channel.name} car le délai de 10 minutes n'est pas écoulé.`);
+                return;
+            }
+
             const randomFeurSentences = feurSentences[Math.floor(Math.random() * feurSentences.length)];
             await message.reply(randomFeurSentences);
+
+            // Mettre à jour le timestamp du dernier "feur"
+            lastFeurTimestamp = now;
+
             return console.log(`${await dateFormatLog()} Un Feur a été prononcé dans ${message.channel.name}`);
         }
     }
@@ -39,10 +54,18 @@ async function verifyWord(message, bot) {
     // Vérification pour "c'est qui"
     if (cki1.test(message.content) || cki2.test(message.content) || cki3.test(message.content)) {
         // Générer une probabilité
-        const chance = Math.random();
+        let chance = Math.random();
 
-        if (chance <= 0.10) { //10% de chance
+        if (chance <= 0.20) { // 10% de chance
+            if (now - lastKeenvTimestamp < 10 * 60 * 1000) { // Vérifie si moins de 10 minutes se sont écoulées
+                console.warn(`${await dateFormatLog()} Un "keenv" a été ignoré dans ${message.channel.name} car le délai de 10 minutes n'est pas écoulé.`);
+                return;
+            }
             await message.reply("C'est Keen'v !");
+
+            // Mettre à jour le timestamp du dernier "feur"
+            lastKeenvTimestamp = now;
+
             return console.log(`${await dateFormatLog()} Un "C'est Keen'v" a été prononcé dans ${message.channel.name}`);
         }
     }
