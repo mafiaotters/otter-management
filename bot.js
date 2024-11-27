@@ -73,7 +73,7 @@ bot.on('ready', () => {
     // Envoyer un message dans le serveur et le channel spécifiés
     const guild = bot.guilds.cache.get("675543520425148416");
     if (guild) {
-        const channel = guild.channels.cache.get("1282684525259919462");
+        const channel = guild.channels.cache.get("1311350221619597455");
         if (channel) {
             channel.send('Je suis de nouveau là ! <:otter_pompom:747554032582787163>');
         } else {
