@@ -110,7 +110,7 @@ bot.on('messageCreate', async (message) => {
 
   const exceptionsChannels = ['704404247445373029', '791052204823281714'] // table ronde, antre mafieuse, 
 
-  if (exceptionsChannels.includes(message.chanel.id)) {
+  if (exceptionsChannels.includes(message.channel.id)) {
       return
   }
 
