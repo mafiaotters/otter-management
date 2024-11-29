@@ -41,7 +41,7 @@ async function verifyWord(message, bot) {
         // Générer une probabilité
         let chance = Math.random();
 
-        if (chance <= 0.40) { // 40% de chance
+        if (chance <= 0.30) { // 40% de chance
             if (now - lastFeurTimestamp < 20 * 60 * 1000) { // Vérifie si moins de 20 minutes se sont écoulées
                 console.warn(`${await dateFormatLog()} Un "feur" a été ignoré dans ${message.channel.name} car le délai de 10 minutes n'est pas écoulé.`);
                 return;
