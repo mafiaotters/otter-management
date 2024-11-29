@@ -124,24 +124,16 @@ bot.on('messageCreate', async (message) => {
 });
 // Après avoir ajouté le listener
 console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
-
-// UPDATE FUNCTION
-const updateFunction = require('@websiteUtils/updateFunction');
-//updateFunction(bot);
-
-// Quand un membre change de role
-/*const handleRoleChange = require('./Events/handleRoleChange');
-bot.on('guildMemberUpdate', (oldMember, newMember) => {
-  handleRoleChange(bot, oldMember, newMember);
-});*/
  
-// MESSAGE DE BIENVENUE
-const { welcomeMember } = require('./Helpers/welcomeMessage');
+// QUAND UN USER REJOINT LA GUILDE
+const { welcomeMessage, assignRoles } = require('./Helpers/newMember');
 
 bot.on('guildMemberAdd', async (member) => {
     try {
         // Appeler la fonction pour gérer le message de bienvenue
-        await welcomeMember(member);
+        await welcomeMessage(member);
+        // Lui assigner ses rôles
+        await assignRoles(member)
     } catch (error) {
         console.error('Erreur lors de l’accueil du nouveau membre :', error);
     }
@@ -180,7 +172,3 @@ bot.on('interactionCreate', async (interaction) => {
 })
 // Après avoir ajouté le listener
 console.log(`Nombre de listeners pour 'interactionCreate' après ajout: ${bot.listenerCount('interactionCreate')}`);
-
-/* POUR LE DEVELOPPMENT UNIQUMENT
-const downloadGitWebsite = require('./Helpers/downloadGitWebsite');
-downloadGitWebsite('https://github.com/Satalis/LOUTRES_SITE/', './devWebsite')*/
