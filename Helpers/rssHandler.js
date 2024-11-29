@@ -43,7 +43,6 @@ async function isDuplicateMessage(channel, title) {
             if (message.embeds.length > 0) {
                 const embed = message.embeds[0];
                 if (embed.title === title) {
-                    console.log(`Message en doublon détecté : ${title}`);
                     return true; // Doublon trouvé
                 }
             }
