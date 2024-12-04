@@ -65,6 +65,8 @@ const RSS_FEEDS = [
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/topics.xml' }  // Canal des annonces importantes
 ];
 
+//Pour les best-of des quotes
+const { createMonthlyBestOf } = require('@helpers/createMonthlyBestOf');
 
 // Quand le bot est prêt et connecté
 bot.on('ready', () => {
@@ -89,12 +91,14 @@ bot.on('ready', () => {
     // Load slash commands
     loadSlashCommands(bot);
 
-    // Vérifier les flux RSS Lodestone toutes les 10 minutes
+    // Vérifier les différents flux RSS Lodestone
     setInterval(() => {
       RSS_FEEDS.forEach(feed => {
           checkRSS(bot, feed.url);
       });
-  }, 10 * 60 * 1000); // Check toutes les 10m
+      //Système du best-of mensuel de quote
+      createMonthlyBestOf(bot);
+  }, 20 * 60 * 1000); // Check toutes les 20m
 });
 
 // SYSTEME DE CITATIONS

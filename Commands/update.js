@@ -16,7 +16,7 @@ module.exports = {
     async run(bot, interaction, args) {
         const userId = interaction.user.id;
         const timestamp = new Date().getTime();
-        const cooldownPeriod = 60000; // Délai en millisecondes, ici 60 secondes
+        const cooldownPeriod = 300000; // Délai en millisecondes, ici 60*5 (300) secondes
 
         try{ 
             if (!interaction.deferred && !interaction.replied) {
