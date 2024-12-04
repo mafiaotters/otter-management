@@ -8,7 +8,9 @@ async function uploadUpdate() {
         host: process.env.FTP_HOST,
         port: process.env.FTP_PORT,
         user: process.env.FTP_USER,
-        password: process.env.FTP_PASS
+        password: process.env.FTP_PASS,
+        readyTimeout: 20000, // Timeout pour l'authentification
+        keepaliveInterval: 5000, // Ping pour garder la connexion active    
     };
 
     try {
