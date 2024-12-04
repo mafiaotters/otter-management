@@ -1,8 +1,8 @@
-const updateMemberDAO = require('./updateMemberDAO');
-const backupWebsite = require('./backupWebsite');
-const updateOtterJson = require('./updateOtterJson');
-const uploadUpdate = require('./uploadUpdate');
-const updateMemberRole = require('./updateMemberRole');
+const updateMemberDAO = require('@websiteUtils/updateMemberDAO');
+const backupWebsite = require('@websiteUtils/backupWebsite');
+const updateOtterJson = require('@websiteUtils/updateOtterJson');
+const uploadUpdate = require('@websiteUtils/uploadUpdate');
+const updateMemberRole = require('@websiteUtils/updateMemberRole');
 
 async function updateFunction(bot) {
 

@@ -1,20 +1,9 @@
 /* INFOS
 Pour rajouter des valeurs par défaut sur les membres, c'est dans Commands/add.js
-
-
-TODO:
-- Quand une personne qui a un grade concerné MAIS n'est pas dans la base de données firestore. Avertir par un message dans le chan bot.
-- dans updateMemberDAO, faire en sorte que ce soit aléatoire pour les membres.
-- Le filtre des mots, réalisé par Kronox -> Si un mot est détecté, y'a 10% de chance que Chantal dise un truc en mode "OMG TU DIS QUOI _feur_"
 */
 
-/*
-A ACTIVER POUR L'ANNIVERSAIRE
-- Systeme de citations ( await saveQuote(message, bot) )
-- Déplacer gill.js dans "Commands"
-- Ré-activer l'update au démarrage
-*/
-
+// Charge les modules alias
+require('module-alias/register');
 
 //HEALTH CHECK UP DE L'APPLICATION
 const express = require('express');
@@ -68,6 +57,15 @@ bot.db = loadDatabase()
 loadCommands(bot); // Load all commands in collection, to the bot
 loadEvents(bot); // Load all commands in collection, to the bot
 
+
+// Configuration des flux RSS et des canaux
+const { checkRSS } = require('./Helpers/rssHandler');
+const RSS_FEEDS = [
+  { url: 'https://fr.finalfantasyxiv.com/lodestone/news/news.xml' }, // Canal de maintenance
+  { url: 'https://fr.finalfantasyxiv.com/lodestone/news/topics.xml' }  // Canal des annonces importantes
+];
+
+
 // Quand le bot est prêt et connecté
 bot.on('ready', () => {
     console.log(`Bot opérationnel sous le nom: ${bot.user.tag}!`);
@@ -90,20 +88,30 @@ bot.on('ready', () => {
 
     // Load slash commands
     loadSlashCommands(bot);
+
+    // Vérifier les flux RSS Lodestone toutes les 10 minutes
+    setInterval(() => {
+      RSS_FEEDS.forEach(feed => {
+          checkRSS(bot, feed.url);
+      });
+  }, 10 * 60 * 1000); // Check toutes les 10m
 });
 
 // SYSTEME DE CITATIONS
 const saveQuote = require('./Helpers/quoteSystem');
+// SYSTEME DE FEUR
+const verifyWord = require('./Helpers/verifyWord')
+
 bot.removeAllListeners('messageCreate');
 // Avant d'ajouter le listener
 console.log(`Nombre de listeners pour 'messageCreate' avant ajout: ${bot.listenerCount('messageCreate')}`);
 // Écouteur d'événements pour les nouveaux messages
 bot.on('messageCreate', async (message) => {
+  if (message.mentions.everyone) return; // Ne pas traiter les messages qui mentionnent @everyone ou @here
+  await verifyWord(message, bot)
+
   if (message.author.bot) return; // Ne pas répondre aux messages du bot lui-même
   if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
-  if (message.mentions.everyone) return; // Ne pas traiter les messages qui mentionnent @everyone ou @here
-
-
   // Appeler saveQuote quand un message est reçu
   await saveQuote(message, bot);
 });
@@ -111,7 +119,7 @@ bot.on('messageCreate', async (message) => {
 console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
 
 // UPDATE FUNCTION
-const updateFunction = require('./Helpers/updateFunction');
+const updateFunction = require('@websiteUtils/updateFunction');
 //updateFunction(bot);
 
 // Quand un membre change de role
@@ -120,6 +128,25 @@ bot.on('guildMemberUpdate', (oldMember, newMember) => {
   handleRoleChange(bot, oldMember, newMember);
 });*/
  
+// MESSAGE DE BIENVENUE
+const { welcomeMember } = require('./Helpers/welcomeMessage');
+
+bot.on('guildMemberAdd', async (member) => {
+    try {
+        // Appeler la fonction pour gérer le message de bienvenue
+        await welcomeMember(member);
+    } catch (error) {
+        console.error('Erreur lors de l’accueil du nouveau membre :', error);
+    }
+});
+
+// MESSAGE DE AU REVOIR
+const goodbyeMessage = require('./Helpers/goodbyeMessage');
+bot.on('guildMemberRemove', async (member) => {
+  console.log(`${member.displayName} a quitté le serveur ${member.guild.name}.`);
+  await goodbyeMessage(member); // Appel de la fonction goodbyeMessage
+});
+
 
 //When bot join a guild
 bot.on('guildCreate', async (guild) => {
@@ -132,7 +159,7 @@ bot.removeAllListeners('interactionCreate');
 console.log(`Nombre de listeners pour 'interactionCreate' avant ajout: ${bot.listenerCount('interactionCreate')}`);
 bot.on('interactionCreate', async (interaction) => {
   if (interaction.isCommand()) {
-    await interaction.deferReply({ ephemeral: true });
+    //await interaction.deferReply({ ephemeral: true });
 
     if(interaction.type === Discord.InteractionType.ApplicationCommand) {
       // Then take the command name 
@@ -150,4 +177,3 @@ console.log(`Nombre de listeners pour 'interactionCreate' après ajout: ${bot.li
 /* POUR LE DEVELOPPMENT UNIQUMENT
 const downloadGitWebsite = require('./Helpers/downloadGitWebsite');
 downloadGitWebsite('https://github.com/Satalis/LOUTRES_SITE/', './devWebsite')*/
-

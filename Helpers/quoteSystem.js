@@ -1,5 +1,5 @@
 const e = require('express');
-const db = require('../Loader/loadDatabase');
+const db = require('@loader/loadDatabase');
 require('dotenv').config();
 
 const {dateFormatLog} = require('./logTools');
@@ -69,7 +69,7 @@ const onlyMention = ["Tu veux quoi ? _(feur)_",
 const noCitations = [
   "Rien d’enregistré ? Elle est aussi vide que le carnet de notes de Tataru.",
   "Pas de traces de sagesse ? Peut-être qu’elle attend encore un loot d’inspiration.",
-  "Rien ? Elle est aussi discrète qu’une Lalafell qui veut passer inaperçue.",
+  "Rien ? Elle est aussi discrète qu’un Lalafell qui veut passer inaperçu.",
   "Rien sur elle dans mes archives. Peut-être qu’elle parle en langage primal qu’on n’a pas capté ",
   "Hmm. j’ai fouillé mes archives, mais rien sur elle n’a été sauvegardé. Une stratégie pour rester mystérieuse, peut-être ? ",
   "Pas de chance, elle n’a laissé aucune trace mémorable. Peut-être qu’elle garde tout pour la prochaine extension ?",
