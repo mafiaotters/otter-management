@@ -5,24 +5,33 @@ const { EmbedBuilder } = require('discord.js');
 const { dateFormatLog } = require('../Helpers/logTools');
 
 const objects = [
-    {symbole: '🍓', coeff: 14}, 
-    {symbole:'🍪', coeff: 50}, 
-    {symbole:'🍑', coeff: 18},
-    {symbole: '🍉', coeff: 13}, 
-    {symbole:'🍒', coeff: 40}, 
-    {symbole:'🍌', coeff: 30}, 
-    {symbole:'🍐', coeff: 20},
-    {symbole: '🐟', coeff : 65}
+    { symbole: '🍓', coeff: 10, weight: 25 }, // Très fréquent
+    { symbole: '🍪', coeff: 40, weight: 8 },  // Rare
+    { symbole: '🍑', coeff: 18, weight: 23 }, // Fréquent
+    { symbole: '🍉', coeff: 13, weight: 25 }, // Très fréquent
+    { symbole: '🍒', coeff: 35, weight: 10 }, // Moyennement rare
+    { symbole: '🍌', coeff: 30, weight: 15 }, // Moyennement fréquent
+    { symbole: '🍐', coeff: 20, weight: 12 }, // Moyennement fréquent
+    { symbole: '🐟', coeff: 65, weight: 5 },  // Très rare
 ];
 
+
 function generateRandomLine() {
+    const weightedObjects = [];
+    objects.forEach(obj => {
+        for (let i = 0; i < obj.weight; i++) {
+            weightedObjects.push(obj.symbole);
+        }
+    });
     const line = [];
     for (let i = 0; i < 3; i++) {
-        const randomIndex = Math.floor(Math.random() * objects.length);
-        line.push(objects[randomIndex].symbole);
+        const randomIndex = Math.floor(Math.random() * weightedObjects.length);
+        line.push(weightedObjects[randomIndex]);
     }
     return line.join(' • ');
 }
+
+
 
 async function kaazino(bot, interaction) {
 
@@ -150,8 +159,8 @@ Faire les appels via bot.js
 */
 function analyzeGame(numSimulations) {
     const symbolOccurrences = {};
-    let wins = 0;
-    let nearWins = 0;
+    let wins = 0; // Victoires (3 occurrences ou plus)
+    let nearWins = 0; // Quasi-victoires (2 occurrences)
     let totalGains = 0;
 
     // Initialisation des symboles
@@ -159,12 +168,14 @@ function analyzeGame(numSimulations) {
         symbolOccurrences[obj.symbole] = 0;
     });
 
+    console.warn('=============== \nANALYSE KAAZINO...   \n ===============')
+
     for (let i = 0; i < numSimulations; i++) {
         const result = `${generateRandomLine()}\n${generateRandomLine()}\n${generateRandomLine()}\n-------------\n${generateRandomLine()}\n-------------`;
-        const { actualGains: gains, potentialGains } = calculateGains(result);
+        const { actualGains: gains } = calculateGains(result);
 
         // Comptage des victoires et des quasi-victoires
-        if (gains > 0) wins++;
+        if (gains > 1) wins++;
         if (gains === 1) nearWins++;
 
         totalGains += gains;
@@ -183,9 +194,14 @@ function analyzeGame(numSimulations) {
     const nearWinRate = (nearWins / numSimulations) * 100;
     const averageGain = totalGains / numSimulations;
 
+    console.log("winRate (3 occurences): " + Math.floor(winRate) + "%")
+    console.log("nearWinRate (2 occurences): " + Math.floor(nearWinRate) + "%")
+    console.log("Gain moyen par tour " + Math.floor(averageGain))
+    console.warn("=============== \n   FIN ANALYSE KAAZINO   \n ===============")
+
     return {
-        winRate,
-        nearWinRate,
+        winRate, // Pourcentage de chance de gagner (3 occurrences)
+        nearWinRate, // Pourcentage de quasi-victoire (2 occurrences)
         averageGain,
         symbolOccurrences,
     };

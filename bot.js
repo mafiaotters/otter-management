@@ -108,7 +108,7 @@ const verifyWord = require('./Helpers/verifyWord')
 
 bot.removeAllListeners('messageCreate');
 // Avant d'ajouter le listener
-console.log(`Nombre de listeners pour 'messageCreate' avant ajout: ${bot.listenerCount('messageCreate')}`);
+//console.log(`Nombre de listeners pour 'messageCreate' avant ajout: ${bot.listenerCount('messageCreate')}`);
 // Écouteur d'événements pour les nouveaux messages
 bot.on('messageCreate', async (message) => {
 
@@ -127,7 +127,7 @@ bot.on('messageCreate', async (message) => {
   await saveQuote(message, bot);
 });
 // Après avoir ajouté le listener
-console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
+//console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
  
 // QUAND UN USER REJOINT LA GUILDE
 const { welcomeMessage, assignRoles } = require('./Helpers/newMember');
@@ -145,6 +145,7 @@ bot.on('guildMemberAdd', async (member) => {
 
 // MESSAGE DE AU REVOIR
 const goodbyeMessage = require('./Helpers/goodbyeMessage');
+const { analyzeGame } = require('./GillSystem/kaazino');
 bot.on('guildMemberRemove', async (member) => {
   console.log(`${member.displayName} a quitté le serveur ${member.guild.name}.`);
   await goodbyeMessage(member); // Appel de la fonction goodbyeMessage
@@ -159,7 +160,7 @@ bot.on('guildCreate', async (guild) => {
 // Supprimer les écouteurs d'événements existants avant de vérifier le nombre de listeners, pour prévenir de certains bugs.
 bot.removeAllListeners('interactionCreate');
 // Avant d'ajouter le listener
-console.log(`Nombre de listeners pour 'interactionCreate' avant ajout: ${bot.listenerCount('interactionCreate')}`);
+//console.log(`Nombre de listeners pour 'interactionCreate' avant ajout: ${bot.listenerCount('interactionCreate')}`);
 bot.on('interactionCreate', async (interaction) => {
   if (interaction.isCommand()) {
     //await interaction.deferReply({ ephemeral: true });
@@ -175,4 +176,4 @@ bot.on('interactionCreate', async (interaction) => {
   bot.hasInteractionCreateListener = true; // Marque que l'écouteur a été ajouté
 })
 // Après avoir ajouté le listener
-console.log(`Nombre de listeners pour 'interactionCreate' après ajout: ${bot.listenerCount('interactionCreate')}`);
+//console.log(`Nombre de listeners pour 'interactionCreate' après ajout: ${bot.listenerCount('interactionCreate')}`);
