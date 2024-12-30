@@ -24,7 +24,7 @@ module.exports = {
         {
             type: "SUB_COMMAND",
             name: "kaazino",
-            description: "Pariez vos petits poissons pour en avoir plus ! _(peut-être)_",
+            description: "Pariez vos petits poissons pour en avoir plus !",
         },
         {
             type: "SUB_COMMAND",
