@@ -130,7 +130,7 @@ async function kaazino(bot, interaction) {
         resultText = `et n'était pas loin de gagner ! <:otter_afraid:747554031349661836>`;
         embed.setColor('#f5a623');
     } else {
-        resultText = `et gagne **${Math.floor(gains)} :fish:** ! <:otter_pompom:747554032582787163> <:tada:>`;
+        resultText = `et gagne **${Math.floor(gains)} :fish:** ! <:otter_pompom:747554032582787163> :tada:`;
         embed.setColor('#28a403');
     }
 
