@@ -65,6 +65,8 @@ const RSS_FEEDS = [
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/topics.xml' }  // Canal des annonces importantes
 ];
 
+//Pour les best-of des quotes
+const { createMonthlyBestOf } = require('@helpers/createMonthlyBestOf');
 
 // Quand le bot est prêt et connecté
 bot.on('ready', () => {
@@ -73,7 +75,7 @@ bot.on('ready', () => {
     // Envoyer un message dans le serveur et le channel spécifiés
     const guild = bot.guilds.cache.get("675543520425148416");
     if (guild) {
-        const channel = guild.channels.cache.get("1282684525259919462");
+        const channel = guild.channels.cache.get("1311350221619597455");
         if (channel) {
             channel.send('Je suis de nouveau là ! <:otter_pompom:747554032582787163>');
         } else {
@@ -89,12 +91,14 @@ bot.on('ready', () => {
     // Load slash commands
     loadSlashCommands(bot);
 
-    // Vérifier les flux RSS Lodestone toutes les 10 minutes
+    // Vérifier les différents flux RSS Lodestone
     setInterval(() => {
       RSS_FEEDS.forEach(feed => {
           checkRSS(bot, feed.url);
       });
-  }, 10 * 60 * 1000); // Check toutes les 10m
+      //Système du best-of mensuel de quote
+      createMonthlyBestOf(bot);
+  }, 20 * 60 * 1000); // Check toutes les 20m
 });
 
 // SYSTEME DE CITATIONS
@@ -104,37 +108,36 @@ const verifyWord = require('./Helpers/verifyWord')
 
 bot.removeAllListeners('messageCreate');
 // Avant d'ajouter le listener
-console.log(`Nombre de listeners pour 'messageCreate' avant ajout: ${bot.listenerCount('messageCreate')}`);
+//console.log(`Nombre de listeners pour 'messageCreate' avant ajout: ${bot.listenerCount('messageCreate')}`);
 // Écouteur d'événements pour les nouveaux messages
 bot.on('messageCreate', async (message) => {
-  if (message.mentions.everyone) return; // Ne pas traiter les messages qui mentionnent @everyone ou @here
-  await verifyWord(message, bot)
-
+  // Exceptions générales
+  const exceptionsChannels = ['704404247445373029', '791052204823281714']; // Table ronde, Antre mafieuse
+  if (exceptionsChannels.includes(message.channel.id)) return; // Ne pas répondre aux messages de la Table ronde et de l'Antre mafieuse
   if (message.author.bot) return; // Ne pas répondre aux messages du bot lui-même
-  if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
-  // Appeler saveQuote quand un message est reçu
-  await saveQuote(message, bot);
+  if (message.mentions.everyone) return; // Ne pas traiter les messages qui mentionnent @everyone ou @here
+  
+  // Feature "feur" et "keen'v"
+  // Appeler `verifyWord` quand un message est reçu
+  const exceptionsUsers = ['173439968381894656', '143762806574022656', '72405181253287936']; // Sefa, Raziel, Velena
+  if (!exceptionsUsers.includes(message.author.id)) await verifyWord(message, bot); // Ne pas répondre "feur" ou "keen'v" aux utilisateurs qui ont un totem d'immunité
+  
+  // Feature "citation"
+  // Appeler `saveQuote` quand un message est reçu
+  if (!message.mentions.has(bot.user)) await saveQuote(message, bot); // Ne pas traiter les messages qui ne mentionnent pas le bot
 });
 // Après avoir ajouté le listener
-console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
-
-// UPDATE FUNCTION
-const updateFunction = require('@websiteUtils/updateFunction');
-//updateFunction(bot);
-
-// Quand un membre change de role
-/*const handleRoleChange = require('./Events/handleRoleChange');
-bot.on('guildMemberUpdate', (oldMember, newMember) => {
-  handleRoleChange(bot, oldMember, newMember);
-});*/
+//console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
  
-// MESSAGE DE BIENVENUE
-const { welcomeMember } = require('./Helpers/welcomeMessage');
+// QUAND UN USER REJOINT LA GUILDE
+const { welcomeMessage, assignRoles } = require('./Helpers/newMember');
 
 bot.on('guildMemberAdd', async (member) => {
     try {
         // Appeler la fonction pour gérer le message de bienvenue
-        await welcomeMember(member);
+        await welcomeMessage(member);
+        // Lui assigner ses rôles
+        await assignRoles(member)
     } catch (error) {
         console.error('Erreur lors de l’accueil du nouveau membre :', error);
     }
@@ -142,6 +145,7 @@ bot.on('guildMemberAdd', async (member) => {
 
 // MESSAGE DE AU REVOIR
 const goodbyeMessage = require('./Helpers/goodbyeMessage');
+const { analyzeGame } = require('./GillSystem/kaazino');
 bot.on('guildMemberRemove', async (member) => {
   console.log(`${member.displayName} a quitté le serveur ${member.guild.name}.`);
   await goodbyeMessage(member); // Appel de la fonction goodbyeMessage
@@ -156,7 +160,7 @@ bot.on('guildCreate', async (guild) => {
 // Supprimer les écouteurs d'événements existants avant de vérifier le nombre de listeners, pour prévenir de certains bugs.
 bot.removeAllListeners('interactionCreate');
 // Avant d'ajouter le listener
-console.log(`Nombre de listeners pour 'interactionCreate' avant ajout: ${bot.listenerCount('interactionCreate')}`);
+//console.log(`Nombre de listeners pour 'interactionCreate' avant ajout: ${bot.listenerCount('interactionCreate')}`);
 bot.on('interactionCreate', async (interaction) => {
   if (interaction.isCommand()) {
     //await interaction.deferReply({ ephemeral: true });
@@ -172,8 +176,4 @@ bot.on('interactionCreate', async (interaction) => {
   bot.hasInteractionCreateListener = true; // Marque que l'écouteur a été ajouté
 })
 // Après avoir ajouté le listener
-console.log(`Nombre de listeners pour 'interactionCreate' après ajout: ${bot.listenerCount('interactionCreate')}`);
-
-/* POUR LE DEVELOPPMENT UNIQUMENT
-const downloadGitWebsite = require('./Helpers/downloadGitWebsite');
-downloadGitWebsite('https://github.com/Satalis/LOUTRES_SITE/', './devWebsite')*/
+//console.log(`Nombre de listeners pour 'interactionCreate' après ajout: ${bot.listenerCount('interactionCreate')}`);

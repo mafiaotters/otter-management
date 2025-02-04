@@ -1,12 +1,13 @@
-const {dateFormatLog} = require('./logTools');
+require('dotenv').config();
 
+const {dateFormatLog} = require('./logTools');
 const { EmbedBuilder } = require('discord.js');
 
 /**
  * Fonction pour envoyer un message de bienvenue
  * @param {GuildMember} member Le nouveau membre qui vient de rejoindre
  */
-async function welcomeMember(member) {
+async function welcomeMessage(member) {
     try {
         console.log(await dateFormatLog() + member.displayName + " a rejoint le serveur Discord !")
         
@@ -42,11 +43,44 @@ async function welcomeMember(member) {
             // Envoyer l'embed
             return await welcomeChannel.send({ embeds: [embed] });
         } else {
-            console.warn(`Le channel de bienvenue n'as pas été trouvé ID:${channelWelcomeID} dans ${member.guild.name}.`);
+            console.warn(await dateFormatLog() + `Le channel de bienvenue n'as pas été trouvé ID:${channelWelcomeID} dans ${member.guild.name}.`);
         }
     } catch (error) {
-        console.error('Erreur dans welcomeMember :', error);
+        console.error(await dateFormatLog() + 'Erreur dans welcomeMember :', error);
     }
 }
 
-module.exports = { welcomeMember };
+
+async function assignRoles(member) {
+    try {
+        // IDs des rôles à attribuer
+        let role1ID = ''; // Visiteur
+        let role2ID = ''; // Possible loutre
+
+        if (process.env.GITHUB_BRANCH === 'main') {
+            role1ID = '675691652349689856';
+            role2ID = '879754348727509052';
+        } else {
+            role1ID = '1312043806023221268';
+            role2ID = '1312043774246912081';
+        }
+        
+        // Récupération des rôles depuis la guilde
+        const role1 = member.guild.roles.cache.get(role1ID) || await member.guild.roles.fetch(role1ID);
+        const role2 = member.guild.roles.cache.get(role2ID) || await member.guild.roles.fetch(role2ID);
+
+        // Vérification que les rôles existent
+        if (!role1 || !role2) {
+            console.error(await dateFormatLog() + 'Un ou plusieurs rôles spécifiés sont introuvables.');
+            return;
+        }
+
+        // Attribution des rôles
+        await member.roles.add([role1, role2]);
+        console.log(await dateFormatLog() + `Rôles attribués à ${member.user.tag}: ${role1.name}, ${role2.name}`);
+    } catch (error) {
+        console.error(await dateFormatLog() + 'Erreur lors de l\'attribution des rôles :', error);
+    }
+}
+
+module.exports = { welcomeMessage, assignRoles };

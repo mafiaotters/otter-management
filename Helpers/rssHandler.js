@@ -1,6 +1,34 @@
 const RSSParser = require('rss-parser');
 const parser = new RSSParser();
-const {dateFormatLog} = require('./logTools');
+const { dateFormatLog } = require('./logTools');
+
+/**
+ * Convertit une date UTC en fuseau horaire français.
+ * @param {string} utcDateStr - La date au format UTC.
+ * @returns {string} - La date convertie au fuseau horaire français.
+ */
+function convertToFrenchTime(utcDateStr) {
+    const utcDate = new Date(utcDateStr);
+
+    // Vérifier si la date est valide
+    if (isNaN(utcDate.getTime())) {
+        throw new Error(`Date invalide : ${utcDateStr}`);
+    }
+
+    // Convertir en fuseau horaire français
+    const options = { 
+        timeZone: 'Europe/Paris', 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+    };
+
+    const formatter = new Intl.DateTimeFormat('fr-FR', options);
+    return formatter.format(utcDate);
+}
 
 /**
  * Vérifie si un message avec le même titre d'embed existe déjà dans les 10 derniers messages.
@@ -15,7 +43,6 @@ async function isDuplicateMessage(channel, title) {
             if (message.embeds.length > 0) {
                 const embed = message.embeds[0];
                 if (embed.title === title) {
-                    console.log(`Message en doublon détecté : ${title}`);
                     return true; // Doublon trouvé
                 }
             }
@@ -69,14 +96,17 @@ async function checkRSS(bot, rssUrl) {
             // Image pour "topics" uniquement
             const imageUrl = rssUrl.includes('topics') && item.content ? extractImage(item.content) : null;
             
+            // Convertir la date au fuseau horaire français
+            const frenchTime = convertToFrenchTime(pubDate);
+
             // Définir le footer en fonction du flux RSS
             const footer = rssUrl.includes('topics')
                 ? {
-                    text: `News • ${new Date(pubDate).toLocaleString()}`,
+                    text: `News • ${frenchTime}`,
                     icon_url: 'https://images-ext-1.discordapp.net/external/NheZoeKn7Hh0UmSee9FFkErt6E41HVgAAO0dCTvW6wQ/https/lodestonenews.com/images/topics.png',
                 }
                 : {
-                    text: `Maintenance • ${new Date(pubDate).toLocaleString()}`,
+                    text: `Maintenance • ${frenchTime}`,
                     icon_url: 'https://images-ext-1.discordapp.net/external/A3w4m6Zwzdgp1KLRcwvw41QlRInTHE1HyeCKLRhADTo/https/lodestonenews.com/images/maintenance.png',
                 };
 
@@ -102,8 +132,6 @@ async function checkRSS(bot, rssUrl) {
                 image: rssUrl.includes('topics') && item.enclosure?.url ? { url: item.enclosure.url } : undefined, // Image uniquement pour "topics"
                 footer,
             };
-
-
 
             // Ajouter l'image si elle est présente
             if (imageUrl) {
@@ -131,7 +159,8 @@ async function checkRSS(bot, rssUrl) {
 
             // Envoyer l'embed sur Discord
             await lodestoneRSSChannel.send({ embeds: [embed] });
-            console.log(await dateFormatLog() + `Publication d'une news lodestone: ${item.title}`)        }
+            console.log(await dateFormatLog() + `Publication d'une news lodestone: ${item.title}`)        
+        }
     } catch (error) {
         console.error('Erreur lors de la vérification du flux RSS :', error);
     }

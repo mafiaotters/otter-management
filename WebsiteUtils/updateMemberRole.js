@@ -36,6 +36,7 @@ async function removeMemberFromActiveMembers(activeRef, discordId, bot) {
 
 
 async function updateMemberRole(bot) {
+  const modifications = []; // Tableau pour sauvegarder les modifications
     const guild = await bot.guilds.fetch(process.env.GUILD_ID);
     console.log(`Récupération de la guilde: ${guild.name}`);
   
@@ -74,6 +75,12 @@ async function updateMemberRole(bot) {
                 // A jour le role sur le profil membre
                 await profileDoc.ref.update({ currentRole: highestRole });
 
+                modifications.push({
+                  user: discordName,
+                  action: 'Role Updated',
+                  role: highestRole,
+              });
+
                 // Retrait l'ancien profil de activeMembers - Aucune distinction du rôle actuel, puisqu'il a changé.
                 await removeMemberFromActiveMembers(activeRef, discordId, bot);
 
@@ -89,6 +96,11 @@ async function updateMemberRole(bot) {
             }
         } else {
             console.log(`${discordName} : Aucun rôle significatif trouvé. Suppression du profil de activeMembers.`);
+            modifications.push({
+              user: discordName,
+              action: 'Role Updated',
+              role: "N'est plus une loutre.",
+          });
             removeMemberFromActiveMembers(activeRef, discordId, bot);
         }
       } catch (error) {
@@ -101,6 +113,7 @@ async function updateMemberRole(bot) {
         }
       }
     }
+    return modifications;
   
   }
 
