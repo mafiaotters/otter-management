@@ -177,3 +177,9 @@ bot.on('interactionCreate', async (interaction) => {
 })
 // Après avoir ajouté le listener
 //console.log(`Nombre de listeners pour 'interactionCreate' après ajout: ${bot.listenerCount('interactionCreate')}`);
+
+
+
+// Pour les tests, auto update au lancement
+const updateMemberDAO = require('@websiteUtils/updateMemberDAO');
+updateMemberDAO(bot)

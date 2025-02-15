@@ -21,7 +21,8 @@ async function uploadUpdate() {
 
         // Chemins spécifiques des fichiers à uploader
         const filesToUpload = [
-            'memberDAO.php', 
+            'memberDAO.php',
+            'memberDAO.csv',
            path.posix.join('data', 'otter.json') // Ajustement pour le dossier "data"
         ];
 
