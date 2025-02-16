@@ -45,23 +45,28 @@ async function isDuplicateMessage(channel, title) {
  */
 async function createMonthlyBestOf(bot) {
     try {
-
         if (!isCorrectTime()) {
-            console.log(await dateFormatLog() + '[BestOf] Ce n\'est pas le moment de générer le best-of mensuel.');
             return;
         }
         
         const db = require('@loader/loadDatabase');
         const date = new Date();
 
+        // Définition des channels
         const bestOfChannelID = process.env.GITHUB_BRANCH === 'main'
-            ? '675682104327012382' // Channel pour la branche main
-            : '1252901298798460978'; // Channel pour dev ou autre
+            ? '675910340936204288' // Channel Best-Of (Main)
+            : '1252901298798460978'; // Channel Best-Of (Dev)
 
-        const channel = bot.channels.cache.get(bestOfChannelID);
+        const notificationChannelID = process.env.GITHUB_BRANCH === 'main'
+            ? '675682104327012382' // Channel Notifications (Main)
+            : '653689680906420238'; // Channel Notifications (Dev)
 
-        if (!channel) {
-            console.error(await dateFormatLog() + '[BestOf] Le canal du best-of est introuvable.');
+        // Récupérer les channels
+        const bestOfChannel = bot.channels.cache.get(bestOfChannelID);
+        const notificationChannel = bot.channels.cache.get(notificationChannelID);
+
+        if (!bestOfChannel || !notificationChannel) {
+            console.error(await dateFormatLog() + '[BestOf] Erreur : Un des channels est introuvable.');
             return;
         }
 
@@ -69,7 +74,7 @@ async function createMonthlyBestOf(bot) {
         const title = `🎉 Best-of Mensuel - ${date.toLocaleString('fr-FR', { month: 'long', year: 'numeric' }).replace(/^\w/, (c) => c.toUpperCase())}`;
 
         // Vérifier les doublons avant d'aller plus loin
-        if (await isDuplicateMessage(channel, title)) {
+        if (await isDuplicateMessage(bestOfChannel, title)) {
             return console.log(await dateFormatLog() + '[BestOf] Le best-of a déjà été publié ce mois-ci.');
         }
 
@@ -96,28 +101,26 @@ async function createMonthlyBestOf(bot) {
             });
         }
 
-        // Ajouter les noms des utilisateurs
-        for (const citation of newCitations) {
+        // Fonction pour récupérer le nom (Prenom > displayName > 'Utilisateur inconnu')
+        async function getUserDisplayName(userId) {
             try {
-                // Récupérer le membre depuis Discord
-                const member = await bot.guilds.cache
-                    .first() // Assure que vous récupérez le bon serveur
-                    .members.fetch(citation.userId);
-                citation.userName = member.displayName || member.user.username;
-            } catch {
-                try {
-                    // Récupérer "Prenom" depuis Firestore
-                    const userDoc = await db.collection('profiles').doc(citation.userId).get();
-                    if (userDoc.exists && userDoc.data().Prenom) {
-                        citation.userName = userDoc.data().Prenom;
-                    } else {
-                        citation.userName = 'Utilisateur inconnu'; // Nom par défaut si tout échoue
-                    }
-                } catch (error) {
-                    console.warn(`${await dateFormatLog()} Erreur lors de la récupération de "Prenom" pour l'utilisateur ID ${citation.userId}:`, error);
-                    citation.userName = 'Utilisateur inconnu';
+                // Récupération via Firestore
+                const userDoc = await db.collection('profiles').doc(userId).get();
+                if (userDoc.exists && userDoc.data().Prenom) {
+                    return userDoc.data().Prenom;
                 }
+
+                // Récupération via Discord
+                const member = await bot.guilds.cache.first().members.fetch(userId);
+                return member.displayName || member.user.username;
+            } catch {
+                return 'Utilisateur inconnu'; // Si tout échoue
             }
+        }
+
+        // Ajouter les noms aux citations récentes
+        for (const citation of newCitations) {
+            citation.userName = await getUserDisplayName(citation.userId);
         }
 
         // Créer un embed pour le best-of
@@ -126,9 +129,38 @@ async function createMonthlyBestOf(bot) {
             .setColor('#00aaff')
             .setTimestamp();
 
-        if (newCitations.length === 0) {
-            // Ajouter un message dans l'embed si aucune citation
-            embed.setDescription('📋 Aucun nouveau best-of ce mois-ci. Revenez le mois prochain !');
+        if (newCitations.length <= 2) {
+            let allCitations = [];
+
+            for (const doc of snapshot.docs) {
+                const userCitations = await doc.ref.collection('citations').get();
+                userCitations.forEach(citation => {
+                    const data = citation.data();
+                    allCitations.push({
+                        userId: doc.id,
+                        text: data.quote,
+                        date: data.date ? data.date.toDate() : new Date(0),
+                    });
+                });
+            }
+
+            if (allCitations.length <= 2) {
+                embed.setDescription('📋 Aucun best-of n\'est disponible. Revenez le mois prochain !');
+            } else {
+                allCitations = allCitations.sort(() => Math.random() - 0.5).slice(0, 5);
+
+                embed.setDescription('📋 Ce mois-ci, voici quelques citations sélectionnées aléatoirement :');
+
+                for (const [index, citation] of allCitations.entries()) {
+                    citation.userName = await getUserDisplayName(citation.userId);
+
+                    embed.addFields({
+                        name: `#${index + 1} - ${citation.userName}`,
+                        value: citation.text,
+                        inline: false,
+                    });
+                }
+            }
         } else {
             // Limiter à 5 citations aléatoires
             if (newCitations.length > 5) {
@@ -139,16 +171,21 @@ async function createMonthlyBestOf(bot) {
 
             newCitations.forEach((citation, index) => {
                 embed.addFields({
-                    name: `#${index + 1} - ${citation.userName}`, // Utilisation du nom prioritaire
+                    name: `#${index + 1} - ${citation.userName}`,
                     value: citation.text,
                     inline: false,
                 });
             });
         }
 
-        // Envoyer le message avec l'embed
-        await channel.send({ embeds: [embed] });
-        console.log(await dateFormatLog() + '[BestOf] Best-of mensuel envoyé.');
+        // Envoyer le best-of et récupérer le message envoyé
+        const bestOfMessage = await bestOfChannel.send({ embeds: [embed] });
+        
+        // Envoyer le lien du message dans le channel de notifications
+        const messageLink = `https://discord.com/channels/${bestOfMessage.guild.id}/${bestOfMessage.channel.id}/${bestOfMessage.id}`;
+        await notificationChannel.send(`📢 Le best-of des citations du mois vient d'être publié ! Cliquez ici : ${messageLink}`);
+
+        console.log(await dateFormatLog() + '[BestOf] Best-of mensuel envoyé et notification postée.');
     } catch (error) {
         console.error(await dateFormatLog() + '[BestOf] Erreur lors de la création du best-of mensuel :', error);
     }

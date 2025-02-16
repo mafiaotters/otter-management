@@ -98,7 +98,7 @@ bot.on('ready', () => {
       });
       //Système du best-of mensuel de quote
       createMonthlyBestOf(bot);
-  }, 20 * 60 * 1000); // Check toutes les 20m
+  }, 15 * 60 * 1000); // Check toutes les 15m
 });
 
 // SYSTEME DE CITATIONS
@@ -181,5 +181,5 @@ bot.on('interactionCreate', async (interaction) => {
 
 
 // Pour les tests, auto update au lancement
-const updateMemberDAO = require('@websiteUtils/updateMemberDAO');
-updateMemberDAO(bot)
+//const updateMemberDAO = require('@websiteUtils/updateMemberDAO');
+//updateMemberDAO(bot)
