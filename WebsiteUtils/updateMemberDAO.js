@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const db = require('@loader/loadDatabase');
 const SftpClient = require('ssh2-sftp-client');
+const { dateFormatLog } = require('../Helpers/logTools');
 const sftp = new SftpClient();
 
 
@@ -30,12 +31,18 @@ async function updateMemberDAO(bot) {
 
           // Ajoutez ici les informations nécessaires à partir de profileData, dans le tableau membersList
           membersList.push({
-            fileName: profileData.websiteInfo.fileName,
             Prenom: prenom,
             Nom: nom,
+            fileName: profileData.websiteInfo.fileName,
             Titre: profileData.websiteInfo.Titre,
             profilPage: profileData.websiteInfo.profilPage,
-            hidden : profileData.websiteInfo.hidden
+            hidden : profileData.websiteInfo.hidden,
+            currentRole : profileData.currentRole,
+            discordId : profileData.discordId,
+            profileTitre1 : profileData.websiteInfo.profilPageInfo.titre1,
+            profileTitre2 : profileData.websiteInfo.profilPageInfo.titre2,
+            profileTitre3 : profileData.websiteInfo.profilPageInfo.titre3,
+            profileDescriptionHTML : profileData.websiteInfo.profilPageInfo.descriptionHTML
           });
         }else{console.log('ERROR: no profile data')}
       }
@@ -43,13 +50,101 @@ async function updateMemberDAO(bot) {
     }
   
     // Une fois tous les membres récupérés, générer le fichier MemberDAO.php
-    await writeMemberDAO(membersList);
+    await writeMemberDAOPHP(membersList);
+    //await writeMemberDAOCSV(membersList)
   }
 
+// Fonction pour générer le contenu de MemberDAO.CSV
+async function writeMemberDAOCSV(membersList) {
+    try {
+        const tmpDirPath = path.join(__dirname, '../tmp');
+        if (!fs.existsSync(tmpDirPath)) {
+            fs.mkdirSync(tmpDirPath, { recursive: true });
+            console.log(await dateFormatLog() + ' [CSV] Dossier "tmp" créé avec succès.');
+        }
+
+        const csvFilePath = path.join(tmpDirPath, 'MemberDAO.csv');
+
+        if (membersList.length === 0) {
+            console.warn(await dateFormatLog() + ' [CSV] Aucun membre à enregistrer.');
+            return;
+        }
+
+        console.warn(await dateFormatLog() + ' [CSV] Génération du fichier MemberDAO.csv...');
+
+        // Connexion au serveur SFTP
+        await sftp.connect({
+            host: process.env.FTP_HOST,
+            port: process.env.FTP_PORT,
+            user: process.env.FTP_USER,
+            password: process.env.FTP_PASS,
+            readyTimeout: 20000,
+            keepaliveInterval: 5000
+        });
+
+        // Séparer les premiers 8 membres du reste
+        const firstMembers = membersList.slice(0, 8);
+        let remainingMembers = membersList.slice(8).sort(() => Math.random() - 0.5);
+        const combinedMembers = [...firstMembers, ...remainingMembers];
+
+        const headers = [
+            'fileName', 'Prenom', 'Nom', 'Titre', 'profilPage', 'hidden',
+            'currentRole', 'discordId', 'profileTitre1', 'profileTitre2',
+            'profileTitre3', 'profileDescriptionHTML', 'avatar', 'extension' 
+        ];
+
+        const basePath = process.env.GITHUB_BRANCH === 'main' ? '/assets/img/speakers' : '/dev/assets/img/speakers';
+
+        // Générer les lignes du CSV
+        const csvData = [];
+        for (const member of combinedMembers) {
+            if (member.hidden ?? false) {
+                console.warn(await dateFormatLog() + ` [CSV] ${member.Prenom} ${member.Nom} : Membre caché, non inclus.`);
+                continue;
+            }
+
+            console.log(await dateFormatLog() + ` [CSV] Vérification de l'avatar pour ${member.Prenom} ${member.Nom}...`);
+
+            // Trouver l'extension jpg/png
+            let extension = "jpg";
+            let existsExt = await sftp.exists(`${basePath}/${member.fileName}.jpg`);
+            extension = existsExt ? "jpg" : "png"; // Définit l'extension trouvée
+
+            const remoteAvatarPath = `${basePath}/${member.fileName}_1.${extension}`;
+            let avatar = "NoAvatar2";
+
+            let exists = await sftp.exists(remoteAvatarPath);
+            avatar = exists ? "Avatar2" : "NoAvatar2";
+
+            const row = headers.map(header => {
+                if (header === "avatar") return `"${avatar}"`;
+                if (header === "extension") return `"${extension}"`; 
+
+                let value = member[header] !== undefined ? member[header] : '';
+                if (typeof value === 'string') {
+                    value = value.replace(/"/g, '""'); // Échapper les guillemets
+                }
+                return `"${value}"`;
+            });
+
+            csvData.push(row.join(','));
+        }
+
+        // Écriture du fichier CSV
+        fs.writeFileSync(csvFilePath, [headers.join(','), ...csvData].join('\n'), 'utf8');
+
+        console.log(await dateFormatLog() + ` [CSV] Fichier MemberDAO.csv généré avec succès (${csvData.length} membres).`);
+
+        // Fermer la connexion SFTP
+        await sftp.end();
+    } catch (error) {
+        console.error(await dateFormatLog() + ' [CSV] Erreur lors de la création du fichier MemberDAO.csv :', error);
+    }
+}
 
 
 // Fonction pour générer le contenu de MemberDAO.php
-async function writeMemberDAO(membersList) {
+async function writeMemberDAOPHP(membersList) {
 
     // Configuration de la connexion SFTP
     const sftpOptions = {
