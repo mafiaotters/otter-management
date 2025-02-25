@@ -88,7 +88,7 @@ async function checkRSS(bot, rssUrl) {
 
             const timeDiff = now - pubDate; // Différence en millisecondes
 
-            if (timeDiff > 1 * 60 * 60 * 1000) {
+            if (timeDiff > 28 * 60 * 1000) {
                 // Ignorer les articles plus anciens que 1 heure
                 continue;
             }
