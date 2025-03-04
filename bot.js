@@ -4,6 +4,7 @@ Pour rajouter des valeurs par défaut sur les membres, c'est dans Commands/add.j
 
 // Charge les modules alias
 require('module-alias/register');
+const https = require("https");
 
 //HEALTH CHECK UP DE L'APPLICATION
 const express = require('express');
@@ -99,6 +100,15 @@ bot.on('ready', () => {
       //Système du best-of mensuel de quote
       createMonthlyBestOf(bot);
   }, 15 * 60 * 1000); // Check toutes les 15m
+
+    // Empêche le sleeping de Koyeb
+    setInterval(() => {
+      https.get("https://google.com", (res) => {
+          //console.log("📡 Keep-alive ping envoyé ! Statut :", res.statusCode);
+      }).on("error", (err) => {
+          console.error("❌ Erreur Keep-Alive :");
+      });
+  }, 2 * 60 * 1000); // Toutes les 2 minutes
 });
 
 // SYSTEME DE CITATIONS
@@ -183,3 +193,5 @@ bot.on('interactionCreate', async (interaction) => {
 // Pour les tests, auto update au lancement
 //const updateMemberDAO = require('@websiteUtils/updateMemberDAO');
 //updateMemberDAO(bot)
+
+
