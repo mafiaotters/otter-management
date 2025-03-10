@@ -5,7 +5,7 @@ const rolePermissions = {
   "Sottocapo": 5,
   "Enroloutre": 4,
   "Loutre Mafieuse": 3,
-  "Loutre Naissante": 2
+  //"Loutre Naissante": 2
 };
 
 async function updateActiveMembers(newMember, highestGainedRoleName, bot) {

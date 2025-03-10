@@ -34,7 +34,7 @@ bot.rolePermissions = {
   "Loutre Sottocapo": 5,
   "L'Enrôloutre": 4,
   "Loutre Mafieuse": 3,
-  "Loutre Naissante": 2
+  //"Loutre Naissante": 2
 };
 
 const loadCommands = require('./Loader/loadCommands');
