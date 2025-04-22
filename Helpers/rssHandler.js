@@ -38,7 +38,7 @@ function convertToFrenchTime(utcDateStr) {
  */
 async function isDuplicateMessage(channel, title) {
     try {
-        const messages = await channel.messages.fetch({ limit: 10 }); // Récupère les 10 derniers messages
+        const messages = await channel.messages.fetch({ limit: 40 }); // Récupère les 10 derniers messages
         for (const [, message] of messages) {
             if (message.embeds.length > 0) {
                 const embed = message.embeds[0];
@@ -88,8 +88,8 @@ async function checkRSS(bot, rssUrl) {
 
             const timeDiff = now - pubDate; // Différence en millisecondes
 
-            if (timeDiff > 28 * 60 * 1000) {
-                // Ignorer les articles plus anciens que 1 heure
+            if (timeDiff > 5 * 60 * 60 * 1000) {
+                // Ignorer les articles plus anciens que 5 heure
                 continue;
             }
 
