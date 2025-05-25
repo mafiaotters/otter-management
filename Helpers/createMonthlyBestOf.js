@@ -23,7 +23,7 @@ function isCorrectTime() {
 
 async function isDuplicateMessage(channel, title) {
     try {
-        const messages = await channel.messages.fetch({ limit: 10 }); // Récupère les 10 derniers messages
+        const messages = await channel.messages.fetch({ limit: 95 }); // Récupère les 10 derniers messages
         for (const [, message] of messages) {
             if (message.embeds.length > 0) {
                 const embed = message.embeds[0];
