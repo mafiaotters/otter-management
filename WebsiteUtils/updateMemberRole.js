@@ -85,24 +85,19 @@ async function updateMemberRole(bot) {
                 }
             } else {
                 // Vérifier si l'utilisateur a déjà été marqué comme "n'est plus une loutre"
-                if (!('roleRemoved' in profileData)) {
+                if (!profileData.roleRemoved) {
                     console.log(`${discordName} : Aucun rôle significatif trouvé. Suppression du profil de activeMembers.`);
-            
                     modifications.push({
                         user: discordName,
                         action: 'Role Updated',
                         role: "N'est plus une loutre.",
                     });
-            
-                    // Mise à jour du profil : marquer comme retiré
                     await profileDoc.ref.update({ currentRole: null, roleRemoved: true });
-            
-                    // Suppression de l'utilisateur des rôles actifs
                     await removeMemberFromActiveMembers(activeRef, discordId, bot);
                 } else {
                     console.log(`${discordName} : Déjà marqué comme sans rôle, aucune modification.`);
                 }
-            }            
+            }
         } catch (error) {
             if (error.message.includes('Unknown Member')) {
                 console.error(`${discordName} : Erreur lors de la récupération, avec discordId: ${discordId}`);
