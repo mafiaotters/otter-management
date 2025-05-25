@@ -31,7 +31,7 @@ bot.rolePermissions = {
   "Le Parrain": 7,
   "Loutre Lanceuse de Pantoufles": 6,
   "Loutre Sottocapo": 5,
-  "L'Enrôloutre": 4,
+  "Enrôloutre": 4,
   "Loutre Mafieuse": 3,
   //"Loutre Naissante": 2
 };
