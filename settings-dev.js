@@ -8,6 +8,8 @@ module.exports = {
   mainGuildId: '653689680906420235',
   // Canal d'annonce au démarrage
   channelId: '1252901298798460978',
+  // URL du flux RSS Reddit Fashion
+  redditFashionRSS: 'https://www.reddit.com/r/ffxiv/search.rss?restrict_sr=on&sort=new&q=author%3AGottesstrafe+Fashion+Report+-+Full+Details+-+For+Week+of&t=week',
   ids: {
     // Canal de bienvenue
     welcomeChannel: '653689680906420238',
@@ -15,6 +17,8 @@ module.exports = {
     goodbyeChannel: '653689680906420238',
     // Canal pour le flux RSS de test
     lodestoneRSSChannel: '1252901298798460978',
+    // Canal pour le flux Reddit Fashion
+    redditFashionChannel: '1252901298798460978',
     // Canal pour le best-of en environnement dev
     bestOfChannel: '1252901298798460978',
     // Canal de notification
@@ -64,6 +68,7 @@ module.exports = {
     quoteSystem: true, // Enregistre les citations et gère le best-of
     rss: true, // Vérifie les flux RSS de la Lodestone
     bestOfMonthly: true, // Génère le best-of mensuel
+    redditFashion: true, // Récupère les posts du subreddit fashion
     welcomeMessage: true, // Envoie un message de bienvenue aux nouveaux
     assignRoles: true, // Attribue les rôles de base lors de l'arrivée
     goodbyeMessage: true, // Indique quand un membre quitte le serveur

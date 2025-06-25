@@ -75,6 +75,7 @@ loadEvents(bot); // Load all commands in collection, to the bot
 
 // Configuration des flux RSS et des canaux
 const { checkRSS } = require('./Helpers/rssHandler');
+const { checkRedditFashion } = require('./Helpers/redditFashion');
 const RSS_FEEDS = [
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/news.xml' }, // Canal de maintenance
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/topics.xml' }  // Canal des annonces importantes
@@ -112,6 +113,9 @@ bot.on('ready', () => {
         RSS_FEEDS.forEach(feed => {
           checkRSS(bot, feed.url);
         });
+      }
+      if (bot.featureEnabled('redditFashion')) {
+        checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
       }
       if (bot.featureEnabled('bestOfMonthly')) {
         createMonthlyBestOf(bot);
