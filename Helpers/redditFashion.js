@@ -35,7 +35,9 @@ function getOriginalImage(html, mediaContent) {
         url = cleanImageUrl(url);
     }
     if (url) {
-        url = url.replace(/preview\.redd\.it/, 'i.redd.it').split('?')[0];
+        url = url
+            .replace(/https?:\/\/(?:external-)?preview\.redd\.it/, 'https://i.redd.it')
+            .split('?')[0];
     }
     return url || null;
 }
@@ -85,7 +87,8 @@ async function checkRedditFashion(bot, rssUrl, channelId) {
                 continue;
             }
 
-            const imageUrl = getOriginalImage(item.content, item['media:content']);
+            const htmlContent = item['content:encoded'] || item.content;
+            const imageUrl = getOriginalImage(htmlContent, item['media:content']);
 
             const embed = new EmbedBuilder()
                 .setTitle(item.title || 'Reddit Fashion')
