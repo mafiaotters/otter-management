@@ -1,6 +1,44 @@
 const RSSParser = require('rss-parser');
-const parser = new RSSParser();
+const { decode } = require('html-entities');
+const { EmbedBuilder } = require('discord.js');
+const parser = new RSSParser({
+    headers: { 'User-Agent': 'Mozilla/5.0 (OtterBot RSS Reader)' },
+    customFields: { item: ['media:thumbnail', 'media:content'] }
+});
 const { dateFormatLog } = require('./logTools');
+
+function decodeHtmlEntities(text) {
+    return text ? decode(text) : text;
+}
+
+function cleanImageUrl(url) {
+    if (!url) return null;
+    return decodeHtmlEntities(url).replace(/&amp;/g, '&');
+}
+
+function extractImage(html) {
+    if (!html) return null;
+    const match = html.match(/<img[^>]+src="([^">]+)"/i);
+    return match ? cleanImageUrl(match[1]) : null;
+}
+
+function getOriginalImage(html, mediaContent) {
+    let url = extractImage(html);
+    if (!url && mediaContent) {
+        if (typeof mediaContent === 'string') {
+            url = mediaContent;
+        } else if (mediaContent.$?.url) {
+            url = mediaContent.$.url;
+        } else if (mediaContent.url) {
+            url = mediaContent.url;
+        }
+        url = cleanImageUrl(url);
+    }
+    if (url) {
+        url = url.replace(/preview\.redd\.it/, 'i.redd.it').split('?')[0];
+    }
+    return url || null;
+}
 
 async function isDuplicateMessage(channel, title) {
     try {
@@ -47,11 +85,16 @@ async function checkRedditFashion(bot, rssUrl, channelId) {
                 continue;
             }
 
-            const embed = {
-                title: item.title || 'Reddit Fashion',
-                url: item.link,
-                footer: { text: `Reddit • ${new Date(pubDate).toLocaleString('fr-FR')}` },
-            };
+            const imageUrl = getOriginalImage(item.content, item['media:content']);
+
+            const embed = new EmbedBuilder()
+                .setTitle(item.title || 'Reddit Fashion')
+                .setURL(item.link)
+                .setFooter({ text: `Reddit • ${new Date(pubDate).toLocaleString('fr-FR')}` });
+
+            if (imageUrl) {
+                embed.setImage(imageUrl);
+            }
 
             await channel.send({ embeds: [embed] });
             console.log(await dateFormatLog() + `Publication d'un post Reddit Fashion : ${item.title}`);
