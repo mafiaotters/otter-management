@@ -64,6 +64,11 @@ bot.featureEnabled = (name) => {
   return bot.settings.features?.[name] !== false;
 }
 
+// Vérifie si une commande est activée
+bot.commandEnabled = (name) => {
+  return bot.settings.commandToggles?.[name] !== false;
+}
+
 loadCommands(bot); // Load all commands in collection, to the bot
 loadEvents(bot); // Load all commands in collection, to the bot
 
@@ -197,13 +202,18 @@ bot.on('interactionCreate', async (interaction) => {
   if (interaction.isCommand()) {
     //await interaction.deferReply({ ephemeral: true });
 
-    if(interaction.type === Discord.InteractionType.ApplicationCommand) {
-      // Then take the command name 
+  if(interaction.type === Discord.InteractionType.ApplicationCommand) {
+      if (!bot.commandEnabled(interaction.commandName)) {
+        await interaction.reply({ content: 'Cette commande est désactivée.', ephemeral: true });
+        return;
+      }
+
+      // Then take the command name
       let command = require(`./Commands/${interaction.commandName}`);
       console.log(await dateFormatLog() +  '- Commande: ' + command.name + ' par: ' + interaction.user.username);
       //Run the command
       command.run(bot, interaction, command.options);
-  } 
+  }
   };
   bot.hasInteractionCreateListener = true; // Marque que l'écouteur a été ajouté
 })

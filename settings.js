@@ -43,6 +43,21 @@ module.exports = {
     helpContacts: ['207992750988197889', '239407042182381588'],
   },
 
+  // Activer ou désactiver des commandes spécifiques
+  // Toutes les commandes sont listées ci-dessous et activées par défaut
+  commandToggles: {
+    add: true,
+    aide: true,
+    delete: true,
+    gill: true,
+    quote: true,
+    suggestion: true,
+    update: true,
+    help: false,
+    link: false,
+    verify: false,
+  },
+
   // Activer ou non certaines fonctionnalités du bot
   features: {
     verifyWord: true, // Répond "feur" ou "keen'v" selon le message
