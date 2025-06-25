@@ -75,6 +75,7 @@ loadEvents(bot); // Load all commands in collection, to the bot
 
 // Configuration des flux RSS et des canaux
 const { checkRSS } = require('./Helpers/rssHandler');
+const { checkRedditFashion } = require('./Helpers/redditFashion');
 const RSS_FEEDS = [
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/news.xml' }, // Canal de maintenance
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/topics.xml' }  // Canal des annonces importantes
@@ -104,19 +105,34 @@ bot.on('ready', () => {
     bot.user.setActivity('GILLS', { type: 'WATCHING' });
 
     // Load slash commands
-    loadSlashCommands(bot);
+  loadSlashCommands(bot);
+
+  // Intervalle pour Reddit Fashion
+  const redditFashionInterval = (bot.settings.redditFashionInterval || 60) * 60 * 1000;
 
     // Vérifier les différents flux RSS Lodestone et le best-of mensuel
+
     setInterval(() => {
       if (bot.featureEnabled('rss')) {
         RSS_FEEDS.forEach(feed => {
           checkRSS(bot, feed.url);
         });
       }
+      if (bot.featureEnabled('redditFashion')) {
+        checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
+      }
       if (bot.featureEnabled('bestOfMonthly')) {
         createMonthlyBestOf(bot);
       }
     }, 15 * 60 * 1000); // Check toutes les 15m
+
+    // Vérification périodique du subreddit fashion
+    if (bot.featureEnabled('redditFashion')) {
+      checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
+      setInterval(() => {
+        checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
+      }, redditFashionInterval);
+    }
 
     // Empêche le sleeping de Koyeb
     setInterval(() => {
