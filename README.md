@@ -52,15 +52,15 @@ FTP_USER=ton_user
 FTP_PASS=ton_mdp
 DEV_MODE=false
 
-### Le démarrer 
-node bot.js
-
 ### Initialisation de Firestore pour le développement
 Pour peupler rapidement la base Firestore avec des données de test, exécutez :
-```sh
 npm run init:dev -- --insert
-```
+
 Ajoutez `--dry-run` pour simuler sans écrire dans la base.
+
 En définissant la variable d'environnement `DEV_MODE=true`, le script utilisera
 `firebase-dev.json` et `settings-dev.js`.
 Les membres insérés sont configurés dans `AdminTools/initSettings.json`.
+
+### Le démarrer 
+node bot.js
