@@ -22,6 +22,9 @@ app.listen(PORT, () => {
 
 require('dotenv').config();
 
+const isDev = process.env.DEV_MODE === 'true';
+const botSettings = require(isDev ? './settings-dev.js' : './settings.js');
+
 const {dateFormatLog} = require('./Helpers/logTools');
 
 const Discord = require('discord.js');
@@ -54,6 +57,7 @@ bot.login(process.env.DISCORD_TOKEN); // Login to Discord
 console.log('Connexion validée !')
 
 bot.db = loadDatabase()
+bot.settings = botSettings
 
 loadCommands(bot); // Load all commands in collection, to the bot
 loadEvents(bot); // Load all commands in collection, to the bot
