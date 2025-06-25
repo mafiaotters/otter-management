@@ -85,6 +85,14 @@ features: {
 
 Passez une valeur à `false` pour désactiver la fonctionnalité correspondante sans modifier le code.
 
+### Réglage des intervalles
+
+Certains délais peuvent être ajustés dans `settings.js` :
+
+```js
+redditFashionInterval: 60 // Vérifie le flux Reddit Fashion toutes les 60 minutes
+```
+
 
 ### Désactiver des commandes
 

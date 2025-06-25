@@ -10,6 +10,10 @@ module.exports = {
   channelId: '1311350221619597455',
   // URL du flux RSS Reddit Fashion
   redditFashionRSS: 'https://www.reddit.com/r/ffxiv/search.rss?restrict_sr=on&sort=new&q=author%3AGottesstrafe+Fashion+Report+-+Full+Details+-+For+Week+of&t=week',
+
+  // Intervalle de vérification du flux Reddit Fashion (en minutes)
+  redditFashionInterval: 60,
+
   ids: {
     // Canal où sont envoyés les messages de bienvenue
     welcomeChannel: '675910340936204288',
