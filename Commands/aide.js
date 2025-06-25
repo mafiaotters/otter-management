@@ -11,8 +11,8 @@ module.exports = {
             // Créer l'embed
             const embed = new EmbedBuilder()
                 .setTitle("📖 Liste des commandes")
-                .setDescription("Voici la liste des commandes disponibles pour **Chantal**." + 
-                    "\nBesoin de plus d'aide ? Contactez : <@207992750988197889> ou <@239407042182381588> !"
+                .setDescription("Voici la liste des commandes disponibles pour **Chantal**." +
+                    `\nBesoin de plus d'aide ? Contactez : <@${bot.settings.commands.helpContacts[0]}> ou <@${bot.settings.commands.helpContacts[1]}> !`
                 )
                 .addFields(
                     { name: "/gill", value: "Affiche les commandes de notre économie fun : les Gills ! :fish:" },

@@ -7,14 +7,11 @@ const { EmbedBuilder } = require('discord.js');
  * Fonction pour envoyer un message de bienvenue
  * @param {GuildMember} member Le nouveau membre qui vient de rejoindre
  */
-async function welcomeMessage(member) {
+async function welcomeMessage(member, bot) {
     try {
         console.log(await dateFormatLog() + member.displayName + " a rejoint le serveur Discord !")
         
-        let channelWelcomeID = "";
-        // Trouver le canal "bienvenue"
-        if(process.env.GITHUB_BRANCH == "main"){ channelWelcomeID = '675910340936204288'}
-        else{ channelWelcomeID = '653689680906420238' }
+        const channelWelcomeID = bot.settings.ids.welcomeChannel;
 
         const welcomeChannel = await member.guild.channels.cache.get(channelWelcomeID);
         if (welcomeChannel) {
@@ -51,19 +48,11 @@ async function welcomeMessage(member) {
 }
 
 
-async function assignRoles(member) {
+async function assignRoles(member, bot) {
     try {
         // IDs des rôles à attribuer
-        let role1ID = ''; // Visiteur
-        let role2ID = ''; // Possible loutre
-
-        if (process.env.GITHUB_BRANCH === 'main') {
-            role1ID = '675691652349689856';
-            role2ID = '879754348727509052';
-        } else {
-            role1ID = '1312043806023221268';
-            role2ID = '1312043774246912081';
-        }
+        const role1ID = bot.settings.ids.roleVisitor; // Visiteur
+        const role2ID = bot.settings.ids.rolePotential; // Possible loutre
         
         // Récupération des rôles depuis la guilde
         const role1 = member.guild.roles.cache.get(role1ID) || await member.guild.roles.fetch(role1ID);

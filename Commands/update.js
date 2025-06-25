@@ -33,7 +33,7 @@ module.exports = {
         lastUsed[userId] = timestamp;
 
         // Liste des ID des utilisateurs autorisés
-        const allowedUsers = ['207992750988197889', '173439968381894656', '239407042182381588']; // Jungso, Sefa, Kaaz, compte test sefa
+        const allowedUsers = bot.settings.commands.allowedUsers; // Jungso, Sefa, Kaaz, compte test sefa
         const isAllowedUser = allowedUsers.includes(interaction.user.id);
     
         // Vérifie l'autorisation d'executer la commande
