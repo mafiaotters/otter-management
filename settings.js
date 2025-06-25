@@ -42,6 +42,7 @@ module.exports = {
     // Contacts à mentionner pour obtenir de l'aide
     helpContacts: ['207992750988197889', '239407042182381588'],
   },
+
   // Activer ou non certaines fonctionnalités du bot
   features: {
     verifyWord: true, // Répond "feur" ou "keen'v" selon le message
