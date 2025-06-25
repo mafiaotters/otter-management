@@ -139,12 +139,7 @@ async function checkRSS(bot, rssUrl) {
             }
 
             // Définir le canal Discord où envoyer les messages
-            let lodestoneRSSChannelID = "";
-            if (process.env.GITHUB_BRANCH == "main") {
-                lodestoneRSSChannelID = '675682104327012382';
-            } else {
-                lodestoneRSSChannelID = '1252901298798460978';
-            }
+            const lodestoneRSSChannelID = bot.settings.ids.lodestoneRSSChannel;
 
             const lodestoneRSSChannel = bot.channels.cache.get(lodestoneRSSChannelID);
             if (!lodestoneRSSChannel) {

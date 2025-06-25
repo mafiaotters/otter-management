@@ -78,9 +78,9 @@ bot.on('ready', () => {
     console.log(`Bot opérationnel sous le nom: ${bot.user.tag}!`);
     if(process.env.GITHUB_BRANCH === 'main'){
     // Envoyer un message dans le serveur et le channel spécifiés
-    const guild = bot.guilds.cache.get("675543520425148416");
+    const guild = bot.guilds.cache.get(bot.settings.mainGuildId);
     if (guild) {
-        const channel = guild.channels.cache.get("1311350221619597455");
+        const channel = guild.channels.cache.get(bot.settings.channelId);
         if (channel) {
             channel.send('Je suis de nouveau là ! <:otter_pompom:747554032582787163>');
         } else {
@@ -126,13 +126,13 @@ bot.removeAllListeners('messageCreate');
 // Écouteur d'événements pour les nouveaux messages
 bot.on('messageCreate', async (message) => {
   // Exceptions générales
-  const exceptionsChannels = ['704404247445373029', '791052204823281714']; // Table ronde, Antre mafieuse
+  const exceptionsChannels = bot.settings.ids.exceptionsChannels;
   if (exceptionsChannels.includes(message.channel.id)) return; // Ne pas répondre aux messages de la Table ronde et de l'Antre mafieuse
   if (message.author.bot) return; // Ne pas répondre aux messages du bot lui-même
   if (message.mentions.everyone) return; // Ne pas traiter les messages qui mentionnent @everyone ou @here
   // Feature "feur" et "keen'v"
   // Appeler `verifyWord` quand un message est reçu
-  const exceptionsUsers = ['173439968381894656', '143762806574022656', '72405181253287936']; // Sefa, Raziel, Velena
+  const exceptionsUsers = bot.settings.ids.exceptionsUsers; // Sefa, Raziel, Velena
   if (!exceptionsUsers.includes(message.author.id)) await verifyWord(message, bot); // Ne pas répondre "feur" ou "keen'v" aux utilisateurs qui ont un totem d'immunité
   // Feature "citation"
   // Appeler `saveQuote` quand un message est reçu
@@ -149,9 +149,9 @@ const { welcomeMessage, assignRoles } = require('./Helpers/newMember');
 bot.on('guildMemberAdd', async (member) => {
     try {
         // Appeler la fonction pour gérer le message de bienvenue
-        await welcomeMessage(member);
+        await welcomeMessage(member, bot);
         // Lui assigner ses rôles
-        await assignRoles(member)
+        await assignRoles(member, bot)
     } catch (error) {
         console.error('Erreur lors de l’accueil du nouveau membre :', error);
     }
@@ -162,7 +162,7 @@ const goodbyeMessage = require('./Helpers/goodbyeMessage');
 const { analyzeGame } = require('./GillSystem/kaazino');
 bot.on('guildMemberRemove', async (member) => {
   console.log(`${member.displayName} a quitté le serveur ${member.guild.name}.`);
-  await goodbyeMessage(member); // Appel de la fonction goodbyeMessage
+  await goodbyeMessage(member, bot); // Appel de la fonction goodbyeMessage
 });
 
 

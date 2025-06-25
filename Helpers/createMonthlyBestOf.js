@@ -53,13 +53,9 @@ async function createMonthlyBestOf(bot) {
         const date = new Date();
 
         // Définition des channels
-        const bestOfChannelID = process.env.GITHUB_BRANCH === 'main'
-            ? '675910340936204288' // Channel Best-Of (Main)
-            : '1252901298798460978'; // Channel Best-Of (Dev)
+        const bestOfChannelID = bot.settings.ids.bestOfChannel;
 
-        const notificationChannelID = process.env.GITHUB_BRANCH === 'main'
-            ? '675682104327012382' // Channel Notifications (Main)
-            : '653689680906420238'; // Channel Notifications (Dev)
+        const notificationChannelID = bot.settings.ids.notificationChannel;
 
         // Récupérer les channels
         const bestOfChannel = bot.channels.cache.get(bestOfChannelID);

@@ -5,16 +5,9 @@ const {dateFormatLog} = require('./logTools');
  * Envoie un message lorsqu'un membre quitte le serveur
  * @param {GuildMember} member - Le membre qui a quitté le serveur
  */
-async function goodbyeMessage(member) {
+async function goodbyeMessage(member, bot) {
     try {
-        let channelId;
-
-        // Vérifier la branche pour définir le bon canal
-        if (process.env.GITHUB_BRANCH === 'main') {
-            channelId = '747143537048682558'; // Canal pour la branche principale
-        } else {
-            channelId = '653689680906420238'; // Canal pour d'autres branches
-        }
+        const channelId = bot.settings.ids.goodbyeChannel;
 
         // Récupérer le canal
         const channel = member.guild.channels.cache.get(channelId);

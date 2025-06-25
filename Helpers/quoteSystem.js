@@ -6,8 +6,8 @@ const {dateFormatLog} = require('./logTools');
 
 async function saveQuote(message, bot) {
 
-  const botDevId = "1110950106842284072";
-  const botMainId = "1106850900682747974";
+  const botDevId = bot.settings.ids.botDevId;
+  const botMainId = bot.settings.ids.botMainId;
 
 const alreadySave = ["Je sais déjà qu'il a dis ça !",
   "C’est déjà dans les annales de la Mafia des Loutres ! ",
@@ -116,15 +116,9 @@ const noCitations = [
       const doc = await userDocRef.get();
       if (!doc.exists) {
           console.warn(`${await dateFormatLog()}quoteSystem : Le profil de ${discordUsername} n'existe pas.`); // Met une indication dans la console (pq pas au channel admin)
-        if(process.env.GITHUB_BRANCH === "main"){
-          const channel = await bot.channels.fetch("1282684525259919462"); // Met une indication dans le channel admin MAIN
-          await channel.send(`quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`);    
-          console.warn(`${await dateFormatLog()}quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`); // Met une indication dans la console 
-        } else{
-          const channel = await bot.channels.fetch("1252901298798460978"); // Met une indication dans le channel admin DEV
-          await channel.send(`quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`);   
-          console.warn(`${await dateFormatLog()}quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`); // Met une indication dans la console
-        }
+        const channel = await bot.channels.fetch(bot.settings.ids.adminChannel);
+        await channel.send(`quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`);
+        console.warn(`${await dateFormatLog()}quoteSystem : Le profil pour ${discordUsername} n'existait pas et a été créé.`); // Met une indication dans la console
       }
 
 
