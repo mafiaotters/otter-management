@@ -83,6 +83,7 @@ features: {
 
 Passez une valeur à `false` pour désactiver la fonctionnalité correspondante sans modifier le code.
 
+
 ### Désactiver des commandes
 
 Chaque commande peut être (dé)activée individuellement dans le fichier `settings.js` (ou `settings-dev.js`).
