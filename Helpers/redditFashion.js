@@ -90,6 +90,7 @@ async function checkRedditFashion(bot, rssUrl, channelId) {
             const htmlContent = item['content:encoded'] || item.content;
             const imageUrl = getOriginalImage(htmlContent, item['media:content']);
 
+
             const embed = new EmbedBuilder()
                 .setTitle(item.title || 'Reddit Fashion')
                 .setURL(item.link)
