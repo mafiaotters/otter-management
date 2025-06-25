@@ -62,5 +62,23 @@ En définissant la variable d'environnement `DEV_MODE=true`, le script utilisera
 `firebase-dev.json` et `settings-dev.js`.
 Les membres insérés sont configurés dans `AdminTools/initSettings.json`.
 
-### Le démarrer 
+### Le démarrer
 node bot.js
+
+### Désactiver des fonctionnalités
+
+Le fichier `settings.js` (et sa variante `settings-dev.js`) contient un objet `features` permettant d'activer ou non certaines parties du bot.
+
+```js
+features: {
+  verifyWord: true,
+  quoteSystem: true,
+  rss: true,
+  bestOfMonthly: true,
+  welcomeMessage: true,
+  assignRoles: true,
+  goodbyeMessage: true,
+}
+```
+
+Passez une valeur à `false` pour désactiver la fonctionnalité correspondante sans modifier le code.

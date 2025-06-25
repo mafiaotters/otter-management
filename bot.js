@@ -59,6 +59,11 @@ console.log('Connexion validée !')
 bot.db = loadDatabase()
 bot.settings = botSettings
 
+// Fonction utilitaire pour savoir si une fonctionnalité est activée
+bot.featureEnabled = (name) => {
+  return bot.settings.features?.[name] !== false;
+}
+
 loadCommands(bot); // Load all commands in collection, to the bot
 loadEvents(bot); // Load all commands in collection, to the bot
 
@@ -96,14 +101,17 @@ bot.on('ready', () => {
     // Load slash commands
     loadSlashCommands(bot);
 
-    // Vérifier les différents flux RSS Lodestone
+    // Vérifier les différents flux RSS Lodestone et le best-of mensuel
     setInterval(() => {
-      RSS_FEEDS.forEach(feed => {
+      if (bot.featureEnabled('rss')) {
+        RSS_FEEDS.forEach(feed => {
           checkRSS(bot, feed.url);
-      });
-      //Système du best-of mensuel de quote
-      createMonthlyBestOf(bot);
-  }, 15 * 60 * 1000); // Check toutes les 15m
+        });
+      }
+      if (bot.featureEnabled('bestOfMonthly')) {
+        createMonthlyBestOf(bot);
+      }
+    }, 15 * 60 * 1000); // Check toutes les 15m
 
     // Empêche le sleeping de Koyeb
     setInterval(() => {
@@ -133,12 +141,16 @@ bot.on('messageCreate', async (message) => {
   // Feature "feur" et "keen'v"
   // Appeler `verifyWord` quand un message est reçu
   const exceptionsUsers = bot.settings.ids.exceptionsUsers; // Sefa, Raziel, Velena
-  if (!exceptionsUsers.includes(message.author.id)) await verifyWord(message, bot); // Ne pas répondre "feur" ou "keen'v" aux utilisateurs qui ont un totem d'immunité
+  if (bot.featureEnabled('verifyWord')) {
+    if (!exceptionsUsers.includes(message.author.id)) await verifyWord(message, bot); // Ne pas répondre "feur" ou "keen'v" aux utilisateurs qui ont un totem d'immunité
+  }
   // Feature "citation"
   // Appeler `saveQuote` quand un message est reçu
-  if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
-  
-  await saveQuote(message, bot);
+  if (bot.featureEnabled('quoteSystem')) {
+    if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
+
+    await saveQuote(message, bot);
+  }
 });
 // Après avoir ajouté le listener
 //console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
@@ -149,9 +161,13 @@ const { welcomeMessage, assignRoles } = require('./Helpers/newMember');
 bot.on('guildMemberAdd', async (member) => {
     try {
         // Appeler la fonction pour gérer le message de bienvenue
-        await welcomeMessage(member, bot);
+        if (bot.featureEnabled('welcomeMessage')) {
+            await welcomeMessage(member, bot);
+        }
         // Lui assigner ses rôles
-        await assignRoles(member, bot)
+        if (bot.featureEnabled('assignRoles')) {
+            await assignRoles(member, bot);
+        }
     } catch (error) {
         console.error('Erreur lors de l’accueil du nouveau membre :', error);
     }
@@ -162,7 +178,9 @@ const goodbyeMessage = require('./Helpers/goodbyeMessage');
 const { analyzeGame } = require('./GillSystem/kaazino');
 bot.on('guildMemberRemove', async (member) => {
   console.log(`${member.displayName} a quitté le serveur ${member.guild.name}.`);
-  await goodbyeMessage(member, bot); // Appel de la fonction goodbyeMessage
+  if (bot.featureEnabled('goodbyeMessage')) {
+    await goodbyeMessage(member, bot); // Appel de la fonction goodbyeMessage
+  }
 });
 
 
