@@ -42,5 +42,14 @@ module.exports = {
     // Contacts à mentionner pour obtenir de l'aide
     helpContacts: ['207992750988197889', '239407042182381588'],
   },
-  features: {},
+  // Activer ou non certaines fonctionnalités du bot
+  features: {
+    verifyWord: true, // Répond "feur" ou "keen'v" en fonction du message
+    quoteSystem: true, // Enregistre les citations et gère le best-of
+    rss: true, // Vérifie les flux RSS de la Lodestone
+    bestOfMonthly: true, // Génère le best-of mensuel
+    welcomeMessage: true, // Envoie un message de bienvenue aux nouveaux
+    assignRoles: true, // Attribue les rôles de base lors de l'arrivée
+    goodbyeMessage: true, // Indique quand un membre quitte le serveur
+  },
 };
