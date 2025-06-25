@@ -93,7 +93,6 @@ Certains délais peuvent être ajustés dans `settings.js` :
 redditFashionInterval: 60 // Vérifie le flux Reddit Fashion toutes les 60 minutes
 ```
 
-
 ### Désactiver des commandes
 
 Chaque commande peut être (dé)activée individuellement dans le fichier `settings.js` (ou `settings-dev.js`).
