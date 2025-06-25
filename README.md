@@ -82,3 +82,25 @@ features: {
 ```
 
 Passez une valeur à `false` pour désactiver la fonctionnalité correspondante sans modifier le code.
+
+### Désactiver des commandes
+
+Chaque commande peut être (dé)activée individuellement dans le fichier `settings.js` (ou `settings-dev.js`).
+L'objet `commandToggles` répertorie toutes les commandes. Elles sont activées par défaut et peuvent être mises à `false` si nécessaire :
+
+```js
+commandToggles: {
+  add: true,
+  aide: true,
+  delete: true,
+  gill: true,
+  quote: true,
+  suggestion: true,
+  update: true,
+  help: false,
+  link: false,
+  verify: false
+}
+```
+
+Une commande dont la valeur est définie à `false` sera ignorée au chargement et renverra un message d'erreur si un utilisateur tente de l'exécuter.
