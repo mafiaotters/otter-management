@@ -91,6 +91,7 @@ Certains délais peuvent être ajustés dans `settings.js` :
 
 ```js
 redditFashionInterval: 60 // Vérifie le flux Reddit Fashion toutes les 60 minutes
+rssFreshnessHours: 5     // Ignore les posts RSS plus vieux que 5 heures
 ```
 
 ### Désactiver des commandes

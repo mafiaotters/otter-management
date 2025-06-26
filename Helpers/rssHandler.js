@@ -76,6 +76,7 @@ async function checkRSS(bot, rssUrl) {
 
         // Récupérer l'heure actuelle
         const now = Date.now();
+        const freshnessHours = bot.settings.rssFreshnessHours || 5;
 
         // Lire les items du flux
         for (const item of feed.items) {
@@ -88,7 +89,7 @@ async function checkRSS(bot, rssUrl) {
 
             const timeDiff = now - pubDate; // Différence en millisecondes
 
-            if (timeDiff > 5 * 60 * 60 * 1000) {
+            if (timeDiff > freshnessHours * 60 * 60 * 1000) {
                 // Ignorer les articles plus anciens que 5 heure
                 continue;
             }

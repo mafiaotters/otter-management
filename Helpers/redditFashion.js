@@ -71,6 +71,7 @@ async function checkRedditFashion(bot, rssUrl, channelId) {
         }
 
         const now = Date.now();
+        const freshnessHours = bot.settings.rssFreshnessHours || 5;
 
         for (const item of feed.items) {
             const pubDate = new Date(item.pubDate || item.isoDate).getTime();
@@ -79,7 +80,7 @@ async function checkRedditFashion(bot, rssUrl, channelId) {
                 continue;
             }
 
-            if (now - pubDate > 5 * 60 * 60 * 1000) {
+            if (now - pubDate > freshnessHours * 60 * 60 * 1000) {
                 continue;
             }
 

@@ -14,6 +14,9 @@ module.exports = {
   // Intervalle de vérification du flux Reddit Fashion (en minutes)
   redditFashionInterval: 60,
 
+  // Durée maximale d'ancienneté des posts RSS (en heures)
+  rssFreshnessHours: 5,
+
   ids: {
     // Canal où sont envoyés les messages de bienvenue
     welcomeChannel: '675910340936204288',
