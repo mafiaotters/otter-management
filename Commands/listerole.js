@@ -22,12 +22,11 @@ module.exports = {
         const members = role.members.map(m => `• <@${m.id}>`);
 
         const embed = new EmbedBuilder()
-            .setTitle(`Rôle : <@&${role.id}>`)
             .addFields(
                 { name: 'Nom du rôle', value: `• <@&${role.id}>`},
                 { name: 'Nombre de membres', value: `${members.length}`},
                 { name: 'Pseudo des membres', value: members.length > 0 ? members.join('\n') : 'Aucun membre.' },
-                { name: 'Date du rôle', value: `<t:${Math.floor(role.createdTimestamp / 1000)}:F>` }
+                { name: 'Date de création', value: `<t:${Math.floor(role.createdTimestamp / 1000)}:F>` }
             )
             .setColor(role.color || '#0099ff')
             .setTimestamp();
