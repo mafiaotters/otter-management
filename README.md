@@ -20,7 +20,7 @@ Chantal est un bot Discord avancé conçu pour animer et gérer une communauté 
 - 📰 **Flux RSS Lodestone** : Surveillance des news FFXIV et publication automatique sur Discord.
 
 ### 🔹 Utilitaires
-- 🛠️ **Commandes personnalisées** : `/help`, `/quote`, `/kaazino`, etc.
+- 🛠️ **Commandes personnalisées** : `/help`, `/quote`, `/kaazino`, `/listerole`, etc.
 - 🚀 **Keep-Alive** : Maintien du bot actif sur Koyeb malgré la mise en veille automatique.
 - 🔔 **Messages d'accueil et d'au revoir** : Attribution automatique de rôles à l’arrivée et annonce du départ.
 
@@ -98,6 +98,7 @@ commandToggles: {
   quote: true,
   suggestion: true,
   update: true,
+  listerole: true,
   help: false,
   link: false,
   verify: false
