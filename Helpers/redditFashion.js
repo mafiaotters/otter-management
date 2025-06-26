@@ -33,6 +33,7 @@ function getOriginalImage(content, thumbnailUrl) {
     if (linkMatch) {
         return decodeHtmlEntities(linkMatch[1]);
     }
+
     if (thumbnailUrl && thumbnailUrl.includes('preview.redd.it')) {
         let url = thumbnailUrl.split('?')[0];
         url = url.replace('external-preview.redd.it', 'i.redd.it');
