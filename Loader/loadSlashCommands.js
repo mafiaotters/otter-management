@@ -10,6 +10,11 @@ module.exports = async bot => {
     //For each loaded command
     bot.commands.forEach(async command => {
 
+        if (!bot.commandEnabled(command.name)) {
+            console.log(`Slash commande ${command.name} ignorée (désactivée)`)
+            return
+        }
+
         let slashCommand = new Discord.SlashCommandBuilder()
         .setName(command.name)
         .setDescription(command.description)

@@ -20,7 +20,7 @@ Chantal est un bot Discord avancé conçu pour animer et gérer une communauté 
 - 📰 **Flux RSS Lodestone** : Surveillance des news FFXIV et publication automatique sur Discord.
 
 ### 🔹 Utilitaires
-- 🛠️ **Commandes personnalisées** : `/help`, `/quote`, `/kaazino`, etc.
+- 🛠️ **Commandes personnalisées** : `/help`, `/quote`, `/kaazino`, `/listerole`, etc.
 - 🚀 **Keep-Alive** : Maintien du bot actif sur Koyeb malgré la mise en veille automatique.
 - 🔔 **Messages d'accueil et d'au revoir** : Attribution automatique de rôles à l’arrivée et annonce du départ.
 
@@ -40,9 +40,9 @@ cd chantal-bot
 
 npm install (installer les dépendances)
 
-### Créer un .env
+### Créer un `.env`
 
-Créer un .env
+Copiez le fichier `.env.example` vers `.env` puis personnalisez les valeurs :
 DISCORD_TOKEN=ton_token
 FIREBASE_CREDENTIALS=chemin_du_fichier_json
 GITHUB_BRANCH=main
@@ -50,6 +50,59 @@ GOOGLE_SHEET_ID=ton_id_google_sheet
 FTP_HOST=ftp.tonsite.com
 FTP_USER=ton_user
 FTP_PASS=ton_mdp
+DEV_MODE=false
 
-### Le démarrer 
+### Initialisation de Firestore pour le développement
+Pour peupler rapidement la base Firestore avec des données de test, exécutez :
+npm run init:dev -- --insert
+
+Ajoutez `--dry-run` pour simuler sans écrire dans la base.
+
+En définissant la variable d'environnement `DEV_MODE=true`, le script utilisera
+`firebase-dev.json` et `settings-dev.js`.
+Les membres insérés sont configurés dans `AdminTools/initSettings.json`.
+
+### Le démarrer
 node bot.js
+
+### Désactiver des fonctionnalités
+
+Le fichier `settings.js` (et sa variante `settings-dev.js`) contient un objet `features` permettant d'activer ou non certaines parties du bot.
+
+```js
+features: {
+  verifyWord: true,
+  quoteSystem: true,
+  rss: true,
+  bestOfMonthly: true,
+  welcomeMessage: true,
+  assignRoles: true,
+  goodbyeMessage: true,
+}
+```
+
+Passez une valeur à `false` pour désactiver la fonctionnalité correspondante sans modifier le code.
+
+
+### Désactiver des commandes
+
+Chaque commande peut être (dé)activée individuellement dans le fichier `settings.js` (ou `settings-dev.js`).
+L'objet `commandToggles` répertorie toutes les commandes. Elles sont activées par défaut et peuvent être mises à `false` si nécessaire :
+
+```js
+commandToggles: {
+  add: true,
+  aide: true,
+  delete: true,
+  gill: true,
+  quote: true,
+  suggestion: true,
+  update: true,
+  listerole: true,
+  help: false,
+  link: false,
+  verify: false
+}
+```
+
+Une commande dont la valeur est définie à `false` sera ignorée au chargement et renverra un message d'erreur si un utilisateur tente de l'exécuter.

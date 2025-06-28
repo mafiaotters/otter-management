@@ -35,7 +35,7 @@ async function removeMemberFromActiveMembers(activeRef, discordId, bot) {
 
 async function updateMemberRole(bot) {
     const modifications = []; // Tableau pour sauvegarder les modifications
-    const guild = await bot.guilds.fetch(process.env.GUILD_ID);
+    const guild = await bot.guilds.fetch(bot.settings.mainGuildId);
     console.log(`Récupération de la guilde: ${guild.name}`);
 
     // Récupérer tous les profils de la collection 'profiles'

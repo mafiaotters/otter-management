@@ -1,0 +1,29 @@
+{
+  "realMember": {
+    "discordId": "239407042182381588",
+    "pseudo": "Piik",
+    "role": "Le Parrain"
+  },
+  "fakeMembers": [
+    {
+      "discordId": "1000000000000000001",
+      "pseudo": "LoutreMoustache",
+      "role": "Loutre Mafieuse"
+    },
+    {
+      "discordId": "1000000000000000002",
+      "pseudo": "OtterlyAwesome",
+      "role": "Loutre Naissante"
+    },
+    {
+      "discordId": "1000000000000000003",
+      "pseudo": "Choutte",
+      "role": "Loutre Sottocapo"
+    },
+    {
+      "discordId": "1000000000000000004",
+      "pseudo": "Barbaplutre",
+      "role": "Enrôloutre"
+    }
+  ]
+}
