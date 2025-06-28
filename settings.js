@@ -15,7 +15,7 @@ module.exports = {
   redditFashionInterval: 60,
 
   // Durée maximale d'ancienneté des posts RSS (en heures)
-  rssFreshnessHours: 5,
+  rssFreshnessHours: 24,
 
   ids: {
     // Canal où sont envoyés les messages de bienvenue
@@ -31,7 +31,7 @@ module.exports = {
     // Canal utilisé pour certaines notifications
     notificationChannel: '675682104327012382',
     // Canal réservé aux messages d'administration
-    adminChannel: '1282684525259919462',
+    adminChannel: '1311350221619597455',
     // Rôle attribué aux visiteurs
     roleVisitor: '675691652349689856',
     // Rôle pour les nouvelles potentielles loutres
@@ -45,11 +45,11 @@ module.exports = {
     // Canaux où le bot ne réagit pas
     exceptionsChannels: ['704404247445373029', '791052204823281714'],
     // Utilisateurs exemptés des réponses automatiques
-    exceptionsUsers: ['173439968381894656', '143762806574022656', '72405181253287936'],
+    exceptionsUsers: ['173439968381894656', '143762806574022656', '143762806574022656'],
   },
   commands: {
     // Utilisateurs autorisés à modifier la base de données
-    allowedUsers: ['207992750988197889', '173439968381894656', '239407042182381588'],
+    allowedUsers: ['239407042182381588', '173439968381894656', '207992750988197889'],
     // Contacts à mentionner pour obtenir de l'aide
     helpContacts: ['207992750988197889', '239407042182381588'],
   },
@@ -64,6 +64,7 @@ module.exports = {
     quote: true,
     suggestion: true,
     update: true,
+    listerole: true,
     help: false,
     link: false,
     verify: false,
