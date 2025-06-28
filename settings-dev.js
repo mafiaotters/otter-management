@@ -16,7 +16,6 @@ module.exports = {
 
   // Durée maximale d'ancienneté des posts RSS (en heures)
   rssFreshnessHours: 24,
-
   ids: {
     // Canal où sont envoyés les messages de bienvenue
     welcomeChannel: '675910340936204288',
