@@ -4,6 +4,7 @@ Pour rajouter des valeurs par défaut sur les membres, c'est dans Commands/add.j
 
 // Charge les modules alias
 require('module-alias/register');
+const https = require("https");
 
 //HEALTH CHECK UP DE L'APPLICATION
 const express = require('express');
@@ -20,6 +21,9 @@ app.listen(PORT, () => {
 //FIN DE HEALTH CHECK UP DE L'APPLICATION
 
 require('dotenv').config();
+
+const isDev = process.env.DEV_MODE === 'true';
+const botSettings = require(isDev ? './settings-dev.js' : './settings.js');
 
 const {dateFormatLog} = require('./Helpers/logTools');
 
@@ -53,6 +57,17 @@ bot.login(process.env.DISCORD_TOKEN); // Login to Discord
 console.log('Connexion validée !')
 
 bot.db = loadDatabase()
+bot.settings = botSettings
+
+// Fonction utilitaire pour savoir si une fonctionnalité est activée
+bot.featureEnabled = (name) => {
+  return bot.settings.features?.[name] !== false;
+}
+
+// Vérifie si une commande est activée
+bot.commandEnabled = (name) => {
+  return bot.settings.commandToggles?.[name] !== false;
+}
 
 loadCommands(bot); // Load all commands in collection, to the bot
 loadEvents(bot); // Load all commands in collection, to the bot
@@ -60,6 +75,7 @@ loadEvents(bot); // Load all commands in collection, to the bot
 
 // Configuration des flux RSS et des canaux
 const { checkRSS } = require('./Helpers/rssHandler');
+const { checkRedditFashion } = require('./Helpers/redditFashion');
 const RSS_FEEDS = [
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/news.xml' }, // Canal de maintenance
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/topics.xml' }  // Canal des annonces importantes
@@ -73,9 +89,9 @@ bot.on('ready', () => {
     console.log(`Bot opérationnel sous le nom: ${bot.user.tag}!`);
     if(process.env.GITHUB_BRANCH === 'main'){
     // Envoyer un message dans le serveur et le channel spécifiés
-    const guild = bot.guilds.cache.get("675543520425148416");
+    const guild = bot.guilds.cache.get(bot.settings.mainGuildId);
     if (guild) {
-        const channel = guild.channels.cache.get("1311350221619597455");
+        const channel = guild.channels.cache.get(bot.settings.channelId);
         if (channel) {
             channel.send('Je suis de nouveau là ! <:otter_pompom:747554032582787163>');
         } else {
@@ -89,16 +105,43 @@ bot.on('ready', () => {
     bot.user.setActivity('GILLS', { type: 'WATCHING' });
 
     // Load slash commands
-    loadSlashCommands(bot);
+  loadSlashCommands(bot);
 
-    // Vérifier les différents flux RSS Lodestone
+  // Intervalle pour Reddit Fashion
+  const redditFashionInterval = (bot.settings.redditFashionInterval || 60) * 60 * 1000;
+
+    // Vérifier les différents flux RSS Lodestone et le best-of mensuel
+
     setInterval(() => {
-      RSS_FEEDS.forEach(feed => {
+      if (bot.featureEnabled('rss')) {
+        RSS_FEEDS.forEach(feed => {
           checkRSS(bot, feed.url);
+        });
+      }
+      if (bot.featureEnabled('redditFashion')) {
+        checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
+      }
+      if (bot.featureEnabled('bestOfMonthly')) {
+        createMonthlyBestOf(bot);
+      }
+    }, 15 * 60 * 1000); // Check toutes les 15m
+
+    // Vérification périodique du subreddit fashion
+    if (bot.featureEnabled('redditFashion')) {
+      checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
+      setInterval(() => {
+        checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
+      }, redditFashionInterval);
+    }
+
+    // Empêche le sleeping de Koyeb
+    setInterval(() => {
+      https.get("https://google.com", (res) => {
+          //console.log("📡 Keep-alive ping envoyé ! Statut :", res.statusCode);
+      }).on("error", (err) => {
+          console.error("❌ Erreur Keep-Alive :");
       });
-      //Système du best-of mensuel de quote
-      createMonthlyBestOf(bot);
-  }, 15 * 60 * 1000); // Check toutes les 15m
+  }, 2 * 60 * 1000); // Toutes les 2 minutes
 });
 
 // SYSTEME DE CITATIONS
@@ -112,19 +155,23 @@ bot.removeAllListeners('messageCreate');
 // Écouteur d'événements pour les nouveaux messages
 bot.on('messageCreate', async (message) => {
   // Exceptions générales
-  const exceptionsChannels = ['704404247445373029', '791052204823281714']; // Table ronde, Antre mafieuse
+  const exceptionsChannels = bot.settings.ids.exceptionsChannels;
   if (exceptionsChannels.includes(message.channel.id)) return; // Ne pas répondre aux messages de la Table ronde et de l'Antre mafieuse
   if (message.author.bot) return; // Ne pas répondre aux messages du bot lui-même
   if (message.mentions.everyone) return; // Ne pas traiter les messages qui mentionnent @everyone ou @here
   // Feature "feur" et "keen'v"
   // Appeler `verifyWord` quand un message est reçu
-  const exceptionsUsers = ['173439968381894656', '143762806574022656', '72405181253287936']; // Sefa, Raziel, Velena
-  if (!exceptionsUsers.includes(message.author.id)) await verifyWord(message, bot); // Ne pas répondre "feur" ou "keen'v" aux utilisateurs qui ont un totem d'immunité
+  const exceptionsUsers = bot.settings.ids.exceptionsUsers; // Sefa, Raziel, Velena
+  if (bot.featureEnabled('verifyWord')) {
+    if (!exceptionsUsers.includes(message.author.id)) await verifyWord(message, bot); // Ne pas répondre "feur" ou "keen'v" aux utilisateurs qui ont un totem d'immunité
+  }
   // Feature "citation"
   // Appeler `saveQuote` quand un message est reçu
-  if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
-  
-  await saveQuote(message, bot);
+  if (bot.featureEnabled('quoteSystem')) {
+    if(!message.mentions.has(bot.user)) return; // Ne pas traiter les messages qui ne mentionnent pas le bot
+
+    await saveQuote(message, bot);
+  }
 });
 // Après avoir ajouté le listener
 //console.log(`Nombre de listeners pour 'messageCreate' après ajout: ${bot.listenerCount('messageCreate')}`);
@@ -135,9 +182,13 @@ const { welcomeMessage, assignRoles } = require('./Helpers/newMember');
 bot.on('guildMemberAdd', async (member) => {
     try {
         // Appeler la fonction pour gérer le message de bienvenue
-        await welcomeMessage(member);
+        if (bot.featureEnabled('welcomeMessage')) {
+            await welcomeMessage(member, bot);
+        }
         // Lui assigner ses rôles
-        await assignRoles(member)
+        if (bot.featureEnabled('assignRoles')) {
+            await assignRoles(member, bot);
+        }
     } catch (error) {
         console.error('Erreur lors de l’accueil du nouveau membre :', error);
     }
@@ -148,7 +199,9 @@ const goodbyeMessage = require('./Helpers/goodbyeMessage');
 const { analyzeGame } = require('./GillSystem/kaazino');
 bot.on('guildMemberRemove', async (member) => {
   console.log(`${member.displayName} a quitté le serveur ${member.guild.name}.`);
-  await goodbyeMessage(member); // Appel de la fonction goodbyeMessage
+  if (bot.featureEnabled('goodbyeMessage')) {
+    await goodbyeMessage(member, bot); // Appel de la fonction goodbyeMessage
+  }
 });
 
 
@@ -165,13 +218,18 @@ bot.on('interactionCreate', async (interaction) => {
   if (interaction.isCommand()) {
     //await interaction.deferReply({ ephemeral: true });
 
-    if(interaction.type === Discord.InteractionType.ApplicationCommand) {
-      // Then take the command name 
+  if(interaction.type === Discord.InteractionType.ApplicationCommand) {
+      if (!bot.commandEnabled(interaction.commandName)) {
+        await interaction.reply({ content: 'Cette commande est désactivée.', ephemeral: true });
+        return;
+      }
+
+      // Then take the command name
       let command = require(`./Commands/${interaction.commandName}`);
       console.log(await dateFormatLog() +  '- Commande: ' + command.name + ' par: ' + interaction.user.username);
       //Run the command
       command.run(bot, interaction, command.options);
-  } 
+  }
   };
   bot.hasInteractionCreateListener = true; // Marque que l'écouteur a été ajouté
 })
@@ -183,3 +241,5 @@ bot.on('interactionCreate', async (interaction) => {
 // Pour les tests, auto update au lancement
 //const updateMemberDAO = require('@websiteUtils/updateMemberDAO');
 //updateMemberDAO(bot)
+
+

@@ -1,4 +1,6 @@
 key-firebase.json
+firebase.json
+firebase-dev.json
 node_modules/
 devWebsite/
 backupWebsite/
@@ -9,4 +11,3 @@ tmp/
 .DS_Store
 .venv
 package-lock.json
-.github/

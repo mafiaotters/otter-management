@@ -38,7 +38,7 @@ function convertToFrenchTime(utcDateStr) {
  */
 async function isDuplicateMessage(channel, title) {
     try {
-        const messages = await channel.messages.fetch({ limit: 10 }); // Récupère les 10 derniers messages
+        const messages = await channel.messages.fetch({ limit: 40 }); // Récupère les 10 derniers messages
         for (const [, message] of messages) {
             if (message.embeds.length > 0) {
                 const embed = message.embeds[0];
@@ -76,6 +76,7 @@ async function checkRSS(bot, rssUrl) {
 
         // Récupérer l'heure actuelle
         const now = Date.now();
+        const freshnessHours = bot.settings.rssFreshnessHours || 5;
 
         // Lire les items du flux
         for (const item of feed.items) {
@@ -88,8 +89,8 @@ async function checkRSS(bot, rssUrl) {
 
             const timeDiff = now - pubDate; // Différence en millisecondes
 
-            if (timeDiff > 1 * 60 * 60 * 1000) {
-                // Ignorer les articles plus anciens que 1 heure
+            if (timeDiff > freshnessHours * 60 * 60 * 1000) {
+                // Ignorer les articles plus anciens que 5 heure
                 continue;
             }
 
@@ -139,12 +140,7 @@ async function checkRSS(bot, rssUrl) {
             }
 
             // Définir le canal Discord où envoyer les messages
-            let lodestoneRSSChannelID = "";
-            if (process.env.GITHUB_BRANCH == "main") {
-                lodestoneRSSChannelID = '675682104327012382';
-            } else {
-                lodestoneRSSChannelID = '1252901298798460978';
-            }
+            const lodestoneRSSChannelID = bot.settings.ids.lodestoneRSSChannel;
 
             const lodestoneRSSChannel = bot.channels.cache.get(lodestoneRSSChannelID);
             if (!lodestoneRSSChannel) {
