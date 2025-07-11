@@ -39,10 +39,10 @@ Chantal est un bot Discord avancé conçu pour animer et gérer une communauté 
 git clone https://github.com/ton-user/chantal-bot.git
 cd chantal-bot
 
-npm install (installer les dépendances)
+### Installer les dépendances
+npm install 
 
 ### Créer un `.env`
-
 Copiez le fichier `.env.example` vers `.env` puis personnalisez les valeurs :
 DISCORD_TOKEN=ton_token
 FIREBASE_CREDENTIALS=chemin_du_fichier_json
@@ -53,21 +53,13 @@ FTP_USER=ton_user
 FTP_PASS=ton_mdp
 DEV_MODE=false
 
-### Initialisation de Firestore pour le développement
-Pour peupler rapidement la base Firestore avec des données de test, exécutez :
-npm run init:dev -- --insert
-
-Ajoutez `--dry-run` pour simuler sans écrire dans la base.
-
-En définissant la variable d'environnement `DEV_MODE=true`, le script utilisera
-`firebase-dev.json` et `settings-dev.js`.
-Les membres insérés sont configurés dans `AdminTools/initSettings.json`.
 
 ### Le démarrer
 node bot.js
+```
+## Commandes et fonctionnalités
 
-### Désactiver des fonctionnalités
-
+### Les fonctionnalités
 Le fichier `settings.js` (et sa variante `settings-dev.js`) contient un objet `features` permettant d'activer ou non certaines parties du bot.
 
 ```js
@@ -94,7 +86,7 @@ redditFashionInterval: 60 // Vérifie le flux Reddit Fashion toutes les 60 minut
 rssFreshnessHours: 5     // Ignore les posts RSS plus vieux que 5 heures
 ```
 
-### Désactiver des commandes
+### Ls commandes
 
 Chaque commande peut être (dé)activée individuellement dans le fichier `settings.js` (ou `settings-dev.js`).
 L'objet `commandToggles` répertorie toutes les commandes. Elles sont activées par défaut et peuvent être mises à `false` si nécessaire :
