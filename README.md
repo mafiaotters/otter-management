@@ -45,7 +45,7 @@ npm install
 ### Créer un `.env`
 Copiez le fichier `.env.example` vers `.env` puis personnalisez les valeurs :
 DISCORD_TOKEN=ton_token
-FIREBASE_CREDENTIALS=chemin_du_fichier_json
+KEYSFIREBASE=chemin_du_fichier_json
 GITHUB_BRANCH=main
 GOOGLE_SHEET_ID=ton_id_google_sheet
 FTP_HOST=ftp.tonsite.com
