@@ -54,7 +54,7 @@ FTP_PASS=ton_mdp
 DEV_MODE=false
 
 
-### Le démarrer
+### Démarrer le bot
 node bot.js
 ```
 ## Commandes et fonctionnalités
@@ -86,7 +86,7 @@ redditFashionInterval: 60 // Vérifie le flux Reddit Fashion toutes les 60 minut
 rssFreshnessHours: 5     // Ignore les posts RSS plus vieux que 5 heures
 ```
 
-### Ls commandes
+### Les commandes
 
 Chaque commande peut être (dé)activée individuellement dans le fichier `settings.js` (ou `settings-dev.js`).
 L'objet `commandToggles` répertorie toutes les commandes. Elles sont activées par défaut et peuvent être mises à `false` si nécessaire :
