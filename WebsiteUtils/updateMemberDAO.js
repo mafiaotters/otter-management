@@ -93,7 +93,7 @@ async function writeMemberDAOCSV(membersList) {
             'profileTitre3', 'profileDescriptionHTML', 'avatar', 'extension' 
         ];
 
-        const basePath = process.env.GITHUB_BRANCH === 'main' ? '/assets/img/speakers' : '/dev/assets/img/speakers';
+        const basePath = process.env.GITHUB_BRANCH === 'main' ? './www/assets/img/speakers' : './www/dev/assets/img/speakers';
 
         // Générer les lignes du CSV
         const csvData = [];
@@ -191,7 +191,7 @@ class MemberDAO
 
         } //Si on veut cacher le membre du site, 
         console.log(`${member.Prenom} ${member.Nom} : Vérification de l'existence de l'avatar...`);
-        const basePath = process.env.GITHUB_BRANCH === 'main' ? '/assets/img/speakers' : '/dev/assets/img/speakers';
+        const basePath = process.env.GITHUB_BRANCH === 'main' ? './www/assets/img/speakers' : './www/dev/assets/img/speakers';
 
         try{
             // Trouver l'extension png/jpg du joueur
