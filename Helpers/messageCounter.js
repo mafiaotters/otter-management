@@ -40,7 +40,7 @@ async function flushMessageCounts() {
     }
 
     await batch.commit();
-    console.log(`✅ Message counts pushed to Firebase : ${Object.keys(messageCounts).length} users`);
+    //console.log(`✅ Message counts pushed to Firebase : ${Object.keys(messageCounts).length} users`);
     messageCounts = {}; // Reset local
 }
 
