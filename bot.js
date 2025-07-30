@@ -81,8 +81,9 @@ const RSS_FEEDS = [
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/topics.xml' }  // Canal des annonces importantes
 ];
 
-//Pour les best-of des quotes
-const { createMonthlyBestOf } = require('@helpers/createMonthlyBestOf');
+//Pour les best-of des quotes & compteur de messages
+const { createMonthlyReport } = require('@helpers/createMonthlyReport');
+
 
 // Quand le bot est prêt et connecté
 bot.on('ready', () => {
@@ -121,10 +122,10 @@ bot.on('ready', () => {
       if (bot.featureEnabled('redditFashion')) {
         checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
       }
-      if (bot.featureEnabled('bestOfMonthly')) {
-        createMonthlyBestOf(bot);
-      }
-    }, 15 * 60 * 1000); // Check toutes les 15m
+      if (bot.featureEnabled('comptMessage') && bot.featureEnabled('bestOfMonthly') && bot.featureEnabled('quoteSystem'))
+      createMonthlyReport(bot);
+
+    }, 60 * 60 * 15); // Check toutes les 15m
 
     // Vérification périodique du subreddit fashion
     if (bot.featureEnabled('redditFashion')) {
@@ -133,15 +134,11 @@ bot.on('ready', () => {
         checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
       }, redditFashionInterval);
     }
+  // Toutes les heures, on push le compteur de message sur Firestore
+  setInterval(() => {
+    flushMessageCounts().catch(err => console.error("❌ Erreur flushMessageCounts:", err));
+  }, 60 * 60 * 1000); // 1h
 
-    // Empêche le sleeping de Koyeb
-    setInterval(() => {
-      https.get("https://google.com", (res) => {
-          //console.log("📡 Keep-alive ping envoyé ! Statut :", res.statusCode);
-      }).on("error", (err) => {
-          console.error("❌ Erreur Keep-Alive :");
-      });
-  }, 2 * 60 * 1000); // Toutes les 2 minutes
 });
 
 // SYSTEME DE CITATIONS
@@ -150,6 +147,9 @@ const saveQuote = require('./Helpers/quoteSystem');
 const verifyWord = require('./Helpers/verifyWord')
 
 bot.removeAllListeners('messageCreate');
+
+const { incrementMessageCount, flushMessageCounts } = require('./Helpers/messageCounter');
+
 // Avant d'ajouter le listener
 //console.log(`Nombre de listeners pour 'messageCreate' avant ajout: ${bot.listenerCount('messageCreate')}`);
 // Écouteur d'événements pour les nouveaux messages
@@ -159,6 +159,11 @@ bot.on('messageCreate', async (message) => {
   if (exceptionsChannels.includes(message.channel.id)) return; // Ne pas répondre aux messages de la Table ronde et de l'Antre mafieuse
   if (message.author.bot) return; // Ne pas répondre aux messages du bot lui-même
   if (message.mentions.everyone) return; // Ne pas traiter les messages qui mentionnent @everyone ou @here
+
+  //Compteur de message
+    if (bot.featureEnabled('comptMessage')) {
+  incrementMessageCount(message.author.id);
+  }
   // Feature "feur" et "keen'v"
   // Appeler `verifyWord` quand un message est reçu
   const exceptionsUsers = bot.settings.ids.exceptionsUsers; // Sefa, Raziel, Velena
