@@ -36,16 +36,16 @@ async function backupWebsite() {
     await sftp.connect(sftpOptions);
 
     // Assurez-vous que le dossier "backups" existe sur le serveur SFTP
-    await sftp.mkdir('/backups', true);
+    await sftp.mkdir('backups', true);
 
     // Télécharger le contenu du site web dans le dossier de sauvegarde local
-    await sftp.downloadDir('./', backupFolderPath);
+    await sftp.downloadDir('./www/', backupFolderPath);
 
     // Téléverser le dossier de sauvegarde dans le dossier "backups" sur le serveur SFTP
     if(process.env.GITHUB_BRANCH === 'main') {
-        await sftp.uploadDir(backupFolderPath, `/backups/${backupFolderName}`);
+        await sftp.uploadDir(backupFolderPath, `www/backups/${backupFolderName}`);
     } else {
-        await sftp.uploadDir(backupFolderPath, `/dev/backups/${backupFolderName}`);
+        await sftp.uploadDir(backupFolderPath, `www/dev/backups/${backupFolderName}`);
     }
 
     console.log(`Backup du site web réalisé avec succès dans /backups/${backupFolderName}.`);

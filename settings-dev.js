@@ -5,7 +5,7 @@
  */
 module.exports = {
   // Identifiant du serveur principal
-  mainGuildId: '675543520425148416',
+  mainGuildId: '653689680906420235',
   // Canal d'annonce au démarrage
   channelId: '1311350221619597455',
   // URL du flux RSS Reddit Fashion
