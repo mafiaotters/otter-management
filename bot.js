@@ -231,7 +231,7 @@ bot.on('interactionCreate', async (interaction) => {
 
       // Then take the command name
       let command = require(`./Commands/${interaction.commandName}`);
-      console.log(await dateFormatLog() +  '- Commande: ' + command.name + ' par: ' + interaction.user.username);
+      console.log('\x1b[32m' + await dateFormatLog() +  '- Commande: ' + command.name + ' par: ' + interaction.user.username + '\x1b[0m');
       //Run the command
       command.run(bot, interaction, command.options);
   }
