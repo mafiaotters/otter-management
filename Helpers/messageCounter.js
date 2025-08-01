@@ -27,7 +27,7 @@ async function flushMessageCounts() {
 
         // ✅ Si le profil n'existe pas, on skip
         if (!profileDoc.exists) {
-            console.log(`⏭️ Profil inexistant pour ${userId}, compteur ignoré.`);
+            //console.log(`⏭️ Profil inexistant pour ${userId}, compteur ignoré.`);
             continue;
         }
 
@@ -40,7 +40,7 @@ async function flushMessageCounts() {
     }
 
     await batch.commit();
-    //console.log(`✅ Message counts pushed to Firebase : ${Object.keys(messageCounts).length} users`);
+    console.log(`✅ Message counts pushed to Firebase : ${Object.keys(messageCounts).length} users`);
     messageCounts = {}; // Reset local
 }
 

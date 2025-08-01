@@ -142,10 +142,10 @@ async function createMonthlyReport(bot) {
             citation.userName = await getUserDisplayName(citation.userId);
         }
 
-        if (newCitations.length <= 2) {
+        if (newCitations.length <= 1) {
             embed.addFields({
                 name: 'Citations du mois',
-                value: '📋 Pas assez de citations ce mois-ci pour un best-of !',
+                value: '📋 Pas assez de citations ce mois-ci pour un best-of ! Vous avez été sympa ce mois-ci.',
                 inline: false
             });
         } else {
