@@ -38,7 +38,7 @@ function convertToFrenchTime(utcDateStr) {
  */
 async function isDuplicateMessage(channel, title) {
     try {
-        const messages = await channel.messages.fetch({ limit: 40 }); // Récupère les 10 derniers messages
+        const messages = await channel.messages.fetch({ limit: 40 }); // Récupère les 40 derniers messages
         for (const [, message] of messages) {
             if (message.embeds.length > 0) {
                 const embed = message.embeds[0];
@@ -90,7 +90,7 @@ async function checkRSS(bot, rssUrl) {
             const timeDiff = now - pubDate; // Différence en millisecondes
 
             if (timeDiff > freshnessHours * 60 * 60 * 1000) {
-                // Ignorer les articles plus anciens que 5 heure
+                // Ignorer les articles plus anciens que 1 heure
                 continue;
             }
 
@@ -149,7 +149,7 @@ async function checkRSS(bot, rssUrl) {
             }
 
             if (await isDuplicateMessage(lodestoneRSSChannel, item.title)) {
-                console.log(await dateFormatLog() + `Article déjà publié, passage : ${item.title}`);
+                //console.log(await dateFormatLog() + `Article déjà publié, passage : ${item.title}`);
                 continue; // Passe à l'article suivant si un doublon est détecté
             }
 
