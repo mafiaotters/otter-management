@@ -11,3 +11,4 @@ tmp/
 .DS_Store
 .venv
 package-lock.json
+Commands/citations.js
