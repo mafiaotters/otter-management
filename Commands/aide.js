@@ -16,6 +16,7 @@ module.exports = {
                 )
                 .addFields(
                     { name: "/gill", value: "Affiche les commandes de notre économie fun : les Gills ! :fish:" },
+                    { name: "/flooders", value: "Voir qui spam le plus le chat ce mois-ci." },
                     { name: "/quote", value: "Affiche vos citations et vous permet de les supprimer si besoin." },
                     { name: "/suggestion", value: "Donne le lien du forms pour toutes vos suggestions ! <:otter_pompom:747554032582787163>" },
                     { name: "/aide", value: "Affiche cette liste." }
