@@ -2,7 +2,7 @@ name: Mirror Repo
 
 on:
   push:
-    branches: [ main ] # adapte si c'est dev ou master
+    branches: [ main ] # adapte si ta branche principale s'appelle master ou dev
 
 jobs:
   sync:
@@ -12,6 +12,17 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Debug token (vérifie que le secret est lu)
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "❌ Le token est VIDE, vérifie ton secret !"
+            exit 1
+          else
+            echo "✅ Token détecté, longueur : ${#TOKEN} caractères"
+          fi
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
 
       - name: Push to second repo
         run: |
