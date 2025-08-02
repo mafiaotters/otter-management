@@ -2,21 +2,21 @@ name: Mirror Repo
 
 on:
   push:
-    branches: [ main ] # adapte si ta branche principale s'appelle master ou dev
+    branches: [ main ] # adapte si ta branche principale est dev ou master
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout source repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Debug token (vérifie que le secret est lu)
+      - name: Vérifier que le token est bien lu
         run: |
           if [ -z "$TOKEN" ]; then
-            echo "❌ Le token est VIDE, vérifie ton secret !"
+            echo "❌ Le token est VIDE. Vérifie ton secret dans Settings > Secrets du dépôt source."
             exit 1
           else
             echo "✅ Token détecté, longueur : ${#TOKEN} caractères"
@@ -24,7 +24,17 @@ jobs:
         env:
           TOKEN: ${{ secrets.TOKEN }}
 
-      - name: Push to second repo
+      - name: Tester l'accès au dépôt cible
+        run: |
+          echo "🔍 Test de connexion avec git ls-remote..."
+          git ls-remote https://${{ secrets.TOKEN }}@github.com/mafiaotters/otter-management.git
+
+      - name: Configurer l'identité Git
+        run: |
+          git config user.name "Mirror Bot"
+          git config user.email "mirror-bot@users.noreply.github.com"
+
+      - name: Pousser vers le dépôt miroir
         run: |
           git remote add mirror https://${{ secrets.TOKEN }}@github.com/mafiaotters/otter-management.git
           git push --mirror mirror
