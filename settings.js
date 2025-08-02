@@ -73,12 +73,13 @@ module.exports = {
   // Activer ou non certaines fonctionnalités du bot
   features: {
     verifyWord: true, // Répond "feur" ou "keen'v" selon le message
-    quoteSystem: true, // Enregistre les citations et gère le best-of
+    quoteSystem: true, // Enregistre les citations et gère le best-of en fin de mois
     rss: true, // Vérifie les flux RSS Lodestone
     bestOfMonthly: true, // Génère le best-of mensuel
     redditFashion: true, // Récupère les posts du subreddit fashion
     welcomeMessage: true, // Envoie un message de bienvenue aux nouveaux
     assignRoles: true, // Attribue les rôles de base lors de l'arrivée
     goodbyeMessage: true, // Indique quand un membre quitte le serveur
+    comptMessage: true, // Compteur de message avec best-of en fin de mois
   },
 };
