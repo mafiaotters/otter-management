@@ -15,5 +15,5 @@ jobs:
 
       - name: Push to second repo
         run: |
-          git remote add mirror https://<TOKEN>@github.com/MonComptePerso/otter-management.git
+          git remote add mirror https://<TOKEN>@github.com/mafiaotters/otter-management.git
           git push --mirror mirror
