@@ -2,7 +2,7 @@ name: Mirror Repo
 
 on:
   push:
-    branches: [ main ] # adapte si c'est master ou dev
+    branches: [ main ] # adapte si ta branche principale est "dev" ou "master"
 
 jobs:
   sync:
@@ -12,6 +12,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Test access to second repo
+        run: |
+          echo "🔍 Test de connexion au repo cible..."
+          git ls-remote https://${{ secrets.TOKEN }}@github.com/mafiaotters/otter-management.git
+        continue-on-error: false
 
       - name: Push to second repo
         run: |
