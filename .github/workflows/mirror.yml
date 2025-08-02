@@ -2,7 +2,7 @@ name: Mirror Repo
 
 on:
   push:
-    branches: [ main ] # ou master si c'est la branche principale
+    branches: [ main ] # adapte si c'est master ou dev
 
 jobs:
   sync:
@@ -15,5 +15,5 @@ jobs:
 
       - name: Push to second repo
         run: |
-          git remote add mirror https://<TOKEN>@github.com/mafiaotters/otter-management.git
+          git remote add mirror https://${{ secrets.TOKEN }}@github.com/mafiaotters/otter-management.git
           git push --mirror mirror
