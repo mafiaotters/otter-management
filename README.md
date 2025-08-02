@@ -36,14 +36,18 @@ Chantal est un bot Discord avancé conçu pour animer et gérer une communauté 
 
 ### Cloner le repo
 ```sh
-git clone https://github.com/ton-user/chantal-bot.git
-cd chantal-bot
+git clone https://github.com/Jungso-GB/otter-management.git
+cd otter-management
+```
 
 ### Installer les dépendances
-npm install 
+```sh
+npm install
+```
 
 ### Créer un `.env`
 Copiez le fichier `.env.example` vers `.env` puis personnalisez les valeurs :
+```env
 DISCORD_TOKEN=ton_token
 KEYSFIREBASE=chemin_du_fichier_json
 GITHUB_BRANCH=main
@@ -52,9 +56,10 @@ FTP_HOST=ftp.tonsite.com
 FTP_USER=ton_user
 FTP_PASS=ton_mdp
 DEV_MODE=false
-
+```
 
 ### Démarrer le bot
+```sh
 node bot.js
 ```
 ## Commandes et fonctionnalités
