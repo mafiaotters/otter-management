@@ -137,7 +137,7 @@ bot.on('ready', () => {
   // Toutes les heures, on push le compteur de message sur Firestore
   setInterval(() => {
     flushMessageCounts().catch(err => console.error("❌ Erreur flushMessageCounts:", err));
-  }, 60 * 60 * 1000); // 1h
+  }, 60 * 60 * 3000); // 3h
 
 });
 
