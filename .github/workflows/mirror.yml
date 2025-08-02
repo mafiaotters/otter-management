@@ -1,8 +1,8 @@
-name: Mirror Repo
+name: Mirror Repo via SSH
 
 on:
   push:
-    branches: [ main ] # adapte si ta branche principale est dev ou master
+    branches: [ main ] # adapte si c'est dev ou master
 
 jobs:
   sync:
@@ -13,28 +13,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Vérifier que le token est bien lu
+      - name: Configurer la clé SSH
         run: |
-          if [ -z "$TOKEN" ]; then
-            echo "❌ Le token est VIDE. Vérifie ton secret dans Settings > Secrets du dépôt source."
-            exit 1
-          else
-            echo "✅ Token détecté, longueur : ${#TOKEN} caractères"
-          fi
-        env:
-          TOKEN: ${{ secrets.TOKEN }}
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Tester l'accès au dépôt cible
-        run: |
-          echo "🔍 Test de connexion avec git ls-remote..."
-          git ls-remote https://${{ secrets.TOKEN }}@github.com/mafiaotters/otter-management.git
-
-      - name: Configurer l'identité Git
+      - name: Configurer identité Git
         run: |
           git config user.name "Mirror Bot"
           git config user.email "mirror-bot@users.noreply.github.com"
 
-      - name: Pousser vers le dépôt miroir
+      - name: Push vers le dépôt miroir via SSH
         run: |
-          git remote add mirror https://${{ secrets.TOKEN }}@github.com/mafiaotters/otter-management.git
+          git remote add mirror git@github.com:mafiaotters/otter-management.git
           git push --mirror mirror
