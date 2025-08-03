@@ -46,14 +46,18 @@ async function checkRedditFashion(client) {
 
     const message = await channel.send({ embeds: [embed] });
 
-    // Enregistre l'association message Discord / post Reddit
-    try {
-      await client.db.collection('redditPosts').doc(post.id).set({
-        messageId: message.id,
-        channelId: channel.id
-      });
-    } catch (saveErr) {
-      console.error('Erreur enregistrement Reddit:', saveErr);
+    // Enregistre l'association message Discord / post Reddit si la base est disponible
+    if (client.db) {
+      try {
+        await client.db.collection('redditPosts').doc(post.id).set({
+          messageId: message.id,
+          channelId: channel.id
+        });
+      } catch (saveErr) {
+        console.error('Erreur enregistrement Reddit:', saveErr);
+      }
+    } else {
+      console.warn('Base de données indisponible, enregistrement du post Reddit ignoré.');
     }
   } catch (err) {
     console.error("Erreur Reddit:", err);
