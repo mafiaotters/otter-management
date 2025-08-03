@@ -86,7 +86,7 @@ const { createMonthlyReport } = require('@helpers/createMonthlyReport');
 
 
 // Quand le bot est prêt et connecté
-bot.on('ready', () => {
+bot.on('ready', async () => {
     console.log(`Bot opérationnel sous le nom: ${bot.user.tag}!`);
     if(process.env.GITHUB_BRANCH === 'main'){
     // Envoyer un message dans le serveur et le channel spécifiés
@@ -111,10 +111,12 @@ bot.on('ready', () => {
     // Intervalles de vérification
     const redditFashionInterval = (bot.settings.redditFashionInterval || 60) * 60 * 1000;
     const rssInterval = (bot.settings.rssCheckInterval || 15) * 60 * 1000;
+    console.log(await dateFormatLog() + `Intervalle RSS configuré à ${rssInterval / 60000} min`);
 
     // Vérifier les différents flux RSS Lodestone et le best-of mensuel
 
-      setInterval(() => {
+      setInterval(async () => {
+        console.log(await dateFormatLog() + 'Début de la vérification périodique des flux RSS');
         if (bot.featureEnabled('rss')) {
           RSS_FEEDS.forEach(feed => {
             checkRSS(bot, feed.url);
@@ -125,6 +127,7 @@ bot.on('ready', () => {
         }
         if (bot.featureEnabled('comptMessage') && bot.featureEnabled('bestOfMonthly') && bot.featureEnabled('quoteSystem'))
         createMonthlyReport(bot);
+        console.log(await dateFormatLog() + 'Fin de la vérification périodique des flux RSS');
 
       }, rssInterval); // Vérification périodique des flux RSS
 
