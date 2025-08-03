@@ -24,6 +24,17 @@ async function checkRedditPosts(client) {
         } else {
           console.error('Erreur vérification post Reddit:', err);
         }
+      } finally {
+        const remaining = typeof reddit.ratelimitRemaining === 'number' ? reddit.ratelimitRemaining : null;
+        const reset = typeof reddit.ratelimitExpiration === 'number'
+          ? Math.ceil((reddit.ratelimitExpiration - Date.now()) / 1000)
+          : null;
+        if (remaining !== null && remaining < 10) {
+          console.warn('Quota bas, pause des requêtes.');
+          if (reset !== null && reset > 0) {
+            await new Promise(r => setTimeout(r, reset * 1000));
+          }
+        }
       }
     }
   } catch (err) {
