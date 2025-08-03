@@ -1,5 +1,4 @@
 const RSSParser = require('rss-parser');
-const parser = new RSSParser();
 const { dateFormatLog } = require('./logTools');
 
 /**
@@ -71,6 +70,12 @@ function extractImage(content) {
  */
 async function checkRSS(bot, rssUrl) {
     try {
+        // Définir un user-agent personnalisé pour respecter la politique d'accès de Reddit
+        const userAgent = bot.settings.rssUserAgent || 'otter-management-bot/1.0 (by u/OtterChantal-bot)';
+        const parser = new RSSParser({
+            headers: { 'User-Agent': userAgent }
+        });
+
         // Récupérer le flux RSS
         const feed = await parser.parseURL(rssUrl);
 

@@ -108,24 +108,25 @@ bot.on('ready', () => {
     // Load slash commands
   loadSlashCommands(bot);
 
-  // Intervalle pour Reddit Fashion
-  const redditFashionInterval = (bot.settings.redditFashionInterval || 60) * 60 * 1000;
+    // Intervalles de vérification
+    const redditFashionInterval = (bot.settings.redditFashionInterval || 60) * 60 * 1000;
+    const rssInterval = (bot.settings.rssCheckInterval || 15) * 60 * 1000;
 
     // Vérifier les différents flux RSS Lodestone et le best-of mensuel
 
-    setInterval(() => {
-      if (bot.featureEnabled('rss')) {
-        RSS_FEEDS.forEach(feed => {
-          checkRSS(bot, feed.url);
-        });
-      }
-      if (bot.featureEnabled('redditFashion')) {
-        checkRedditFashion(bot);
-      }
-      if (bot.featureEnabled('comptMessage') && bot.featureEnabled('bestOfMonthly') && bot.featureEnabled('quoteSystem'))
-      createMonthlyReport(bot);
+      setInterval(() => {
+        if (bot.featureEnabled('rss')) {
+          RSS_FEEDS.forEach(feed => {
+            checkRSS(bot, feed.url);
+          });
+        }
+        if (bot.featureEnabled('redditFashion')) {
+          checkRedditFashion(bot);
+        }
+        if (bot.featureEnabled('comptMessage') && bot.featureEnabled('bestOfMonthly') && bot.featureEnabled('quoteSystem'))
+        createMonthlyReport(bot);
 
-    }, 60 * 60 * 15); // Check toutes les 15m
+      }, rssInterval); // Vérification périodique des flux RSS
 
     // Vérification périodique du subreddit fashion
     if (bot.featureEnabled('redditFashion')) {
