@@ -120,7 +120,7 @@ bot.on('ready', () => {
         });
       }
       if (bot.featureEnabled('redditFashion')) {
-        checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
+        checkRedditFashion(bot);
       }
       if (bot.featureEnabled('comptMessage') && bot.featureEnabled('bestOfMonthly') && bot.featureEnabled('quoteSystem'))
       createMonthlyReport(bot);
@@ -129,9 +129,9 @@ bot.on('ready', () => {
 
     // Vérification périodique du subreddit fashion
     if (bot.featureEnabled('redditFashion')) {
-      checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
+      checkRedditFashion(bot);
       setInterval(() => {
-        checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
+        checkRedditFashion(bot);
       }, redditFashionInterval);
     }
   // Toutes les heures, on push le compteur de message sur Firestore

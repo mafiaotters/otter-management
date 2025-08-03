@@ -1,56 +1,54 @@
 /**
- * Configuration pour le serveur principal
+ * Configuration pour le serveur principal (développement)
  * mainGuildId : identifiant du serveur Discord principal
  * channelId : canal d'annonce au démarrage du bot
  */
 module.exports = {
   // Identifiant du serveur principal
-  mainGuildId: '653689680906420235',
+  mainGuildId: '000000000000000000',
   // Canal d'annonce au démarrage
-  channelId: '1400038897991422032',
-  // URL du flux RSS Reddit Fashion
-  redditFashionRSS: 'https://www.reddit.com/r/ffxiv/search.rss?restrict_sr=on&sort=new&q=author%3AGottesstrafe+Fashion+Report+-+Full+Details+-+For+Week+of&t=week',
+  channelId: '000000000000000000',
 
-  // Intervalle de vérification du flux Reddit Fashion (en minutes)
+  // Intervalle de vérification du Reddit Fashion (en minutes)
   redditFashionInterval: 60,
 
   // Durée maximale d'ancienneté des posts RSS (en heures)
   rssFreshnessHours: 24,
   ids: {
     // Canal où sont envoyés les messages de bienvenue
-    welcomeChannel: '675910340936204288',
+    welcomeChannel: '000000000000000000',
     // Canal pour les messages d'au revoir
-    goodbyeChannel: '747143537048682558',
+    goodbyeChannel: '000000000000000000',
     // Canal dédié au flux RSS Lodestone
-    lodestoneRSSChannel: '1400038897991422032',
+    lodestoneRSSChannel: '000000000000000000',
     // Canal pour le flux Reddit Fashion
-    redditFashionChannel: '1400038897991422032',
+    redditFashionChannel: '000000000000000000',
     // Canal pour le best-of mensuel
-    bestOfChannel: '1400038897991422032',
+    bestOfChannel: '000000000000000000',
     // Canal utilisé pour certaines notifications
-    notificationChannel: '1400038897991422032',
+    notificationChannel: '000000000000000000',
     // Canal réservé aux messages d'administration
-    adminChannel: '1311350221619597455',
+    adminChannel: '000000000000000000',
     // Rôle attribué aux visiteurs
-    roleVisitor: '675691652349689856',
+    roleVisitor: '000000000000000000',
     // Rôle pour les nouvelles potentielles loutres
-    rolePotential: '879754348727509052',
+    rolePotential: '000000000000000000',
     // ID du bot principal
-    botMainId: '1106850900682747974',
+    botMainId: '000000000000000000',
     // ID du bot de développement
-    botDevId: '1110950106842284072',
+    botDevId: '000000000000000000',
     // Guildes reconnues : principale et serveur de test
-    recognizedGuildIds: ['675543520425148416', '653689680906420235'],
+    recognizedGuildIds: ['000000000000000000', '000000000000000000'],
     // Canaux où le bot ne réagit pas
-    exceptionsChannels: ['704404247445373029', '791052204823281714'],
+    exceptionsChannels: ['000000000000000000', '000000000000000000'],
     // Utilisateurs exemptés des réponses automatiques
-    exceptionsUsers: ['173439968381894656', '143762806574022656', '143762806574022656'],
+    exceptionsUsers: ['000000000000000000', '000000000000000000', '000000000000000000'],
   },
   commands: {
     // Utilisateurs autorisés à modifier la base de données
-    allowedUsers: ['239407042182381588', '173439968381894656', '207992750988197889'],
+    allowedUsers: ['000000000000000000', '000000000000000000', '000000000000000000'],
     // Contacts à mentionner pour obtenir de l'aide
-    helpContacts: ['207992750988197889', '239407042182381588'],
+    helpContacts: ['000000000000000000', '000000000000000000'],
   },
 
   // Activer ou désactiver des commandes spécifiques

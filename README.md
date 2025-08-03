@@ -18,7 +18,7 @@ Chantal est un bot Discord avancé conçu pour animer et gérer une communauté 
 
 ### 🔹 Intégrations et API
 - 📰 **Flux RSS Lodestone** : Surveillance des news FFXIV et publication automatique sur Discord.
-- 👗 **Flux RSS Reddit Fashion** : Partage des dernières tenues postées sur Reddit.
+- 👗 **API Reddit Fashion** : Partage des dernières tenues postées sur Reddit.
 
 ### 🔹 Utilitaires
 - 🛠️ **Commandes personnalisées** : `/help`, `/quote`, `/kaazino`, `/listerole`, etc.
@@ -56,7 +56,10 @@ FTP_HOST=ftp.tonsite.com
 FTP_USER=ton_user
 FTP_PASS=ton_mdp
 DEV_MODE=false
-```
+REDDIT_CLIENT_ID=ton_client_id
+REDDIT_CLIENT_SECRET=ton_client_secret
+REDDIT_USERNAME=ton_nom_utilisateur
+REDDIT_PASSWORD=ton_mot_de_passe
 
 ### Démarrer le bot
 ```sh
@@ -87,7 +90,7 @@ Passez une valeur à `false` pour désactiver la fonctionnalité correspondante 
 Certains délais peuvent être ajustés dans `settings.js` :
 
 ```js
-redditFashionInterval: 60 // Vérifie le flux Reddit Fashion toutes les 60 minutes
+redditFashionInterval: 60 // Vérifie le subreddit Reddit Fashion toutes les 60 minutes
 rssFreshnessHours: 5     // Ignore les posts RSS plus vieux que 5 heures
 ```
 
