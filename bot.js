@@ -136,14 +136,16 @@ bot.on('ready', async () => {
     // Vérification périodique du subreddit fashion
     if (bot.featureEnabled('redditFashion')) {
       checkRedditFashion(bot);
-      checkRedditPosts(bot);
       setInterval(() => {
         checkRedditFashion(bot);
       }, redditFashionInterval);
-      setInterval(() => {
-        checkRedditPosts(bot);
-      }, redditPostCheckInterval);
     }
+
+    // Vérification périodique des posts Reddit pour suppressions éventuelles
+    checkRedditPosts(bot);
+    setInterval(() => {
+      checkRedditPosts(bot);
+    }, redditPostCheckInterval);
   // Toutes les heures, on push le compteur de message sur Firestore
   setInterval(() => {
     flushMessageCounts().catch(err => console.error("❌ Erreur flushMessageCounts:", err));

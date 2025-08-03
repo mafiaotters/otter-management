@@ -4,7 +4,23 @@ async function checkRedditPosts(client) {
   if (!client.db) return;
   try {
     const snapshot = await client.db.collection('redditPosts').get();
+    let processed = 0;
     for (const doc of snapshot.docs) {
+      if (processed >= 90) {
+        console.warn('Quota Reddit atteint, arrêt de la vérification des posts.');
+        break;
+      }
+
+      const remaining = typeof reddit.ratelimitRemaining === 'number' ? reddit.ratelimitRemaining : null;
+      const reset = typeof reddit.ratelimitExpiration === 'number'
+        ? Math.ceil((reddit.ratelimitExpiration - Date.now()) / 1000)
+        : null;
+      console.log(`Reddit rate limit - Remaining: ${remaining}, Reset: ${reset}s`);
+      if (remaining !== null && remaining <= 10) {
+        console.warn('Ratelimit Reddit faible, arrêt de la vérification des posts.');
+        break;
+      }
+
       const postId = doc.id;
       const { messageId, channelId } = doc.data();
       try {
@@ -36,6 +52,8 @@ async function checkRedditPosts(client) {
           }
         }
       }
+
+      processed++;
     }
   } catch (err) {
     console.error('Erreur récupération redditPosts:', err);
