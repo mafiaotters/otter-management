@@ -31,7 +31,17 @@ async function checkRedditFashion(client) {
       embed.setImage(post.preview.images[0].source.url.replace(/&amp;/g, '&'));
     }
 
-    await channel.send({ embeds: [embed] });
+    const message = await channel.send({ embeds: [embed] });
+
+    // Enregistre l'association message Discord / post Reddit
+    try {
+      await client.db.collection('redditPosts').doc(post.id).set({
+        messageId: message.id,
+        channelId: channel.id
+      });
+    } catch (saveErr) {
+      console.error('Erreur enregistrement Reddit:', saveErr);
+    }
   } catch (err) {
     console.error("Erreur Reddit:", err);
   }

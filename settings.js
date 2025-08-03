@@ -12,6 +12,9 @@ module.exports = {
   // Intervalle de vérification du Reddit Fashion (en minutes)
   redditFashionInterval: 60,
 
+  // Intervalle de vérification des posts Reddit existants (en minutes)
+  redditPostCheckInterval: 60,
+
   // Durée maximale d'ancienneté des posts RSS (en heures)
   rssFreshnessHours: 24,
 

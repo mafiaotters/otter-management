@@ -76,6 +76,7 @@ loadEvents(bot); // Load all commands in collection, to the bot
 // Configuration des flux RSS et des canaux
 const { checkRSS } = require('./Helpers/rssHandler');
 const { checkRedditFashion } = require('./Helpers/redditFashion');
+const { checkRedditPosts } = require('./Helpers/redditPostChecker');
 const RSS_FEEDS = [
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/news.xml' }, // Canal de maintenance
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/topics.xml' }  // Canal des annonces importantes
@@ -111,6 +112,7 @@ bot.on('ready', async () => {
     // Intervalles de vérification
     const redditFashionInterval = (bot.settings.redditFashionInterval || 60) * 60 * 1000;
     const rssInterval = (bot.settings.rssCheckInterval || 15) * 60 * 1000;
+    const redditPostCheckInterval = (bot.settings.redditPostCheckInterval || 60) * 60 * 1000;
     console.log(await dateFormatLog() + `Intervalle RSS configuré à ${rssInterval / 60000} min`);
 
     // Vérifier les différents flux RSS Lodestone et le best-of mensuel
@@ -134,9 +136,13 @@ bot.on('ready', async () => {
     // Vérification périodique du subreddit fashion
     if (bot.featureEnabled('redditFashion')) {
       checkRedditFashion(bot);
+      checkRedditPosts(bot);
       setInterval(() => {
         checkRedditFashion(bot);
       }, redditFashionInterval);
+      setInterval(() => {
+        checkRedditPosts(bot);
+      }, redditPostCheckInterval);
     }
   // Toutes les heures, on push le compteur de message sur Firestore
   setInterval(() => {
