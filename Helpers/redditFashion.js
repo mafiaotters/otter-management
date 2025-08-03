@@ -10,6 +10,19 @@ async function checkRedditFashion(client) {
       time: 'week'
     });
 
+    const remaining = typeof reddit.ratelimitRemaining === 'number' ? reddit.ratelimitRemaining : null;
+    const reset = typeof reddit.ratelimitExpiration === 'number'
+      ? Math.ceil((reddit.ratelimitExpiration - Date.now()) / 1000)
+      : null;
+    const used = typeof remaining === 'number' ? 600 - remaining : null;
+    console.log(`Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
+    if (remaining !== null && remaining < 10) {
+      console.warn('Ratelimit restant faible, temporisation des appels futurs.');
+      if (reset !== null && reset > 0) {
+        await new Promise(resolve => setTimeout(resolve, reset * 1000));
+      }
+    }
+
     if (!results.length) return;
 
     const post = results[0];
