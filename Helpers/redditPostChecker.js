@@ -12,11 +12,12 @@ async function checkRedditPosts(client) {
         break;
       }
 
+      const used = typeof reddit.ratelimitUsed === 'number' ? reddit.ratelimitUsed : null;
       const remaining = typeof reddit.ratelimitRemaining === 'number' ? reddit.ratelimitRemaining : null;
       const reset = typeof reddit.ratelimitExpiration === 'number'
         ? Math.ceil((reddit.ratelimitExpiration - Date.now()) / 1000)
         : null;
-      debugLog(client, 'reddit', `Reddit rate limit - Remaining: ${remaining}, Reset: ${reset}s`);
+      debugLog(client, 'reddit', `Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
       if (remaining !== null && remaining <= 10) {
         console.warn('Ratelimit Reddit faible, arrêt de la vérification des posts.');
         break;
@@ -42,10 +43,12 @@ async function checkRedditPosts(client) {
           console.error('Erreur vérification post Reddit:', err);
         }
       } finally {
+        const used = typeof reddit.ratelimitUsed === 'number' ? reddit.ratelimitUsed : null;
         const remaining = typeof reddit.ratelimitRemaining === 'number' ? reddit.ratelimitRemaining : null;
         const reset = typeof reddit.ratelimitExpiration === 'number'
           ? Math.ceil((reddit.ratelimitExpiration - Date.now()) / 1000)
           : null;
+        debugLog(client, 'reddit', `Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
         if (remaining !== null && remaining < 10) {
           console.warn('Quota bas, pause des requêtes.');
           if (reset !== null && reset > 0) {
