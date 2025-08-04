@@ -42,7 +42,7 @@ bot.rolePermissions = {
 
 const loadCommands = require('./Loader/loadCommands');
 const loadEvents = require('./Loader/loadEvents');
-const loadDatabase = require('./Loader/loadDatabase');
+const db = require('./Loader/loadDatabase');
 
 const loadSlashCommands = require('./Loader/loadSlashCommands');
 
@@ -56,7 +56,7 @@ console.log(timestamp + ': Connexion à Discord...')
 bot.login(process.env.DISCORD_TOKEN); // Login to Discord
 console.log('Connexion validée !')
 
-bot.db = loadDatabase()
+bot.db = db
 bot.settings = botSettings
 
 // Fonction utilitaire pour savoir si une fonctionnalité est activée
