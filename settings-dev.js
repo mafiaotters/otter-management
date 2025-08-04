@@ -18,6 +18,9 @@ module.exports = {
   // Limite de requêtes Reddit par minute (100 QPM maximum selon la politique Reddit)
   redditRateLimit: 100,
 
+  // Marge de sécurité pour les requêtes Reddit (arrêt quand il reste ce nombre de requêtes)
+  redditRateReserve: 10,
+
   // User-Agent utilisé pour les requêtes Reddit
   redditUserAgent: 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)',
 

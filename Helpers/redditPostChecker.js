@@ -7,20 +7,22 @@ async function checkRedditPosts(client) {
     const snapshot = await client.db.collection('redditPosts').get();
     let processed = 0;
     const rateLimit = client.settings?.redditRateLimit || 100;
+    const rateReserve = client.settings?.redditRateReserve || 10;
     for (const doc of snapshot.docs) {
-      if (processed >= rateLimit - 10) {
+      if (processed >= rateLimit - rateReserve) {
         console.warn('Quota Reddit atteint, arrêt de la vérification des posts.');
         break;
       }
 
-      const used = typeof reddit.ratelimitUsed === 'number' ? reddit.ratelimitUsed : null;
       const remaining = typeof reddit.ratelimitRemaining === 'number' ? reddit.ratelimitRemaining : null;
+      const used = typeof reddit.ratelimitUsed === 'number'
+        ? reddit.ratelimitUsed
+        : (typeof remaining === 'number' ? rateLimit - remaining : null);
       const reset = typeof reddit.ratelimitExpiration === 'number'
         ? Math.ceil((reddit.ratelimitExpiration - Date.now()) / 1000)
         : null;
-      const used = typeof remaining === 'number' ? rateLimit - remaining : null;
       debugLog(client, 'reddit', `Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
-      if (remaining !== null && remaining <= 10) {
+      if (remaining !== null && remaining <= rateReserve) {
         console.warn('Ratelimit Reddit faible, arrêt de la vérification des posts.');
         break;
       }
@@ -46,14 +48,15 @@ async function checkRedditPosts(client) {
           console.error('Erreur vérification post Reddit:', err);
         }
       } finally {
-        const used = typeof reddit.ratelimitUsed === 'number' ? reddit.ratelimitUsed : null;
         const remaining = typeof reddit.ratelimitRemaining === 'number' ? reddit.ratelimitRemaining : null;
+        const used = typeof reddit.ratelimitUsed === 'number'
+          ? reddit.ratelimitUsed
+          : (typeof remaining === 'number' ? rateLimit - remaining : null);
         const reset = typeof reddit.ratelimitExpiration === 'number'
           ? Math.ceil((reddit.ratelimitExpiration - Date.now()) / 1000)
           : null;
-        const used = typeof remaining === 'number' ? rateLimit - remaining : null;
         debugLog(client, 'reddit', `Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
-        if (remaining !== null && remaining < 10) {
+        if (remaining !== null && remaining < rateReserve) {
           console.warn('Quota bas, pause des requêtes.');
           if (reset !== null && reset > 0) {
             await new Promise(r => setTimeout(r, reset * 1000));
