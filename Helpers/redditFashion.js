@@ -5,6 +5,7 @@ const { debugLog } = require('./logTools');
 
 async function checkRedditFashion(client) {
   try {
+    debugLog(client, 'reddit', 'Recherche Fashion Report sur r/ffxiv');
     const results = await reddit.getSubreddit('ffxiv').search({
       query: 'author:Gottesstrafe Fashion Report - Full Details - For Week of',
       sort: 'new',
@@ -15,7 +16,8 @@ async function checkRedditFashion(client) {
     const reset = typeof reddit.ratelimitExpiration === 'number'
       ? Math.ceil((reddit.ratelimitExpiration - Date.now()) / 1000)
       : null;
-    const used = typeof remaining === 'number' ? 600 - remaining : null;
+    const rateLimit = client.settings?.redditRateLimit || 100;
+    const used = typeof remaining === 'number' ? rateLimit - remaining : null;
     debugLog(client, 'reddit', `Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
     if (remaining !== null && remaining < 10) {
       console.warn('Ratelimit restant faible, temporisation des appels futurs.');

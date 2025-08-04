@@ -11,10 +11,22 @@ const reddit = new Snoowrap({
 
 const rateLimit = settings.redditRateLimit || 100;
 const requestDelay = Math.ceil(60000 / rateLimit);
-reddit.config({ requestDelay, continueAfterRatelimitError: true });
+const logger = {
+  debug: (...args) => console.log('[Reddit]', ...args),
+  warn: (...args) => console.warn('[Reddit]', ...args)
+};
+
+reddit.config({
+  requestDelay,
+  continueAfterRatelimitError: true,
+  debug: !!settings.debug?.reddit,
+  logger
+});
 
 if (settings.debug?.reddit) {
-  console.log(`Reddit config - User-Agent: ${settings.redditUserAgent}, Limite: ${rateLimit} req/min, Délai: ${requestDelay}ms`);
+  console.log(
+    `[Reddit] Config - User-Agent: ${settings.redditUserAgent}, Limite: ${rateLimit} req/min, Délai: ${requestDelay}ms`
+  );
 }
 
 module.exports = reddit;

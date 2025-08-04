@@ -98,7 +98,9 @@ rssFreshnessHours: 5     // Ignore les posts RSS plus vieux que 5 heures
 
 ### Mode debug Reddit
 
-Activez `debug.reddit` dans `settings.js` pour afficher les informations de limitation d'API renvoyées par Reddit. Ces logs sont isolés du flux Lodestone afin d'éviter toute interférence.
+Activez `debug.reddit` dans `settings.js` pour afficher les requêtes Reddit et les en-têtes de limitation d'API (`X-Ratelimit-Used`, `X-Ratelimit-Remaining`, `X-Ratelimit-Reset`).
+Les logs détaillent également le User-Agent, la limite configurée et le délai appliqué entre chaque requête.
+Ces messages, préfixés par `[Reddit]`, sont isolés du flux Lodestone afin d'éviter toute interférence.
 
 ### Les commandes
 
