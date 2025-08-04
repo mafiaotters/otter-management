@@ -1,6 +1,7 @@
 const reddit = require('./redditAPI');
 const { EmbedBuilder } = require('discord.js');
 const { isDuplicateMessage } = require('./duplicateChecker');
+const { debugLog } = require('./logTools');
 
 async function checkRedditFashion(client) {
   try {
@@ -15,7 +16,7 @@ async function checkRedditFashion(client) {
       ? Math.ceil((reddit.ratelimitExpiration - Date.now()) / 1000)
       : null;
     const used = typeof remaining === 'number' ? 600 - remaining : null;
-    console.log(`Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
+    debugLog(client, 'reddit', `Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
     if (remaining !== null && remaining < 10) {
       console.warn('Ratelimit restant faible, temporisation des appels futurs.');
       if (reset !== null && reset > 0) {

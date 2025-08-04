@@ -1,4 +1,5 @@
 const reddit = require('./redditAPI');
+const { debugLog } = require('./logTools');
 
 async function checkRedditPosts(client) {
   if (!client.db) return;
@@ -15,7 +16,7 @@ async function checkRedditPosts(client) {
       const reset = typeof reddit.ratelimitExpiration === 'number'
         ? Math.ceil((reddit.ratelimitExpiration - Date.now()) / 1000)
         : null;
-      console.log(`Reddit rate limit - Remaining: ${remaining}, Reset: ${reset}s`);
+      debugLog(client, 'reddit', `Reddit rate limit - Remaining: ${remaining}, Reset: ${reset}s`);
       if (remaining !== null && remaining <= 10) {
         console.warn('Ratelimit Reddit faible, arrêt de la vérification des posts.');
         break;

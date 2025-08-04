@@ -89,4 +89,10 @@ module.exports = {
     goodbyeMessage: true, // Indique quand un membre quitte le serveur
     comptMessage: true, // Compteur de message avec best-of en fin de mois
   },
+
+  // Configuration des logs de debug par fonctionnalité
+  debug: {
+    reddit: false, // Logs pour les interactions Reddit
+    rss: false,    // Logs pour le flux RSS
+  },
 };

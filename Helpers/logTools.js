@@ -12,6 +12,13 @@ async function dateFormatLog() {
     return formattedDate;
 }
 
+function debugLog(bot, feature, ...args) {
+  if (bot?.settings?.debug?.[feature]) {
+    console.log(...args);
+  }
+}
+
 module.exports = {
-    dateFormatLog
+    dateFormatLog,
+    debugLog
 };
