@@ -80,6 +80,18 @@ module.exports = {
     comptMessage: true, // Compteur de message avec best-of en fin de mois
   },
 
+  // Paramètres généraux pour Reddit
+  reddit: {
+    fashionInterval: 60, // Vérifie le subreddit Reddit Fashion toutes les 60 minutes
+    postCheckInterval: 60, // Vérifie les posts existants toutes les 60 minutes
+    fashionSubreddit: 'ffxiv', // Subreddit ciblé
+    fashionQuery: 'author:Gottesstrafe Fashion Report - Full Details - For Week of', // Requête de recherche
+    fashionSort: 'new', // Tri des résultats
+    fashionTime: 'week', // Période de recherche
+    fashionChannelId: '000000000000000000', // Canal pour le flux Fashion
+    debug: false,
+  },
+
   // Configuration des logs de debug par fonctionnalité
   debug: {
     rss: false,    // Logs pour le flux RSS

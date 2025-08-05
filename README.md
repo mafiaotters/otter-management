@@ -88,34 +88,44 @@ Passez une valeur à `false` pour désactiver la fonctionnalité correspondante 
 
 ### Réglage des intervalles
 
-Les paramètres liés à Reddit se trouvent dans `config/reddit.js` :
+Les paramètres techniques liés à Reddit se trouvent dans `config/reddit.js` ; les autres options sont regroupées dans `settings.js` (ou `settings-dev.js`) sous la clé `reddit` :
 
 ```js
+// config/reddit.js
 const userAgent = 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)';
 
 module.exports = {
-  fashionInterval: 60, // Vérifie le subreddit Reddit Fashion toutes les 60 minutes
-  postCheckInterval: 60, // Vérifie les posts existants toutes les 60 minutes
   rateLimit: 100,      // Limite maximale de requêtes Reddit par minute
   rateReserve: 10,     // Arrêt quand il reste ce nombre de requêtes
   rateWindow: 600,     // Fenêtre de ratelimit en secondes (10 min)
   userAgent,           // User-Agent utilisé pour les requêtes Reddit
-  fashionSubreddit: 'ffxiv', // Subreddit ciblé
-  fashionQuery: 'author:Gottesstrafe Fashion Report - Full Details - For Week of', // Requête de recherche
-  fashionSort: 'new',  // Tri des résultats
-  fashionTime: 'week', // Période de recherche
-  fashionChannelId: '000000000000000000', // Canal pour le flux Fashion
-  debug: false,
+};
+```
+
+```js
+// settings.js
+module.exports = {
+  // ...
+  reddit: {
+    fashionInterval: 60, // Vérifie le subreddit Reddit Fashion toutes les 60 minutes
+    postCheckInterval: 60, // Vérifie les posts existants toutes les 60 minutes
+    fashionSubreddit: 'ffxiv', // Subreddit ciblé
+    fashionQuery: 'author:Gottesstrafe Fashion Report - Full Details - For Week of', // Requête de recherche
+    fashionSort: 'new',  // Tri des résultats
+    fashionTime: 'week', // Période de recherche
+    fashionChannelId: '000000000000000000', // Canal pour le flux Fashion
+    debug: false,
+  },
 };
 ```
 
 Le User-Agent est défini directement dans `config/reddit.js`.
 
-Pour les autres réglages généraux, continuez d'utiliser `settings.js`.
+Les autres réglages généraux restent dans `settings.js`.
 
 ### Mode debug Reddit
 
-Activez `debug` dans `config/reddit.js` pour afficher les requêtes Reddit et les en-têtes de limitation d'API (`X-Ratelimit-Used`, `X-Ratelimit-Remaining`, `X-Ratelimit-Reset`).
+Activez `debug` dans `settings.js` (ou `settings-dev.js`) à la section `reddit` pour afficher les requêtes Reddit et les en-têtes de limitation d'API (`X-Ratelimit-Used`, `X-Ratelimit-Remaining`, `X-Ratelimit-Reset`).
 Les logs détaillent également le User-Agent, la limite configurée et le délai appliqué entre chaque requête.
 Ces messages, préfixés par `[Reddit]`, sont isolés du flux Lodestone afin d'éviter toute interférence.
 

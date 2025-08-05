@@ -24,7 +24,8 @@ require('dotenv').config();
 
 const isDev = process.env.DEV_MODE === 'true';
 const botSettings = require(isDev ? './settings-dev.js' : './settings.js');
-const redditConfig = require('./config/reddit.js');
+const redditTechnical = require('./config/reddit.js');
+const redditConfig = { ...redditTechnical, ...(botSettings.reddit || {}) };
 
 const {dateFormatLog} = require('./Helpers/logTools');
 
