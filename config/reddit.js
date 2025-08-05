@@ -17,6 +17,12 @@ module.exports = {
   // User-Agent utilisé pour les requêtes Reddit
   userAgent: 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)',
 
+  // Paramètres de recherche pour le flux Fashion
+  fashionSubreddit: 'ffxiv',
+  fashionQuery: 'author:Gottesstrafe Fashion Report - Full Details - For Week of',
+  fashionSort: 'new',
+  fashionTime: 'week',
+
   // Canal pour le flux Reddit Fashion
   fashionChannelId: '000000000000000000',
 

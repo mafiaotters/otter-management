@@ -6,17 +6,32 @@ const { getRateLimitInfo } = require('./redditRateLimit');
 
 async function checkRedditFashion(client) {
   try {
-    debugLog(client, 'reddit', 'Recherche Fashion Report sur r/ffxiv');
-    const results = await reddit.getSubreddit('ffxiv').search({
-      query: 'author:Gottesstrafe Fashion Report - Full Details - For Week of',
-      sort: 'new',
-      time: 'week'
-    });
-
     const rateLimit = client.reddit?.rateLimit || 100;
     const rateWindow = client.reddit?.rateWindow || 600;
     const rateReserve = client.reddit?.rateReserve || 10;
-    const { used, remaining, reset } = getRateLimitInfo(reddit, rateLimit, rateWindow);
+
+    // Vérification du quota avant la requête
+    let { used, remaining, reset } = getRateLimitInfo(reddit, rateLimit, rateWindow);
+    debugLog(client, 'reddit', `Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
+    if (remaining <= rateReserve) {
+      console.warn('Ratelimit restant faible, temporisation des appels futurs.');
+      if (reset > 0) {
+        await new Promise(resolve => setTimeout(resolve, reset * 1000));
+      }
+      ({ used, remaining, reset } = getRateLimitInfo(reddit, rateLimit, rateWindow));
+      debugLog(client, 'reddit', `Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
+      if (remaining <= rateReserve) return;
+    }
+
+    const subreddit = client.reddit?.fashionSubreddit || 'ffxiv';
+    const query = client.reddit?.fashionQuery || 'author:Gottesstrafe Fashion Report - Full Details - For Week of';
+    const sort = client.reddit?.fashionSort || 'new';
+    const time = client.reddit?.fashionTime || 'week';
+
+    debugLog(client, 'reddit', `Recherche Fashion Report sur r/${subreddit}`);
+    const results = await reddit.getSubreddit(subreddit).search({ query, sort, time });
+
+    ({ used, remaining, reset } = getRateLimitInfo(reddit, rateLimit, rateWindow));
     debugLog(client, 'reddit', `Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
     if (remaining <= rateReserve) {
       console.warn('Ratelimit restant faible, temporisation des appels futurs.');

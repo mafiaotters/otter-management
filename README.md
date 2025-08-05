@@ -97,7 +97,11 @@ module.exports = {
   rateReserve: 10,     // Arrêt quand il reste ce nombre de requêtes
   rateWindow: 600,     // Fenêtre de ratelimit en secondes (10 min)
   userAgent: 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)',
-  fashionChannelId: '000000000000000000',
+  fashionSubreddit: 'ffxiv', // Subreddit ciblé
+  fashionQuery: 'author:Gottesstrafe Fashion Report - Full Details - For Week of', // Requête de recherche
+  fashionSort: 'new',  // Tri des résultats
+  fashionTime: 'week', // Période de recherche
+  fashionChannelId: '000000000000000000', // Canal pour le flux Fashion
   debug: false,
 };
 ```
