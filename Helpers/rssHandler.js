@@ -70,15 +70,18 @@ function extractImage(content) {
  */
 async function checkRSS(bot, rssUrl) {
     try {
-        console.log(await dateFormatLog() + `Début vérification du flux RSS : ${rssUrl}`);
         const parser = new RSSParser();
-
-        // Récupérer le flux RSS
-        const feed = await parser.parseURL(rssUrl);
 
         // Récupérer l'heure actuelle
         const now = Date.now();
         const freshnessHours = bot.settings.rssFreshnessHours || 5;
+        console.log(
+            await dateFormatLog() +
+            `[rssFreshnessHours] Début vérification du flux RSS : ${rssUrl} (seuil: ${freshnessHours}h)`
+        );
+
+        // Récupérer le flux RSS
+        const feed = await parser.parseURL(rssUrl);
 
         // Lire les items du flux
         for (const item of feed.items) {
@@ -94,7 +97,7 @@ async function checkRSS(bot, rssUrl) {
             if (timeDiff > freshnessHours * 60 * 60 * 1000) {
                 console.log(
                     await dateFormatLog() +
-                    `Article ignoré (trop ancien: ${Math.round(timeDiff / 60000)} min) : ${item.title}`
+                    `[rssFreshnessHours] Article ignoré (trop ancien: ${Math.round(timeDiff / 60000)} min > ${freshnessHours * 60} min) : ${item.title}`
                 );
                 continue; // Ignorer les articles trop anciens
             }
@@ -162,7 +165,9 @@ async function checkRSS(bot, rssUrl) {
             await lodestoneRSSChannel.send({ embeds: [embed] });
             console.log(await dateFormatLog() + `Publication d'une news lodestone: ${item.title}`)
         }
-        console.log(await dateFormatLog() + `Fin vérification du flux RSS : ${rssUrl}`);
+        console.log(
+            await dateFormatLog() + `[rssFreshnessHours] Fin vérification du flux RSS : ${rssUrl}`
+        );
     } catch (error) {
         console.error('Erreur lors de la vérification du flux RSS :', error);
     }
