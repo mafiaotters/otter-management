@@ -71,11 +71,7 @@ function extractImage(content) {
 async function checkRSS(bot, rssUrl) {
     try {
         console.log(await dateFormatLog() + `Début vérification du flux RSS : ${rssUrl}`);
-        // Définir un user-agent personnalisé pour respecter la politique d'accès de Reddit
-        const userAgent = bot.settings.rssUserAgent || 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)';
-        const parser = new RSSParser({
-            headers: { 'User-Agent': userAgent }
-        });
+        const parser = new RSSParser();
 
         // Récupérer le flux RSS
         const feed = await parser.parseURL(rssUrl);

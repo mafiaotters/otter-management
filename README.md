@@ -61,6 +61,7 @@ REDDIT_CLIENT_SECRET=ton_client_secret
 REDDIT_USERNAME=ton_nom_utilisateur
 REDDIT_PASSWORD=ton_mot_de_passe
 
+```
 ### Démarrer le bot
 ```sh
 node bot.js
@@ -90,13 +91,15 @@ Passez une valeur à `false` pour désactiver la fonctionnalité correspondante 
 Les paramètres liés à Reddit se trouvent dans `config/reddit.js` :
 
 ```js
+const userAgent = 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)';
+
 module.exports = {
   fashionInterval: 60, // Vérifie le subreddit Reddit Fashion toutes les 60 minutes
   postCheckInterval: 60, // Vérifie les posts existants toutes les 60 minutes
   rateLimit: 100,      // Limite maximale de requêtes Reddit par minute
   rateReserve: 10,     // Arrêt quand il reste ce nombre de requêtes
   rateWindow: 600,     // Fenêtre de ratelimit en secondes (10 min)
-  userAgent: 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)',
+  userAgent,           // User-Agent utilisé pour les requêtes Reddit
   fashionSubreddit: 'ffxiv', // Subreddit ciblé
   fashionQuery: 'author:Gottesstrafe Fashion Report - Full Details - For Week of', // Requête de recherche
   fashionSort: 'new',  // Tri des résultats
@@ -106,7 +109,9 @@ module.exports = {
 };
 ```
 
-Pour les flux RSS et autres réglages généraux, continuez d'utiliser `settings.js`.
+Le User-Agent est défini directement dans `config/reddit.js`.
+
+Pour les autres réglages généraux, continuez d'utiliser `settings.js`.
 
 ### Mode debug Reddit
 

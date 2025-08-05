@@ -1,3 +1,5 @@
+const userAgent = 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)';
+
 module.exports = {
   // Intervalle de vérification du Reddit Fashion (en minutes)
   fashionInterval: 60,
@@ -15,7 +17,7 @@ module.exports = {
   rateWindow: 600,
 
   // User-Agent utilisé pour les requêtes Reddit
-  userAgent: 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)',
+  userAgent,
 
   // Paramètres de recherche pour le flux Fashion
   fashionSubreddit: 'ffxiv',

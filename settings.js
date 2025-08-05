@@ -3,6 +3,7 @@
  * mainGuildId : identifiant du serveur Discord principal
  * channelId : canal d'annonce au démarrage du bot
  */
+
 module.exports = {
   // Identifiant du serveur principal
   mainGuildId: '000000000000000000',
@@ -14,9 +15,6 @@ module.exports = {
 
   // Intervalle de vérification des flux RSS (en minutes)
   rssCheckInterval: 15,
-
-  // User-Agent utilisé pour les requêtes RSS
-  rssUserAgent: 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)',
 
   ids: {
     // Canal où sont envoyés les messages de bienvenue
