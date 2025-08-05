@@ -120,6 +120,17 @@ bot.on('ready', async () => {
       await dateFormatLog() + `[rssCheckInterval] Intervalle RSS configuré à ${rssInterval / 60000} min`
     );
 
+    console.log(
+      await dateFormatLog() +
+        `[fashionInterval] Intervalle Reddit Fashion configuré à ${redditFashionInterval / 60000} min`
+    );
+    console.log(
+      await dateFormatLog() +
+        `[postCheckInterval] Intervalle de vérification des posts Reddit configuré à ${
+          redditPostCheckInterval / 60000
+        } min`
+    );
+
     // Vérifier les différents flux RSS Lodestone et le best-of mensuel
 
       setInterval(async () => {
@@ -145,15 +156,31 @@ bot.on('ready', async () => {
     // Vérification périodique du subreddit fashion
     if (bot.featureEnabled('redditFashion')) {
       checkRedditFashion(bot);
-      setInterval(() => {
+      setInterval(async () => {
+        console.log(
+          await dateFormatLog() +
+            '[fashionInterval] Début de la vérification périodique du subreddit Fashion'
+        );
         checkRedditFashion(bot);
+        console.log(
+          await dateFormatLog() +
+            '[fashionInterval] Fin de la vérification périodique du subreddit Fashion'
+        );
       }, redditFashionInterval);
     }
 
     // Vérification périodique des posts Reddit pour suppressions éventuelles
     checkRedditPosts(bot);
-    setInterval(() => {
+    setInterval(async () => {
+      console.log(
+        await dateFormatLog() +
+          '[postCheckInterval] Début de la vérification périodique des posts Reddit'
+      );
       checkRedditPosts(bot);
+      console.log(
+        await dateFormatLog() +
+          '[postCheckInterval] Fin de la vérification périodique des posts Reddit'
+      );
     }, redditPostCheckInterval);
   // Toutes les heures, on push le compteur de message sur Firestore
   setInterval(() => {
