@@ -32,9 +32,13 @@ const totalLimit = rateLimit * (rateWindow / 60);
 const requestDelay = Math.ceil(60000 / rateLimit);
 
 // Petit logger pour tracer Snoowrap
+function getTimestamp() {
+  return new Date().toLocaleString('fr-FR');
+}
+
 const logger = {
-  debug: (...args) => console.log('[Reddit]', ...args),
-  warn: (...args) => console.warn('[Reddit]', ...args),
+  debug: (...args) => console.log('[Reddit]', getTimestamp(), ...args),
+  warn: (...args) => console.warn('[Reddit]', getTimestamp(), ...args),
 };
 
 reddit.config({
