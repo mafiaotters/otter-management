@@ -1,15 +1,16 @@
-const userAgent = 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)';
-
 module.exports = {
-  // Limite de requêtes Reddit par minute (100 QPM maximum selon la politique Reddit)
+  // ------------------- Limitations de rate limit -------------------
+  // ⚠️ 100 QPM maximum selon la politique Reddit
   rateLimit: 100,
 
-  // Marge de sécurité pour les requêtes Reddit (arrêt quand il reste ce nombre de requêtes)
+  // ⚠️ Arrête les requêtes quand il reste ce nombre pour éviter de dépasser la limite
   rateReserve: 10,
 
-  // Durée de la fenêtre de ratelimit Reddit en secondes (politique actuelle : 10 minutes)
+  // Fenêtre de ratelimit en secondes (politique actuelle : 10 minutes)
   rateWindow: 600,
 
-  // User-Agent utilisé pour les requêtes Reddit
-  userAgent,
+  // ------------------- Identification du client -------------------
+  // ⚠️ User-Agent obligatoire pour respecter les règles Reddit
+  userAgent: 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)',
 };
+

@@ -92,13 +92,14 @@ Les paramètres techniques liés à Reddit se trouvent dans `config/reddit.js` 
 
 ```js
 // config/reddit.js
-const userAgent = 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)';
-
 module.exports = {
-  rateLimit: 100,      // Limite maximale de requêtes Reddit par minute
-  rateReserve: 10,     // Arrêt quand il reste ce nombre de requêtes
+  // ------------------- Limitations de rate limit -------------------
+  rateLimit: 100,      // ⚠️ 100 QPM maximum selon la politique Reddit
+  rateReserve: 10,     // ⚠️ Arrêt quand il reste ce nombre pour éviter le blocage
   rateWindow: 600,     // Fenêtre de ratelimit en secondes (10 min)
-  userAgent,           // User-Agent utilisé pour les requêtes Reddit
+
+  // ------------------- Identification du client -------------------
+  userAgent: 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)', // ⚠️ User-Agent obligatoire
 };
 ```
 
