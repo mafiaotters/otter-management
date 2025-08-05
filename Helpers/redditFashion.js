@@ -2,6 +2,7 @@ const reddit = require('./redditAPI');
 const { EmbedBuilder } = require('discord.js');
 const { isDuplicateMessage } = require('./duplicateChecker');
 const { debugLog } = require('./logTools');
+const { getRateLimitInfo } = require('./redditRateLimit');
 
 async function checkRedditFashion(client) {
   try {
@@ -12,16 +13,14 @@ async function checkRedditFashion(client) {
       time: 'week'
     });
 
-    const remaining = typeof reddit.ratelimitRemaining === 'number' ? reddit.ratelimitRemaining : null;
-    const reset = typeof reddit.ratelimitExpiration === 'number'
-      ? Math.ceil((reddit.ratelimitExpiration - Date.now()) / 1000)
-      : null;
-    const rateLimit = client.settings?.redditRateLimit || 100;
-    const used = typeof remaining === 'number' ? rateLimit - remaining : null;
+    const rateLimit = client.reddit?.rateLimit || 100;
+    const rateWindow = client.reddit?.rateWindow || 600;
+    const rateReserve = client.reddit?.rateReserve || 10;
+    const { used, remaining, reset } = getRateLimitInfo(reddit, rateLimit, rateWindow);
     debugLog(client, 'reddit', `Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
-    if (remaining !== null && remaining < 10) {
+    if (remaining <= rateReserve) {
       console.warn('Ratelimit restant faible, temporisation des appels futurs.');
-      if (reset !== null && reset > 0) {
+      if (reset > 0) {
         await new Promise(resolve => setTimeout(resolve, reset * 1000));
       }
     }
@@ -31,7 +30,7 @@ async function checkRedditFashion(client) {
     const post = results[0];
     const title = post.title;
     const link = `https://redd.it/${post.id}`;
-    const channel = client.channels.cache.get(client.settings.ids.redditFashionChannel);
+    const channel = client.channels.cache.get(client.reddit.fashionChannelId);
     if (!channel) return;
 
     if (await isDuplicateMessage(channel, title)) return;

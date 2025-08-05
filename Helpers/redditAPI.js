@@ -1,15 +1,17 @@
 const Snoowrap = require('snoowrap');
-const settings = require('../settings');
+const config = require('../config/reddit.js');
 
 const reddit = new Snoowrap({
-  userAgent: settings.redditUserAgent,
+  userAgent: config.userAgent,
   clientId: process.env.REDDIT_CLIENT_ID,
   clientSecret: process.env.REDDIT_CLIENT_SECRET,
   username: process.env.REDDIT_USERNAME,
   password: process.env.REDDIT_PASSWORD
 });
 
-const rateLimit = settings.redditRateLimit || 100;
+const rateLimit = config.rateLimit || 100;
+const rateWindow = config.rateWindow || 600;
+const totalLimit = rateLimit * (rateWindow / 60);
 const requestDelay = Math.ceil(60000 / rateLimit);
 const logger = {
   debug: (...args) => console.log('[Reddit]', ...args),
@@ -19,13 +21,18 @@ const logger = {
 reddit.config({
   requestDelay,
   continueAfterRatelimitError: true,
-  debug: !!settings.debug?.reddit,
+  debug: !!config.debug,
   logger
 });
 
-if (settings.debug?.reddit) {
+// Valeurs par défaut pour éviter des null au démarrage
+reddit.ratelimitRemaining = totalLimit;
+reddit.ratelimitUsed = 0;
+reddit.ratelimitExpiration = Date.now() + rateWindow * 1000;
+
+if (config.debug) {
   console.log(
-    `[Reddit] Config - User-Agent: ${settings.redditUserAgent}, Limite: ${rateLimit} req/min, Délai: ${requestDelay}ms`
+    `[Reddit] Config - User-Agent: ${config.userAgent}, Limite: ${rateLimit} req/min, Fenêtre: ${rateWindow}s, Délai: ${requestDelay}ms`
   );
 }
 

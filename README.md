@@ -87,20 +87,44 @@ Passez une valeur à `false` pour désactiver la fonctionnalité correspondante 
 
 ### Réglage des intervalles
 
-Certains délais peuvent être ajustés dans `settings.js` :
+Les paramètres liés à Reddit se trouvent dans `config/reddit.js` :
 
 ```js
-redditFashionInterval: 60 // Vérifie le subreddit Reddit Fashion toutes les 60 minutes
-redditRateLimit: 100      // Limite maximale de requêtes Reddit par minute (politique Reddit)
-redditUserAgent: 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)' // User-Agent conforme à l'API Reddit
-rssFreshnessHours: 5     // Ignore les posts RSS plus vieux que 5 heures
+module.exports = {
+  fashionInterval: 60, // Vérifie le subreddit Reddit Fashion toutes les 60 minutes
+  postCheckInterval: 60, // Vérifie les posts existants toutes les 60 minutes
+  rateLimit: 100,      // Limite maximale de requêtes Reddit par minute
+  rateReserve: 10,     // Arrêt quand il reste ce nombre de requêtes
+  rateWindow: 600,     // Fenêtre de ratelimit en secondes (10 min)
+  userAgent: 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)',
+  fashionChannelId: '000000000000000000',
+  debug: false,
+};
 ```
+
+Pour les flux RSS et autres réglages généraux, continuez d'utiliser `settings.js`.
 
 ### Mode debug Reddit
 
-Activez `debug.reddit` dans `settings.js` pour afficher les requêtes Reddit et les en-têtes de limitation d'API (`X-Ratelimit-Used`, `X-Ratelimit-Remaining`, `X-Ratelimit-Reset`).
+Activez `debug` dans `config/reddit.js` pour afficher les requêtes Reddit et les en-têtes de limitation d'API (`X-Ratelimit-Used`, `X-Ratelimit-Remaining`, `X-Ratelimit-Reset`).
 Les logs détaillent également le User-Agent, la limite configurée et le délai appliqué entre chaque requête.
 Ces messages, préfixés par `[Reddit]`, sont isolés du flux Lodestone afin d'éviter toute interférence.
+
+### Limites et conformité à l'API Reddit
+
+Reddit impose un maximum de **100 requêtes par minute et par identifiant OAuth**. Cette limite est calculée sur une fenêtre glissante d'environ **10 minutes**, soit jusqu'à 1 000 requêtes sur la période. Chaque réponse fournit les en‑têtes `X-Ratelimit-Used`, `X-Ratelimit-Remaining` et `X-Ratelimit-Reset` indiquant respectivement le nombre de requêtes utilisées, celles restantes et le temps avant réinitialisation. Le bot lit ces en‑têtes pour ajuster automatiquement son rythme.
+
+Les comptes bénéficiant d'un accès gratuit sont également soumis à des plafonds de **2 000 messages de chat par destinataire et 3 000 au total par jour**, ainsi qu'à une limite de **300 salons** rejointe quotidiennement. Le bot n'utilise pas l'API de messagerie et reste donc en‑dessous de ces seuils.
+
+Le fichier `config/reddit.js` permet de personnaliser cette politique :
+
+```js
+rateLimit: 100,  // Requêtes par minute
+rateWindow: 600, // Fenêtre de 10 minutes
+rateReserve: 10  // Seuil d'arrêt avant saturation
+```
+
+Des valeurs initiales sont définies au démarrage afin d'éviter tout affichage `null`, garantissant un suivi cohérent dès la première requête.
 
 ### Les commandes
 

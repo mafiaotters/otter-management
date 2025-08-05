@@ -24,6 +24,7 @@ require('dotenv').config();
 
 const isDev = process.env.DEV_MODE === 'true';
 const botSettings = require(isDev ? './settings-dev.js' : './settings.js');
+const redditConfig = require('./config/reddit.js');
 
 const {dateFormatLog} = require('./Helpers/logTools');
 
@@ -58,6 +59,7 @@ console.log('Connexion validée !')
 
 bot.db = db
 bot.settings = botSettings
+bot.reddit = redditConfig
 
 // Fonction utilitaire pour savoir si une fonctionnalité est activée
 bot.featureEnabled = (name) => {
@@ -110,9 +112,9 @@ bot.on('ready', async () => {
   loadSlashCommands(bot);
 
     // Intervalles de vérification
-    const redditFashionInterval = (bot.settings.redditFashionInterval || 60) * 60 * 1000;
+    const redditFashionInterval = (bot.reddit.fashionInterval || 60) * 60 * 1000;
     const rssInterval = (bot.settings.rssCheckInterval || 15) * 60 * 1000;
-    const redditPostCheckInterval = (bot.settings.redditPostCheckInterval || 60) * 60 * 1000;
+    const redditPostCheckInterval = (bot.reddit.postCheckInterval || 60) * 60 * 1000;
     console.log(await dateFormatLog() + `Intervalle RSS configuré à ${rssInterval / 60000} min`);
 
     // Vérifier les différents flux RSS Lodestone et le best-of mensuel

@@ -9,21 +9,6 @@ module.exports = {
   // Canal d'annonce au démarrage
   channelId: '000000000000000000',
 
-  // Intervalle de vérification du Reddit Fashion (en minutes)
-  redditFashionInterval: 60,
-
-  // Intervalle de vérification des posts Reddit existants (en minutes)
-  redditPostCheckInterval: 60,
-
-  // Limite de requêtes Reddit par minute (100 QPM maximum selon la politique Reddit)
-  redditRateLimit: 100,
-
-  // Marge de sécurité pour les requêtes Reddit (arrêt quand il reste ce nombre de requêtes)
-  redditRateReserve: 10,
-
-  // User-Agent utilisé pour les requêtes Reddit
-  redditUserAgent: 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)',
-
   // Durée maximale d'ancienneté des posts RSS (en heures)
   rssFreshnessHours: 24,
   
@@ -39,8 +24,6 @@ module.exports = {
     goodbyeChannel: '000000000000000000',
     // Canal dédié au flux RSS Lodestone
     lodestoneRSSChannel: '000000000000000000',
-    // Canal pour le flux Reddit Fashion
-    redditFashionChannel: '000000000000000000',
     // Canal pour le best-of mensuel
     bestOfChannel: '000000000000000000',
     // Canal utilisé pour certaines notifications
@@ -100,7 +83,6 @@ module.exports = {
 
   // Configuration des logs de debug par fonctionnalité
   debug: {
-    reddit: true, // Logs pour les interactions Reddit
     rss: false,   // Logs pour le flux RSS
   },
 };
