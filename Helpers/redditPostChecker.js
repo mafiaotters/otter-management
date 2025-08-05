@@ -1,17 +1,22 @@
+// Vérifie périodiquement que les posts Reddit référencés existent toujours
 const reddit = require('./redditAPI');
 const { debugLog } = require('./logTools');
-const { getRateLimitInfo } = require('./redditRateLimit');
+const { getRateLimitInfo, getRateConfig } = require('./redditRateLimit');
 
+/**
+ * Vérifie les posts Reddit enregistrés et supprime ceux qui n'existent plus.
+ * @param {object} client - Instance du bot Discord.
+ */
 async function checkRedditPosts(client) {
-  if (!client.db) return;
+  if (!client.db) return; // Nécessite une base de données pour fonctionner
   try {
     const snapshot = await client.db.collection('redditPosts').get();
-    let processed = 0;
-    const rateLimit = client.reddit?.rateLimit || 100;
-    const rateWindow = client.reddit?.rateWindow || 600;
-    const rateReserve = client.reddit?.rateReserve || 10;
+    let processedCount = 0;
+    const { rateLimit, rateWindow, rateReserve } = getRateConfig(client);
+
     for (const doc of snapshot.docs) {
-      if (processed >= rateLimit - rateReserve) {
+      // Évite de consommer tout le quota Reddit
+      if (processedCount >= rateLimit - rateReserve) {
         console.warn('Quota Reddit atteint, arrêt de la vérification des posts.');
         break;
       }
@@ -29,6 +34,7 @@ async function checkRedditPosts(client) {
         debugLog(client, 'reddit', `Vérification du post ${postId}`);
         await reddit.getSubmission(postId).fetch();
       } catch (err) {
+        // Post supprimé côté Reddit -> suppression côté Discord et base
         if (err.statusCode === 404) {
           const channel = client.channels.cache.get(channelId);
           if (channel) {
@@ -54,7 +60,7 @@ async function checkRedditPosts(client) {
         }
       }
 
-      processed++;
+      processedCount++;
     }
   } catch (err) {
     console.error('Erreur récupération redditPosts:', err);

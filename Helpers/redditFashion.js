@@ -1,14 +1,17 @@
+// Recherche et publie le Fashion Report depuis Reddit
 const reddit = require('./redditAPI');
 const { EmbedBuilder } = require('discord.js');
 const { isDuplicateMessage } = require('./duplicateChecker');
 const { debugLog } = require('./logTools');
-const { getRateLimitInfo } = require('./redditRateLimit');
+const { getRateLimitInfo, getRateConfig } = require('./redditRateLimit');
 
+/**
+ * Cherche le dernier Fashion Report sur Reddit et le publie sur Discord.
+ * @param {object} client - Instance du bot Discord.
+ */
 async function checkRedditFashion(client) {
   try {
-    const rateLimit = client.reddit?.rateLimit || 100;
-    const rateWindow = client.reddit?.rateWindow || 600;
-    const rateReserve = client.reddit?.rateReserve || 10;
+    const { rateLimit, rateWindow, rateReserve } = getRateConfig(client);
 
     // Vérification du quota avant la requête
     let { used, remaining, reset } = getRateLimitInfo(reddit, rateLimit, rateWindow);
@@ -20,7 +23,7 @@ async function checkRedditFashion(client) {
       }
       ({ used, remaining, reset } = getRateLimitInfo(reddit, rateLimit, rateWindow));
       debugLog(client, 'reddit', `Reddit rate limit - Used: ${used}, Remaining: ${remaining}, Reset: ${reset}s`);
-      if (remaining <= rateReserve) return;
+      if (remaining <= rateReserve) return; // Toujours insuffisant après attente
     }
 
     const subreddit = client.reddit?.fashionSubreddit || 'ffxiv';
@@ -48,7 +51,7 @@ async function checkRedditFashion(client) {
     const channel = client.channels.cache.get(client.reddit.fashionChannelId);
     if (!channel) return;
 
-    if (await isDuplicateMessage(channel, title)) return;
+    if (await isDuplicateMessage(channel, title)) return; // Évite les doublons
 
     const embed = new EmbedBuilder()
       .setTitle(title)
@@ -77,7 +80,7 @@ async function checkRedditFashion(client) {
       console.warn('Base de données indisponible, enregistrement du post Reddit ignoré.');
     }
   } catch (err) {
-    console.error("Erreur Reddit:", err);
+    console.error('Erreur Reddit:', err);
   }
 }
 
