@@ -16,16 +16,20 @@ module.exports = {
             return interaction.reply({ content: "Message introuvable.", ephemeral: true });
         }
 
+        if (targetMessage.author.id === bot.user.id && targetMessage.embeds[0]?.author?.name?.startsWith('Message de')) {
+            return interaction.reply({ content: "Impossible de censurer ce message.", ephemeral: true });
+        }
+
         const content = targetMessage.content || "";
         const author = targetMessage.author;
         const member = targetMessage.member;
         const pseudo = member ? member.displayName : author.username;
 
-        const files = targetMessage.attachments.map(att => {
-            const file = new Discord.AttachmentBuilder(att.url);
-            file.setSpoiler(true);
-            return file;
-        });
+        const files = await Promise.all(targetMessage.attachments.map(async att => {
+            const response = await fetch(att.url);
+            const buffer = Buffer.from(await response.arrayBuffer());
+            return new Discord.AttachmentBuilder(buffer, { name: att.name }).setSpoiler(true);
+        }));
 
         const modal = new Discord.ModalBuilder()
             .setCustomId("censurer-reason")
@@ -60,8 +64,11 @@ module.exports = {
 
             const embed = new Discord.EmbedBuilder()
                 .setColor(0xff0000)
-                .setAuthor({ name: `Message de ${pseudo}`, iconURL: author.displayAvatarURL({ dynamic: true }) })
-                .setDescription(descriptionParts.join('\n\n'));
+                .setAuthor({ name: `Message de ${pseudo}`, iconURL: author.displayAvatarURL({ dynamic: true }) });
+
+            if (descriptionParts.length) {
+                embed.setDescription(descriptionParts.join('\n\n'));
+            }
 
             await interaction.channel.send({ embeds: [embed], files });
 
