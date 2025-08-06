@@ -64,7 +64,7 @@ function extractImage(content) {
 }
 
 /**
- * Récupère un flux RSS avec gestion du code 503 et réessais exponentiels.
+ * Récupère un flux RSS avec gestion des codes 500/503 et réessais exponentiels.
  * @param {RSSParser} parser - Instance du parser RSS.
  * @param {string} url - URL du flux RSS.
  * @param {number} [maxRetries=5] - Nombre maximum de tentatives.
@@ -82,11 +82,11 @@ async function fetchWithRetry(parser, url, maxRetries = 5, baseDelay = 60000) {
                 error?.response?.status ||
                 parseInt(error?.message?.match(/Status code (\d+)/)?.[1]);
 
-            if (status === 503) {
+            if (status === 503 || status === 500) {
                 const wait = baseDelay * Math.pow(2, attempt);
                 console.warn(
                     await dateFormatLog() +
-                        `[rssFreshnessHours] Flux RSS indisponible (503). Nouvel essai dans ${Math.round(wait / 1000)} s`
+                        `[rssFreshnessHours] Flux RSS indisponible (${status}). Nouvel essai dans ${Math.round(wait / 1000)} s`
                 );
                 await new Promise(res => setTimeout(res, wait));
                 attempt++;
@@ -115,9 +115,7 @@ async function checkRSS(bot, rssUrl) {
             `[rssFreshnessHours] Début vérification du flux RSS : ${rssUrl} (seuil: ${freshnessHours}h)`
         );
 
-        // Récupérer le flux RSS avec réessais en cas de 503
-        const feed = await fetchWithRetry(parser, rssUrl);
-
+        // Récupérer le flux RSS avec réessais en cas de 500 ou 503
         // Lire les items du flux
         for (const item of feed.items) {
             // Déterminer la date de publication
