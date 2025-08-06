@@ -64,6 +64,41 @@ function extractImage(content) {
 }
 
 /**
+ * Récupère un flux RSS avec gestion du code 503 et réessais exponentiels.
+ * @param {RSSParser} parser - Instance du parser RSS.
+ * @param {string} url - URL du flux RSS.
+ * @param {number} [maxRetries=5] - Nombre maximum de tentatives.
+ * @param {number} [baseDelay=60000] - Délai de base entre les tentatives (ms).
+ * @returns {Promise<object>} - Flux RSS parsé.
+ */
+async function fetchWithRetry(parser, url, maxRetries = 5, baseDelay = 60000) {
+    let attempt = 0;
+    while (attempt < maxRetries) {
+        try {
+            return await parser.parseURL(url);
+        } catch (error) {
+            const status =
+                error?.statusCode ||
+                error?.response?.status ||
+                parseInt(error?.message?.match(/Status code (\d+)/)?.[1]);
+
+            if (status === 503) {
+                const wait = baseDelay * Math.pow(2, attempt);
+                console.warn(
+                    await dateFormatLog() +
+                        `[rssFreshnessHours] Flux RSS indisponible (503). Nouvel essai dans ${Math.round(wait / 1000)} s`
+                );
+                await new Promise(res => setTimeout(res, wait));
+                attempt++;
+            } else {
+                throw error;
+            }
+        }
+    }
+    throw new Error(`Flux RSS indisponible après ${maxRetries} tentatives.`);
+}
+
+/**
  * Fonction pour vérifier et envoyer les mises à jour des flux RSS.
  * @param {Client} bot - L'instance du bot Discord.
  * @param {string} rssUrl - L'URL du flux RSS à surveiller.
@@ -80,8 +115,8 @@ async function checkRSS(bot, rssUrl) {
             `[rssFreshnessHours] Début vérification du flux RSS : ${rssUrl} (seuil: ${freshnessHours}h)`
         );
 
-        // Récupérer le flux RSS
-        const feed = await parser.parseURL(rssUrl);
+        // Récupérer le flux RSS avec réessais en cas de 503
+        const feed = await fetchWithRetry(parser, rssUrl);
 
         // Lire les items du flux
         for (const item of feed.items) {
@@ -169,7 +204,7 @@ async function checkRSS(bot, rssUrl) {
             await dateFormatLog() + `[rssFreshnessHours] Fin vérification du flux RSS : ${rssUrl}`
         );
     } catch (error) {
-        console.error('Erreur lors de la vérification du flux RSS :', error);
+        console.error(await dateFormatLog() + 'Erreur lors de la vérification du flux RSS :', error);
     }
 }
 
