@@ -37,6 +37,7 @@
     "requests": "^0.3.0",
     "rss-parser": "^3.13.0",
     "simple-git": "^3.25.0",
+    "snoowrap": "^1.23.0",
     "ssh2-sftp-client": "^10.0.3",
     "uuid": "^10.0.0"
   },

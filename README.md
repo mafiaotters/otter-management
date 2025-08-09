@@ -18,7 +18,7 @@ Chantal est un bot Discord avancé conçu pour animer et gérer une communauté 
 
 ### 🔹 Intégrations et API
 - 📰 **Flux RSS Lodestone** : Surveillance des news FFXIV et publication automatique sur Discord.
-- 👗 **Flux RSS Reddit Fashion** : Partage des dernières tenues postées sur Reddit.
+- 👗 **API Reddit Fashion** : Partage des dernières tenues postées sur Reddit.
 
 ### 🔹 Utilitaires
 - 🛠️ **Commandes personnalisées** : `/help`, `/quote`, `/kaazino`, `/listerole`, etc.
@@ -36,38 +36,39 @@ Chantal est un bot Discord avancé conçu pour animer et gérer une communauté 
 
 ### Cloner le repo
 ```sh
-git clone https://github.com/ton-user/chantal-bot.git
-cd chantal-bot
+git clone https://github.com/Jungso-GB/otter-management.git
+cd otter-management
+```
 
-npm install (installer les dépendances)
+### Installer les dépendances
+```sh
+npm install
+```
 
 ### Créer un `.env`
-
 Copiez le fichier `.env.example` vers `.env` puis personnalisez les valeurs :
+```env
 DISCORD_TOKEN=ton_token
-FIREBASE_CREDENTIALS=chemin_du_fichier_json
+KEYSFIREBASE=chemin_du_fichier_json
 GITHUB_BRANCH=main
 GOOGLE_SHEET_ID=ton_id_google_sheet
 FTP_HOST=ftp.tonsite.com
 FTP_USER=ton_user
 FTP_PASS=ton_mdp
 DEV_MODE=false
+REDDIT_CLIENT_ID=ton_client_id
+REDDIT_CLIENT_SECRET=ton_client_secret
+REDDIT_USERNAME=ton_nom_utilisateur
+REDDIT_PASSWORD=ton_mot_de_passe
 
-### Initialisation de Firestore pour le développement
-Pour peupler rapidement la base Firestore avec des données de test, exécutez :
-npm run init:dev -- --insert
-
-Ajoutez `--dry-run` pour simuler sans écrire dans la base.
-
-En définissant la variable d'environnement `DEV_MODE=true`, le script utilisera
-`firebase-dev.json` et `settings-dev.js`.
-Les membres insérés sont configurés dans `AdminTools/initSettings.json`.
-
-### Le démarrer
+```
+### Démarrer le bot
+```sh
 node bot.js
+```
+## Commandes et fonctionnalités
 
-### Désactiver des fonctionnalités
-
+### Les fonctionnalités
 Le fichier `settings.js` (et sa variante `settings-dev.js`) contient un objet `features` permettant d'activer ou non certaines parties du bot.
 
 ```js
@@ -87,14 +88,65 @@ Passez une valeur à `false` pour désactiver la fonctionnalité correspondante 
 
 ### Réglage des intervalles
 
-Certains délais peuvent être ajustés dans `settings.js` :
+Les paramètres techniques liés à Reddit se trouvent dans `config/reddit.js` ; les autres options sont regroupées dans `settings.js` (ou `settings-dev.js`) sous la clé `reddit` :
 
 ```js
-redditFashionInterval: 60 // Vérifie le flux Reddit Fashion toutes les 60 minutes
-rssFreshnessHours: 5     // Ignore les posts RSS plus vieux que 5 heures
+// config/reddit.js
+module.exports = {
+  // ------------------- Limitations de rate limit -------------------
+  rateLimit: 100,      // ⚠️ 100 QPM maximum selon la politique Reddit
+  rateReserve: 10,     // ⚠️ Arrêt quand il reste ce nombre pour éviter le blocage
+  rateWindow: 600,     // Fenêtre de ratelimit en secondes (10 min)
+
+  // ------------------- Identification du client -------------------
+  userAgent: 'web:otter-management-bot:1.0.0 (by /u/OtterChantal-bot)', // ⚠️ User-Agent obligatoire
+};
 ```
 
-### Désactiver des commandes
+```js
+// settings.js
+module.exports = {
+  // ...
+  reddit: {
+    fashionInterval: 60, // Vérifie le subreddit Reddit Fashion toutes les 60 minutes
+    postCheckInterval: 60, // Vérifie les posts existants toutes les 60 minutes
+    fashionSubreddit: 'ffxiv', // Subreddit ciblé
+    fashionQuery: 'author:Gottesstrafe Fashion Report - Full Details - For Week of', // Requête de recherche
+    fashionSort: 'new',  // Tri des résultats
+    fashionTime: 'week', // Période de recherche
+    fashionChannelId: '000000000000000000', // Canal pour le flux Fashion
+    debug: false,
+  },
+};
+```
+
+Le User-Agent est défini directement dans `config/reddit.js`.
+
+Les autres réglages généraux restent dans `settings.js`.
+
+### Mode debug Reddit
+
+Activez `debug` dans `settings.js` (ou `settings-dev.js`) à la section `reddit` pour afficher les requêtes Reddit et les en-têtes de limitation d'API (`X-Ratelimit-Used`, `X-Ratelimit-Remaining`, `X-Ratelimit-Reset`).
+Les logs détaillent également le User-Agent, la limite configurée et le délai appliqué entre chaque requête.
+Ces messages, préfixés par `[Reddit]`, sont isolés du flux Lodestone afin d'éviter toute interférence.
+
+### Limites et conformité à l'API Reddit
+
+Reddit impose un maximum de **100 requêtes par minute et par identifiant OAuth**. Cette limite est calculée sur une fenêtre glissante d'environ **10 minutes**, soit jusqu'à 1 000 requêtes sur la période. Chaque réponse fournit les en‑têtes `X-Ratelimit-Used`, `X-Ratelimit-Remaining` et `X-Ratelimit-Reset` indiquant respectivement le nombre de requêtes utilisées, celles restantes et le temps avant réinitialisation. Le bot lit ces en‑têtes pour ajuster automatiquement son rythme.
+
+Les comptes bénéficiant d'un accès gratuit sont également soumis à des plafonds de **2 000 messages de chat par destinataire et 3 000 au total par jour**, ainsi qu'à une limite de **300 salons** rejointe quotidiennement. Le bot n'utilise pas l'API de messagerie et reste donc en‑dessous de ces seuils.
+
+Le fichier `config/reddit.js` permet de personnaliser cette politique :
+
+```js
+rateLimit: 100,  // Requêtes par minute
+rateWindow: 600, // Fenêtre de 10 minutes
+rateReserve: 10  // Seuil d'arrêt avant saturation
+```
+
+Des valeurs initiales sont définies au démarrage afin d'éviter tout affichage `null`, garantissant un suivi cohérent dès la première requête.
+
+### Les commandes
 
 Chaque commande peut être (dé)activée individuellement dans le fichier `settings.js` (ou `settings-dev.js`).
 L'objet `commandToggles` répertorie toutes les commandes. Elles sont activées par défaut et peuvent être mises à `false` si nécessaire :
