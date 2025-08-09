@@ -24,6 +24,8 @@ require('dotenv').config();
 
 const isDev = process.env.DEV_MODE === 'true';
 const botSettings = require(isDev ? './settings-dev.js' : './settings.js');
+const redditTechnical = require('./config/reddit.js');
+const redditConfig = { ...redditTechnical, ...(botSettings.reddit || {}) };
 
 const {dateFormatLog} = require('./Helpers/logTools');
 
@@ -42,7 +44,7 @@ bot.rolePermissions = {
 
 const loadCommands = require('./Loader/loadCommands');
 const loadEvents = require('./Loader/loadEvents');
-const loadDatabase = require('./Loader/loadDatabase');
+const db = require('./Loader/loadDatabase');
 
 const loadSlashCommands = require('./Loader/loadSlashCommands');
 
@@ -56,8 +58,9 @@ console.log(timestamp + ': Connexion à Discord...')
 bot.login(process.env.DISCORD_TOKEN); // Login to Discord
 console.log('Connexion validée !')
 
-bot.db = loadDatabase()
+bot.db = db
 bot.settings = botSettings
+bot.reddit = redditConfig
 
 // Fonction utilitaire pour savoir si une fonctionnalité est activée
 bot.featureEnabled = (name) => {
@@ -76,6 +79,7 @@ loadEvents(bot); // Load all commands in collection, to the bot
 // Configuration des flux RSS et des canaux
 const { checkRSS } = require('./Helpers/rssHandler');
 const { checkRedditFashion } = require('./Helpers/redditFashion');
+const { checkRedditPosts } = require('./Helpers/redditPostChecker');
 const RSS_FEEDS = [
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/news.xml' }, // Canal de maintenance
   { url: 'https://fr.finalfantasyxiv.com/lodestone/news/topics.xml' }  // Canal des annonces importantes
@@ -86,7 +90,7 @@ const { createMonthlyReport } = require('@helpers/createMonthlyReport');
 
 
 // Quand le bot est prêt et connecté
-bot.on('ready', () => {
+bot.on('ready', async () => {
     console.log(`Bot opérationnel sous le nom: ${bot.user.tag}!`);
     if(process.env.GITHUB_BRANCH === 'main'){
     // Envoyer un message dans le serveur et le channel spécifiés
@@ -108,32 +112,76 @@ bot.on('ready', () => {
     // Load slash commands
   loadSlashCommands(bot);
 
-  // Intervalle pour Reddit Fashion
-  const redditFashionInterval = (bot.settings.redditFashionInterval || 60) * 60 * 1000;
+    // Intervalles de vérification
+    const redditFashionInterval = (bot.reddit.fashionInterval || 60) * 60 * 1000;
+    const rssInterval = (bot.settings.rssCheckInterval || 15) * 60 * 1000;
+    const redditPostCheckInterval = (bot.reddit.postCheckInterval || 60) * 60 * 1000;
+    console.log(
+      await dateFormatLog() + `[rssCheckInterval] Intervalle RSS configuré à ${rssInterval / 60000} min`
+    );
+
+    console.log(
+      await dateFormatLog() +
+        `[fashionInterval] Intervalle Reddit Fashion configuré à ${redditFashionInterval / 60000} min`
+    );
+    console.log(
+      await dateFormatLog() +
+        `[postCheckInterval] Intervalle de vérification des posts Reddit configuré à ${
+          redditPostCheckInterval / 60000
+        } min`
+    );
 
     // Vérifier les différents flux RSS Lodestone et le best-of mensuel
 
-    setInterval(() => {
-      if (bot.featureEnabled('rss')) {
-        RSS_FEEDS.forEach(feed => {
-          checkRSS(bot, feed.url);
-        });
-      }
-      if (bot.featureEnabled('redditFashion')) {
-        checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
-      }
-      if (bot.featureEnabled('comptMessage') && bot.featureEnabled('bestOfMonthly') && bot.featureEnabled('quoteSystem'))
-      createMonthlyReport(bot);
+      setInterval(async () => {
+        console.log(
+          await dateFormatLog() + '[rssCheckInterval] Début de la vérification périodique des flux RSS'
+        );
+        if (bot.featureEnabled('rss')) {
+          RSS_FEEDS.forEach(feed => {
+            checkRSS(bot, feed.url);
+          });
+        }
+        if (bot.featureEnabled('redditFashion')) {
+          checkRedditFashion(bot);
+        }
+        if (bot.featureEnabled('comptMessage') && bot.featureEnabled('bestOfMonthly') && bot.featureEnabled('quoteSystem'))
+        createMonthlyReport(bot);
+        console.log(
+          await dateFormatLog() + '[rssCheckInterval] Fin de la vérification périodique des flux RSS'
+        );
 
-    }, 60 * 60 * 15); // Check toutes les 15m
+      }, rssInterval); // Vérification périodique des flux RSS
 
     // Vérification périodique du subreddit fashion
     if (bot.featureEnabled('redditFashion')) {
-      checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
-      setInterval(() => {
-        checkRedditFashion(bot, bot.settings.redditFashionRSS, bot.settings.ids.redditFashionChannel);
+      checkRedditFashion(bot);
+      setInterval(async () => {
+        console.log(
+          await dateFormatLog() +
+            '[fashionInterval] Début de la vérification périodique du subreddit Fashion'
+        );
+        checkRedditFashion(bot);
+        console.log(
+          await dateFormatLog() +
+            '[fashionInterval] Fin de la vérification périodique du subreddit Fashion'
+        );
       }, redditFashionInterval);
     }
+
+    // Vérification périodique des posts Reddit pour suppressions éventuelles
+    checkRedditPosts(bot);
+    setInterval(async () => {
+      console.log(
+        await dateFormatLog() +
+          '[postCheckInterval] Début de la vérification périodique des posts Reddit'
+      );
+      checkRedditPosts(bot);
+      console.log(
+        await dateFormatLog() +
+          '[postCheckInterval] Fin de la vérification périodique des posts Reddit'
+      );
+    }, redditPostCheckInterval);
   // Toutes les heures, on push le compteur de message sur Firestore
   setInterval(() => {
     flushMessageCounts().catch(err => console.error("❌ Erreur flushMessageCounts:", err));
