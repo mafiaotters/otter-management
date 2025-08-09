@@ -44,15 +44,15 @@ async function createMonthlyReport(bot) {
         const notificationChannel = bot.channels.cache.get(notificationChannelID);
 
         if (!bestOfChannel || !notificationChannel) {
-            console.error(await dateFormatLog() + '[MonthlyReport] Erreur : Channel introuvable.');
+            console.error(await dateFormatLog() + '[LoutroNews] Erreur : Channel introuvable.');
             return;
         }
 
-        const title = `Il s'est passé quoi en ${date.toLocaleString('fr-FR', { month: 'long', year: 'numeric' }).replace(/^\w/, (c) => c.toUpperCase())} ?`;
+        const title = `Loutro'news - ${date.toLocaleString('fr-FR', { month: 'long', year: 'numeric' }).replace(/^\w/, (c) => c.toUpperCase())} `;
 
         // ✅ Vérifie si le rapport est déjà posté
         if (await isDuplicateMessage(bestOfChannel, title)) {
-            console.log(await dateFormatLog() + '[MonthlyReport] Rapport déjà publié ce mois-ci, annulation.');
+            console.log(await dateFormatLog() + '[LoutroNews] Rapport déjà publié ce mois-ci, annulation.');
             return;
         }
 
@@ -166,10 +166,10 @@ async function createMonthlyReport(bot) {
         await notificationChannel.send(`📢 L'actualité des loutres du mois est sorti ! **Cliquez ici:** ${messageLink}`);
 
         await batch.commit();
-        console.log(await dateFormatLog() + '[MonthlyReport] Rapport mensuel envoyé et compteurs remis à 0.');
+        console.log(await dateFormatLog() + '[LoutroNews] Rapport mensuel envoyé et compteurs remis à 0.');
 
     } catch (error) {
-        console.error(await dateFormatLog() + '[MonthlyReport] Erreur :', error);
+        console.error(await dateFormatLog() + '[LoutroNews] Erreur :', error);
     }
 }
 
