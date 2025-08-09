@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 module.exports = {
-    name: "Censurer",
+    name: "censurer",
     description: "Remplace un message par une version masquée en cas de spoil.",
     type: "MESSAGE",
     dm: false,
