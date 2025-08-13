@@ -1,6 +1,9 @@
 const RSSParser = require('rss-parser');
 const { dateFormatLog } = require('./logTools');
 
+// Mémorise les URL des derniers articles publiés pour éviter les reposts en boucle
+const postedItems = new Set();
+
 /**
  * Convertit une date UTC en fuseau horaire français.
  * @param {string} utcDateStr - La date au format UTC.
@@ -30,18 +33,19 @@ function convertToFrenchTime(utcDateStr) {
 }
 
 /**
- * Vérifie si un message avec le même titre d'embed existe déjà dans les 10 derniers messages.
+ * Vérifie si un message avec le même titre ou la même URL d'embed existe déjà dans les 40 derniers messages.
  * @param {TextChannel} channel - Le channel Discord où vérifier les messages.
  * @param {string} title - Le titre du message à publier.
+ * @param {string} url - L'URL du message à publier.
  * @returns {Promise<boolean>} - Retourne true si un doublon est trouvé, sinon false.
  */
-async function isDuplicateMessage(channel, title) {
+async function isDuplicateMessage(channel, title, url) {
     try {
         const messages = await channel.messages.fetch({ limit: 40 }); // Récupère les 40 derniers messages
         for (const [, message] of messages) {
             if (message.embeds.length > 0) {
                 const embed = message.embeds[0];
-                if (embed.title === title) {
+                if (embed.url === url || embed.title === title) {
                     return true; // Doublon trouvé
                 }
             }
@@ -120,6 +124,16 @@ async function checkRSS(bot, rssUrl) {
         
         // Lire les items du flux
         for (const item of feed.items) {
+            // Utilise l'URL comme identifiant principal pour détecter les doublons
+            const uniqueId = item.link || item.id;
+            if (postedItems.has(uniqueId)) {
+                console.log(
+                    await dateFormatLog() +
+                        `[rssFreshnessHours] Article déjà traité récemment (ID: ${uniqueId}) : ${item.title}`
+                );
+                continue;
+            }
+
             // Déterminer la date de publication
             const pubDate = new Date(item.published || item.updated || item.isoDate).getTime();
             if (isNaN(pubDate)) {
@@ -191,13 +205,19 @@ async function checkRSS(bot, rssUrl) {
                 return;
             }
 
-            if (await isDuplicateMessage(lodestoneRSSChannel, item.title)) {
+            if (await isDuplicateMessage(lodestoneRSSChannel, item.title, item.link)) {
                 //console.log(await dateFormatLog() + `Article déjà publié, passage : ${item.title}`);
                 continue; // Passe à l'article suivant si un doublon est détecté
             }
 
             // Envoyer l'embed sur Discord
             await lodestoneRSSChannel.send({ embeds: [embed] });
+            postedItems.add(uniqueId);
+            // Conserve seulement les 20 derniers articles publiés
+            if (postedItems.size > 20) {
+                const first = postedItems.values().next().value;
+                postedItems.delete(first);
+            }
             console.log(await dateFormatLog() + `Publication d'une news lodestone: ${item.title}`)
         }
         console.log(
