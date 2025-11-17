@@ -20,7 +20,7 @@ module.exports = {
     // Canal où sont envoyés les messages de bienvenue
     welcomeChannel: '675910340936204288',
     // Canal pour les messages d'au revoir
-    goodbyeChannel: '747143537048682558',
+    goodbyeChannel: '675910340936204288',
     // Canal dédié au flux RSS Lodestone
     lodestoneRSSChannel: '675682104327012382',
     // Canal pour le best-of mensuel
