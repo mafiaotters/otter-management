@@ -168,3 +168,4 @@ commandToggles: {
 ```
 
 Une commande dont la valeur est définie à `false` sera ignorée au chargement et renverra un message d'erreur si un utilisateur tente de l'exécuter.
+
